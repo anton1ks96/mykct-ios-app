@@ -25,6 +25,11 @@ extension Color {
     static let violetSoft = Color(hex: 0xE8E5FF)
     static let violetInk = Color(hex: 0x3F1FD6)
 
+    static let flameTint = Color(hex: 0xFFD166)
+    static let flameLight = Color(hex: 0xFF9F1C)
+    static let flame = Color(hex: 0xF4511E)
+    static let flameDeep = Color(hex: 0xC62828)
+
     static let statusGreen = Color(hex: 0x30D97C)
     static let statusWarning = Color(hex: 0xFFAE1A)
     static let statusDanger = Color(hex: 0xFF5A63)

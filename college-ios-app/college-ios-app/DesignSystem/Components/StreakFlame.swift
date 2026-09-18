@@ -12,7 +12,7 @@ private let glowRange: ClosedRange<Double> = 0.22...0.6
 private let spreadRange: ClosedRange<Double> = 0.38...0.5
 
 private let flameColors: [Color] = [
-    .violetTint, .violetLight, .violet, .violetDeep, .violet, .violetLight, .violetTint,
+    .flameTint, .flameLight, .flame, .flameDeep, .flame, .flameLight, .flameTint,
 ]
 
 struct StreakFlame: View {
@@ -40,9 +40,9 @@ struct StreakFlame: View {
             .fill(
                 RadialGradient(
                     stops: [
-                        .init(color: .violetLight.opacity(glow), location: 0),
-                        .init(color: .violetLight.opacity(glow * 0.5), location: 0.4),
-                        .init(color: .violetLight.opacity(glow * 0.16), location: 0.75),
+                        .init(color: .flameLight.opacity(glow), location: 0),
+                        .init(color: .flameLight.opacity(glow * 0.5), location: 0.4),
+                        .init(color: .flameLight.opacity(glow * 0.16), location: 0.75),
                         .init(color: .clear, location: 1),
                     ],
                     center: .center,

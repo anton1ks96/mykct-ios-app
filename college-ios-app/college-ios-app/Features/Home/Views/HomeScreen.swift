@@ -96,18 +96,14 @@ struct HomeScreen: View {
 
     private var attendance: some View {
         VStack(alignment: .leading, spacing: 20) {
-            AttendanceRing(
-                weekTitle: weekTitle,
-                stats: state.stats,
-                value: ringValue,
-                caption: ringCaption,
-                hasData: !state.records.isEmpty
-            )
-
-            WeekNav(
+            AttendanceCalendar(
+                month: state.month,
+                selected: state.selected,
+                marks: state.marks,
                 onToday: viewModel.goToToday,
                 onPrevious: { viewModel.shiftMonth(by: -1) },
-                onNext: { viewModel.shiftMonth(by: 1) }
+                onNext: { viewModel.shiftMonth(by: 1) },
+                onSelect: viewModel.select(date:)
             )
 
             Fade(value: attendancePhase) { phase in
@@ -141,7 +137,7 @@ struct HomeScreen: View {
 
         case .empty:
             HomePlaceholder {
-                Text("За эту неделю отметок нет")
+                Text("За этот месяц отметок нет")
                     .textStyle(AppType.bodyLarge)
                     .foregroundStyle(colors.onSurfaceVariant)
             }
@@ -151,11 +147,16 @@ struct HomeScreen: View {
         }
     }
 
+    @ViewBuilder
     private var days: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            StatsRow(stats: state.stats)
-                .padding(.bottom, 24)
-
+        if state.selectedDay.records.isEmpty {
+            HomePlaceholder {
+                Text("\(ScheduleFormat.dayTitle(state.selected)) - пар не было")
+                    .textStyle(AppType.bodyLarge)
+                    .foregroundStyle(colors.onSurfaceVariant)
+                    .multilineTextAlignment(.center)
+            }
+        } else {
             AttendanceDayCard(
                 day: state.selectedDay,
                 isToday: state.selected == ScheduleCalendar.day(of: .now)
@@ -205,23 +206,6 @@ struct HomeScreen: View {
     }
 
     // MARK: - Copy
-
-    private var weekTitle: String {
-        ScheduleFormat.monthYear(state.month)
-    }
-
-    private var ringValue: String {
-        if state.isLoading && state.records.isEmpty { return "Загружаем…" }
-        if state.error != nil { return "Нет данных" }
-        if state.records.isEmpty { return "Отметок нет" }
-        return "\(state.stats.percent)%"
-    }
-
-    private var ringCaption: String {
-        state.records.isEmpty
-            ? ""
-            : HomeFormat.attended(present: state.stats.present, total: state.stats.total)
-    }
 
     private var attendancePhase: Phase {
         phaseOf(

@@ -116,9 +116,9 @@ nonisolated enum HomeMocks {
     }
 
     private static func attendance(day: Int, lesson: Int) -> Attendance {
-        switch (day * 7 + lesson * 3) % 11 {
+        switch (day * 7 + lesson * 3) % 29 {
         case 0: .absent
-        case 1, 2: .excused
+        case 1: .excused
         default: .present
         }
     }

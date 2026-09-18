@@ -105,6 +105,30 @@ struct AttendanceStatsTests {
     }
 }
 
+@Suite("Мотивация месяца")
+struct MotivationTests {
+
+    @Test("Фраза меняется на границах процента")
+    func borders() {
+        #expect(HomeFormat.motivation(percent: 100) == "Ни одного пропуска")
+        #expect(HomeFormat.motivation(percent: 95) == "Ни одного пропуска")
+        #expect(HomeFormat.motivation(percent: 94) == "Почти идеальный месяц")
+        #expect(HomeFormat.motivation(percent: 85) == "Почти идеальный месяц")
+        #expect(HomeFormat.motivation(percent: 84) == "Хорошо идёшь, не сбавляй")
+        #expect(HomeFormat.motivation(percent: 70) == "Хорошо идёшь, не сбавляй")
+        #expect(HomeFormat.motivation(percent: 69) == "Половина есть, подтянись")
+        #expect(HomeFormat.motivation(percent: 50) == "Половина есть, подтянись")
+        #expect(HomeFormat.motivation(percent: 49) == "Пора возвращаться на пары")
+        #expect(HomeFormat.motivation(percent: 0) == "Пора возвращаться на пары")
+    }
+
+    @Test("Заголовок месяца пишется строчными в винительном падеже")
+    func caption() {
+        #expect(HomeFormat.monthCaption(date("2026-09-17")) == "Посещаемость за сентябрь")
+        #expect(HomeFormat.monthCaption(date("2026-05-01")) == "Посещаемость за май")
+    }
+}
+
 @Suite("Границы полугодия")
 struct HomeSemesterTests {
 

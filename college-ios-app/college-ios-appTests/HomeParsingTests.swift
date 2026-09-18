@@ -13,6 +13,10 @@ private func decode<T: Decodable>(_ type: T.Type, _ json: String) throws -> T {
     try decoder.decode(type, from: Data(json.utf8))
 }
 
+private func date(_ value: String) -> Date {
+    ScheduleParsing.date(from: value)!
+}
+
 @Suite("Разбор посещаемости")
 struct AttendanceParsingTests {
 
@@ -75,21 +79,30 @@ struct AttendanceParsingTests {
         #expect(HomeParsing.records(from: dtos).map(\.id) == ["1", "2", "3"])
     }
 
-    @Test("Дни группируются по возрастанию даты")
-    func grouping() throws {
+    @Test("Отметка дня берётся по худшему статусу")
+    func marks() throws {
         let dtos = try decode([AttendanceDTO].self, """
         [
-          {"ClID": 1, "Day": "2026-08-25", "status": 2},
-          {"ClID": 2, "Day": "2026-08-24", "status": 2},
-          {"ClID": 3, "Day": "2026-08-24", "status": 0}
+          {"ClID": 1, "Day": "2026-08-24", "status": 2},
+          {"ClID": 2, "Day": "2026-08-24", "status": 0},
+          {"ClID": 3, "Day": "2026-08-25", "status": 2},
+          {"ClID": 4, "Day": "2026-08-25", "status": 1},
+          {"ClID": 5, "Day": "2026-08-26", "status": 2},
+          {"ClID": 6, "Day": "2026-08-27", "status": -1}
         ]
         """)
-        let days = HomeParsing.days(from: HomeParsing.records(from: dtos))
+        let marks = HomeParsing.marks(from: HomeParsing.records(from: dtos))
 
-        #expect(days.count == 2)
-        #expect(days[0].records.count == 2)
-        #expect(days[0].present == 1)
-        #expect(days[0].date < days[1].date)
+        #expect(marks.count == 4)
+        #expect(marks[date("2026-08-24")] == .absent)
+        #expect(marks[date("2026-08-25")] == .excused)
+        #expect(marks[date("2026-08-26")] == .present)
+        #expect(marks[date("2026-08-27")] == .empty)
+    }
+
+    @Test("Пустой день отметки не получает")
+    func emptyMark() {
+        #expect(DayMark.of([]) == .empty)
     }
 }
 

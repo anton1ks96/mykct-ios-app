@@ -38,6 +38,10 @@ nonisolated enum HomeParsing {
             .map { AttendanceDay(date: $0.key, records: $0.value) }
     }
 
+    static func marks(from records: [AttendanceRecord]) -> [Date: DayMark] {
+        Dictionary(grouping: records, by: \.date).mapValues(DayMark.of)
+    }
+
     static func streak(from dto: StreakDTO) -> Streak {
         Streak(
             current: dto.current,

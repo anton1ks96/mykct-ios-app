@@ -28,13 +28,13 @@ nonisolated final class ScheduleAPI: ScheduleAPIProtocol {
         appendIfPresent("english_group", selection.englishGroup, to: &queryItems)
         appendIfPresent("profile_subgroup", selection.profileSubgroup, to: &queryItems)
 
-        let endpoint = Endpoint(path: "/api/v1/schedule", method: .get, queryItems: queryItems)
+        let endpoint = Endpoint(path: "/api/mykct/v1/schedule", method: .get, queryItems: queryItems)
         return try await client.send(endpoint, as: ScheduleResponse.self)
     }
 
     func classDetails(id: String) async throws -> JSONValue {
         let endpoint = Endpoint(
-            path: "/api/v1/classdetails",
+            path: "/api/mykct/v1/classdetails",
             method: .get,
             queryItems: [URLQueryItem(name: "id", value: id)]
         )

@@ -32,6 +32,26 @@ nonisolated enum ScheduleCalendar {
         calendar.date(byAdding: .weekOfYear, value: weeks, to: date) ?? date
     }
 
+    static func adding(months: Int, to date: Date) -> Date {
+        calendar.date(byAdding: .month, value: months, to: date) ?? date
+    }
+
+    static func monthStart(of date: Date) -> Date {
+        calendar.dateInterval(of: .month, for: date)?.start ?? day(of: date)
+    }
+
+    static func monthEnd(of date: Date) -> Date {
+        adding(days: days(inMonth: date) - 1, to: monthStart(of: date))
+    }
+
+    static func days(inMonth date: Date) -> Int {
+        calendar.range(of: .day, in: .month, for: date)?.count ?? 30
+    }
+
+    static func isSameMonth(_ left: Date, _ right: Date) -> Bool {
+        calendar.isDate(left, equalTo: right, toGranularity: .month)
+    }
+
     static func weekdayIndex(of date: Date) -> Int {
         let weekday = calendar.component(.weekday, from: date)
         return weekday == 1 ? 7 : weekday - 1

@@ -10,7 +10,6 @@ struct AccountSheet: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var sessionViewModel: SessionViewModel
 
-    @State private var didApplyGroup = false
     @State private var isSignOutConfirming = false
 
     var body: some View {
@@ -36,10 +35,6 @@ struct AccountSheet: View {
 
                         SettingsSectionTitle("Действия")
                         SettingsCard {
-                            if let selection = SelectionMapping.selection(of: user) {
-                                applyGroupRow(selection)
-                                SettingsDivider()
-                            }
                             signOutRow
                         }
                     }
@@ -73,24 +68,6 @@ struct AccountSheet: View {
                 title: "Выйти из аккаунта",
                 tint: colors.danger
             ) {}
-        }
-        .buttonStyle(SettingsRowButtonStyle())
-        .accessibilityElement(children: .combine)
-    }
-
-    private func applyGroupRow(_ selection: Selection) -> some View {
-        Button {
-            SelectionStore().save(selection)
-            didApplyGroup = true
-        } label: {
-            SettingsRow(icon: "calendar", title: "Использовать мою группу") {
-                if didApplyGroup {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(colors.primary)
-                        .accessibilityHidden(true)
-                }
-            }
         }
         .buttonStyle(SettingsRowButtonStyle())
         .accessibilityElement(children: .combine)

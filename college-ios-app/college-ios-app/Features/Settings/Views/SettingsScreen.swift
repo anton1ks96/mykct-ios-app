@@ -77,7 +77,7 @@ struct SettingsScreen: View {
                         .minimumScaleFactor(0.6)
                         .frame(maxWidth: .infinity)
                 }
-                .glassAction()
+                .glassAction(tint: colors.onSurface)
                 .padding(.top, 28)
                 .padding(.horizontal, 16)
             }

@@ -95,6 +95,7 @@ struct AttendanceCalendar: View {
 }
 
 private struct MonthGrid: View {
+    @Environment(\.colors) private var colors
     @Namespace private var glass
 
     let month: Date
@@ -126,7 +127,17 @@ private struct MonthGrid: View {
                 }
             }
         }
+        .background(alignment: .topLeading) { selection }
         .animation(.snappy(duration: 0.28), value: selected)
+    }
+
+    private var selection: some View {
+        let mark = marks[selected] ?? .empty
+
+        return RoundedRectangle(cornerRadius: cellRadius, style: .continuous)
+            .fill(mark.fill(colors) ?? colors.primary)
+            .matchedGeometryEffect(id: "selection", in: glass, isSource: false)
+            .accessibilityHidden(true)
     }
 
     @ViewBuilder
@@ -213,9 +224,7 @@ private struct DayTileSurface: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         if isSelected {
-            content
-                .glassSurface(shape, tint: mark.fill(colors) ?? colors.primary, interactive: true)
-                .glassMorph(id: "selection", in: namespace)
+            content.matchedGeometryEffect(id: "selection", in: namespace, isSource: true)
         } else if let accent = mark.accent(colors) {
             content.background(accent.opacity(0.16), in: shape)
         } else {

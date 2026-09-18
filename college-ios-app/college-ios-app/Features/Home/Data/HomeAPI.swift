@@ -24,7 +24,7 @@ nonisolated final class HomeAPI: HomeAPIProtocol {
 
     func attendance(start: Date, end: Date) async throws -> [AttendanceDTO] {
         let endpoint = Endpoint(
-            path: "/api/v1/attendance",
+            path: "/api/mykct/v1/attendance",
             method: .get,
             queryItems: [
                 URLQueryItem(name: "start", value: ScheduleParsing.requestString(from: start)),
@@ -35,12 +35,12 @@ nonisolated final class HomeAPI: HomeAPIProtocol {
     }
 
     func streak() async throws -> StreakDTO {
-        let endpoint = Endpoint(path: "/api/v1/attendance/streak", method: .get)
+        let endpoint = Endpoint(path: "/api/mykct/v1/attendance/streak", method: .get)
         return try await client.send(endpoint, as: StreakDTO.self)
     }
 
     func subjects() async throws -> [SubjectDTO] {
-        let endpoint = Endpoint(path: "/api/v1/performance/subjects", method: .get)
+        let endpoint = Endpoint(path: "/api/mykct/v1/performance/subjects", method: .get)
         return try await client.send(endpoint, as: [SubjectDTO]?.self) ?? []
     }
 
@@ -51,7 +51,7 @@ nonisolated final class HomeAPI: HomeAPIProtocol {
             dataend: ScheduleParsing.requestString(from: end)
         )
         let endpoint = Endpoint(
-            path: "/api/v1/performance/score",
+            path: "/api/mykct/v1/performance/score",
             method: .post,
             body: try encoder.encode(request),
             contentType: "application/json"

@@ -151,7 +151,8 @@ struct LessonSheet: View {
                                 GlassChip(
                                     text: chip.text,
                                     symbol: chip.symbol,
-                                    foreground: chip.isAccent ? colors.primary : colors.onSurfaceVariant
+                                    foreground: chip.isAccent ? colors.primary : colors.onSurfaceVariant,
+                                    fill: .clear
                                 )
                             }
                         }

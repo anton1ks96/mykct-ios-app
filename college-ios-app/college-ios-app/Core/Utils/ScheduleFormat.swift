@@ -24,6 +24,15 @@ nonisolated enum ScheduleFormat {
         "\(fullWeekdays[ScheduleCalendar.weekdayIndex(of: date) - 1]), \(dayMonth(date))"
     }
 
+    static func monthName(_ date: Date) -> String {
+        nominativeMonths[ScheduleCalendar.calendar.component(.month, from: date) - 1]
+    }
+
+    static func monthYear(_ date: Date) -> String {
+        let parts = ScheduleCalendar.calendar.dateComponents([.month, .year], from: date)
+        return "\(nominativeMonths[(parts.month ?? 1) - 1]) \(parts.year ?? 0)"
+    }
+
     static func dateRange(from: Date, to: Date) -> String {
         let calendar = ScheduleCalendar.calendar
         let sameMonth = calendar.component(.month, from: from) == calendar.component(.month, from: to)
@@ -63,6 +72,11 @@ nonisolated enum ScheduleFormat {
         return "\(count) \(word)"
     }
 
+    private static let nominativeMonths = [
+        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+        "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",
+    ]
+
     private static let genitiveMonths = [
         "января", "февраля", "марта", "апреля", "мая", "июня",
         "июля", "августа", "сентября", "октября", "ноября", "декабря",
@@ -72,5 +86,5 @@ nonisolated enum ScheduleFormat {
         "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье",
     ]
 
-    private static let shortWeekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+    static let shortWeekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
 }

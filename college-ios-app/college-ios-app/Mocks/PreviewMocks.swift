@@ -8,7 +8,7 @@
 #if DEBUG
 import Foundation
 
-final class InMemoryTokenStorage: RefreshTokenStorage {
+nonisolated final class InMemoryTokenStorage: RefreshTokenStorage {
     private let lock = NSLock()
     nonisolated(unsafe) private var stored: StoredRefreshToken?
 
@@ -29,7 +29,7 @@ final class InMemoryTokenStorage: RefreshTokenStorage {
     }
 }
 
-final class MockAuthAPI: AuthAPIProtocol {
+nonisolated final class MockAuthAPI: AuthAPIProtocol {
     private let user: User
     private let error: APIError?
 
@@ -61,7 +61,7 @@ final class MockAuthAPI: AuthAPIProtocol {
     func signOut(refreshToken: String) async throws {}
 }
 
-enum PreviewMocks {
+nonisolated enum PreviewMocks {
     static let sampleUser = User(
         id: "i24s0291",
         username: "i24s0291",

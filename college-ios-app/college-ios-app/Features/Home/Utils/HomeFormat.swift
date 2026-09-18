@@ -32,4 +32,18 @@ nonisolated enum HomeFormat {
     static func attended(present: Int, total: Int) -> String {
         "Был на \(present) из \(ScheduleFormat.lessonsCount(total))"
     }
+
+    static func motivation(percent: Int) -> String {
+        switch percent {
+        case 95...: "Ни одного пропуска"
+        case 85..<95: "Почти идеальный месяц"
+        case 70..<85: "Хорошо идёшь, не сбавляй"
+        case 50..<70: "Половина есть, подтянись"
+        default: "Пора возвращаться на пары"
+        }
+    }
+
+    static func monthCaption(_ month: Date) -> String {
+        "Посещаемость за \(ScheduleFormat.monthName(month).lowercased())"
+    }
 }

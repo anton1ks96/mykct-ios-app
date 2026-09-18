@@ -59,7 +59,7 @@ public nonisolated struct Endpoint: Sendable {
 }
 
 // MARK: - Protocol
-public protocol HTTPClientProtocol: Sendable {
+public nonisolated protocol HTTPClientProtocol: Sendable {
     func send<T: Decodable>(_ endpoint: Endpoint, as type: T.Type) async throws -> T
     func sendRaw(_ endpoint: Endpoint) async throws -> (Data, HTTPURLResponse)
 }

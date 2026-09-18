@@ -39,6 +39,29 @@ nonisolated enum Attendance: Equatable, Sendable {
     }
 }
 
+nonisolated enum DayMark: Equatable, Sendable {
+    case empty
+    case present
+    case excused
+    case absent
+
+    static func of(_ records: [AttendanceRecord]) -> DayMark {
+        if records.contains(where: { $0.attendance == .absent }) { return .absent }
+        if records.contains(where: { $0.attendance == .excused }) { return .excused }
+        if records.contains(where: { $0.attendance == .present }) { return .present }
+        return .empty
+    }
+
+    var title: String {
+        switch self {
+        case .empty: "Отметок нет"
+        case .present: "Был на всех парах"
+        case .excused: "Есть пропуск по уважительной"
+        case .absent: "Есть прогул"
+        }
+    }
+}
+
 nonisolated struct AttendanceRecord: Identifiable, Equatable, Sendable {
     let id: String
     let date: Date
@@ -63,11 +86,13 @@ nonisolated struct AttendanceStats: Equatable, Sendable {
     }
 
     static func of(_ records: [AttendanceRecord]) -> AttendanceStats {
-        AttendanceStats(
-            total: records.count,
-            present: records.count(where: { $0.attendance == .present }),
-            absent: records.count(where: { $0.attendance == .absent }),
-            excused: records.count(where: { $0.attendance == .excused })
+        let marked = records.filter { $0.attendance != .unknown }
+
+        return AttendanceStats(
+            total: marked.count,
+            present: marked.count(where: { $0.attendance == .present }),
+            absent: marked.count(where: { $0.attendance == .absent }),
+            excused: marked.count(where: { $0.attendance == .excused })
         )
     }
 }

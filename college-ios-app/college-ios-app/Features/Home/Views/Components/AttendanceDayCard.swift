@@ -46,12 +46,16 @@ struct AttendanceDayCard: View {
 }
 
 #Preview {
-    let monday = ScheduleCalendar.monday(of: .now)
+    let records = HomeMocks.records(month: .now)
+    let dates = Set(records.map(\.date)).sorted().suffix(3)
 
     return ScrollView {
         VStack(spacing: 20) {
-            ForEach(HomeParsing.days(from: HomeMocks.records(monday: monday))) { day in
-                AttendanceDayCard(day: day, isToday: day.date == ScheduleCalendar.day(of: .now))
+            ForEach(dates, id: \.self) { date in
+                AttendanceDayCard(
+                    day: AttendanceDay(date: date, records: records.filter { $0.date == date }),
+                    isToday: date == ScheduleCalendar.day(of: .now)
+                )
             }
         }
         .padding(16)

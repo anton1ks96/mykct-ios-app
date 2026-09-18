@@ -66,7 +66,7 @@ struct WeekChecks: View {
 #Preview {
     let monday = ScheduleCalendar.monday(of: .now)
 
-    return WeekChecks(weekStart: monday, records: HomeMocks.records(monday: monday))
+    return WeekChecks(weekStart: monday, records: HomeMocks.records(month: .now))
         .padding(20)
         .appBackground()
         .environment(\.colors, .dark)

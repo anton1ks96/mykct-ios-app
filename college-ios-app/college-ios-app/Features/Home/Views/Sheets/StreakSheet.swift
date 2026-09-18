@@ -92,7 +92,7 @@ struct StreakSheet: View {
 
 #Preview {
     let monday = ScheduleCalendar.monday(of: .now)
-    let records = HomeMocks.records(monday: monday)
+    let records = HomeMocks.records(month: .now)
 
     return StreakSheet(
         streak: HomeMocks.streak,

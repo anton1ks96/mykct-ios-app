@@ -16,10 +16,10 @@ nonisolated final class MockHomeRepository: HomeRepositoryProtocol {
         self.failure = failure
     }
 
-    func attendance(monday: Date) async throws -> [AttendanceRecord] {
+    func attendance(month: Date) async throws -> [AttendanceRecord] {
         try? await Task.sleep(for: delay)
         if let failure { throw failure }
-        return HomeMocks.records(monday: monday)
+        return HomeMocks.records(month: month)
     }
 
     func streak() async throws -> Streak {
@@ -90,16 +90,17 @@ nonisolated enum HomeMocks {
         ),
     ]
 
-    static func records(monday: Date) -> [AttendanceRecord] {
-        let current = ScheduleCalendar.monday(of: .now)
-        let weeks = ScheduleCalendar.calendar
-            .dateComponents([.weekOfYear], from: current, to: monday)
-            .weekOfYear ?? 0
-        guard abs(weeks) <= 1 else { return [] }
+    static func records(month: Date) -> [AttendanceRecord] {
+        let start = ScheduleCalendar.monthStart(of: month)
+        let today = ScheduleCalendar.day(of: .now)
 
-        return plan.flatMap { offset, lessons in
-            let date = ScheduleCalendar.adding(days: offset, to: monday)
-            return lessons.enumerated().map { index, lesson in
+        return (0..<ScheduleCalendar.days(inMonth: start)).flatMap { offset -> [AttendanceRecord] in
+            let date = ScheduleCalendar.adding(days: offset, to: start)
+            let weekday = ScheduleCalendar.weekdayIndex(of: date)
+            guard weekday <= 5, date <= today else { return [] }
+
+            let day = offset + 1
+            return plan[weekday - 1].enumerated().map { index, lesson in
                 AttendanceRecord(
                     id: "\(ScheduleParsing.requestString(from: date))-\(index)",
                     date: date,
@@ -108,9 +109,17 @@ nonisolated enum HomeMocks {
                     title: lesson.0,
                     topic: lesson.1,
                     room: lesson.2,
-                    attendance: lesson.3
+                    attendance: attendance(day: day, lesson: index)
                 )
             }
+        }
+    }
+
+    private static func attendance(day: Int, lesson: Int) -> Attendance {
+        switch (day * 7 + lesson * 3) % 29 {
+        case 0: .absent
+        case 1: .excused
+        default: .present
         }
     }
 
@@ -125,31 +134,37 @@ nonisolated enum HomeMocks {
         (14 * 60 + 20, 15 * 60 + 50),
     ]
 
-    private static let plan: [(Int, [(String, String, String, Attendance)])] = [
-        (0, [
-            ("Разработка программных модулей", "Паттерны проектирования", "305", .present),
-            ("Базы данных", "Индексы и планы запросов", "412", .present),
-            ("Математика", "Производная сложной функции", "210", .present),
-            ("Иностранный язык", "Present Perfect", "118", .present),
-        ]),
-        (1, [
-            ("Операционные системы", "Права доступа", "305", .present),
-            ("Физическая культура", "", "Спортзал", .excused),
-            ("Разработка программных модулей", "Рефакторинг", "305", .present),
-            ("Базы данных", "Транзакции", "412", .present),
-        ]),
-        (3, [
-            ("Математика", "Интегралы", "210", .present),
-            ("Разработка программных модулей", "Тестирование модулей", "305", .present),
-            ("Иностранный язык", "Технический перевод", "118", .absent),
-            ("Операционные системы", "Процессы и потоки", "305", .present),
-        ]),
-        (4, [
-            ("Базы данных", "Нормализация", "412", .present),
-            ("Физическая культура", "", "Спортзал", .absent),
-            ("Разработка программных модулей", "Курсовой проект", "305", .present),
-            ("Математика", "Ряды", "210", .excused),
-        ]),
+    private static let plan: [[(String, String, String)]] = [
+        [
+            ("Разработка программных модулей", "Паттерны проектирования", "305"),
+            ("Базы данных", "Индексы и планы запросов", "412"),
+            ("Математика", "Производная сложной функции", "210"),
+            ("Иностранный язык", "Present Perfect", "118"),
+        ],
+        [
+            ("Операционные системы", "Права доступа", "305"),
+            ("Физическая культура", "", "Спортзал"),
+            ("Разработка программных модулей", "Рефакторинг", "305"),
+            ("Базы данных", "Транзакции", "412"),
+        ],
+        [
+            ("Математика", "Ряды", "210"),
+            ("Иностранный язык", "Технический перевод", "118"),
+            ("Базы данных", "Нормализация", "412"),
+            ("Операционные системы", "Виртуальная память", "305"),
+        ],
+        [
+            ("Математика", "Интегралы", "210"),
+            ("Разработка программных модулей", "Тестирование модулей", "305"),
+            ("Иностранный язык", "Аудирование", "118"),
+            ("Операционные системы", "Процессы и потоки", "305"),
+        ],
+        [
+            ("Базы данных", "Транзакции и блокировки", "412"),
+            ("Физическая культура", "", "Спортзал"),
+            ("Разработка программных модулей", "Курсовой проект", "305"),
+            ("Математика", "Ряды Фурье", "210"),
+        ],
     ]
 }
 #endif

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol AuthAPIProtocol: Sendable {
+public nonisolated protocol AuthAPIProtocol: Sendable {
     func signIn(username: String, password: String) async throws -> SignInResponse
     func getAccessToken(refreshToken: String) async throws -> AccessTokenResponse
     func refreshRefreshToken(refreshToken: String) async throws -> RefreshTokenResponse

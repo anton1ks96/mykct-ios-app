@@ -42,7 +42,7 @@ private struct GlassSurface<S: InsettableShape>: ViewModifier {
             content.glassEffect(glass, in: shape)
         } else {
             content
-                .background(colors.surfaceVariant, in: shape)
+                .background(tint ?? colors.surfaceVariant, in: shape)
                 .hairline(shape)
         }
     }

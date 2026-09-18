@@ -96,18 +96,21 @@ struct HomeScreen: View {
 
     private var attendance: some View {
         VStack(alignment: .leading, spacing: 20) {
-            AttendanceRing(
-                weekTitle: weekTitle,
-                stats: state.stats,
-                value: ringValue,
-                caption: ringCaption,
-                hasData: !state.records.isEmpty
+            AttendanceCalendar(
+                month: state.month,
+                selected: state.selected,
+                marks: state.marks,
+                onToday: viewModel.goToToday,
+                onPrevious: { viewModel.shiftMonth(by: -1) },
+                onNext: { viewModel.shiftMonth(by: 1) },
+                onSelect: viewModel.select(date:)
             )
 
-            WeekNav(
-                onToday: viewModel.goToCurrentWeek,
-                onPrevious: { viewModel.shiftWeek(by: -1) },
-                onNext: { viewModel.shiftWeek(by: 1) }
+            MonthSummary(
+                percent: state.stats.percent,
+                caption: state.motivation ?? HomeFormat.monthCaption(state.month),
+                detail: summaryDetail,
+                hasData: state.stats.total > 0
             )
 
             Fade(value: attendancePhase) { phase in
@@ -139,27 +142,25 @@ struct HomeScreen: View {
                 .padding(.top, 12)
             }
 
-        case .empty:
-            HomePlaceholder {
-                Text("За эту неделю отметок нет")
-                    .textStyle(AppType.bodyLarge)
-                    .foregroundStyle(colors.onSurfaceVariant)
-            }
-
-        case .content:
+        case .empty, .content:
             days
         }
     }
 
+    @ViewBuilder
     private var days: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            StatsRow(stats: state.stats)
-                .padding(.bottom, 24)
-
-            ForEach(Array(state.days.enumerated()), id: \.element.id) { index, day in
-                AttendanceDayCard(day: day, isToday: day.date == ScheduleCalendar.day(of: .now))
-                    .padding(.top, index == 0 ? 0 : 24)
+        if state.selectedDay.records.isEmpty {
+            HomePlaceholder {
+                Text("\(ScheduleFormat.dayTitle(state.selected)) - пар не было")
+                    .textStyle(AppType.bodyLarge)
+                    .foregroundStyle(colors.onSurfaceVariant)
+                    .multilineTextAlignment(.center)
             }
+        } else {
+            AttendanceDayCard(
+                day: state.selectedDay,
+                isToday: state.selected == ScheduleCalendar.day(of: .now)
+            )
         }
     }
 
@@ -206,30 +207,15 @@ struct HomeScreen: View {
 
     // MARK: - Copy
 
-    private var weekTitle: String {
-        let end = ScheduleCalendar.adding(days: 6, to: state.weekStart)
-        return "Неделя \(ScheduleFormat.dateRange(from: state.weekStart, to: end))"
-    }
-
-    private var ringValue: String {
+    private var summaryDetail: String {
         if state.isLoading && state.records.isEmpty { return "Загружаем…" }
         if state.error != nil { return "Нет данных" }
-        if state.records.isEmpty { return "Отметок нет" }
-        return "\(state.stats.percent)%"
-    }
-
-    private var ringCaption: String {
-        state.records.isEmpty
-            ? ""
-            : HomeFormat.attended(present: state.stats.present, total: state.stats.total)
+        if state.stats.total == 0 { return "Отметок за месяц нет" }
+        return HomeFormat.attended(present: state.stats.present, total: state.stats.total)
     }
 
     private var attendancePhase: Phase {
-        phaseOf(
-            isLoading: state.isLoading && state.records.isEmpty,
-            error: state.error,
-            isEmpty: state.records.isEmpty
-        )
+        phaseOf(isLoading: state.isLoading && state.records.isEmpty, error: state.error)
     }
 
     private var performancePhase: Phase {

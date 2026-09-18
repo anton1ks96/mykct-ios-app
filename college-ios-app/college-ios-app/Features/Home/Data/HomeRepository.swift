@@ -6,7 +6,7 @@
 import Foundation
 
 nonisolated protocol HomeRepositoryProtocol: Sendable {
-    func attendance(monday: Date) async throws -> [AttendanceRecord]
+    func attendance(month: Date) async throws -> [AttendanceRecord]
     func streak() async throws -> Streak
     func subjects() async throws -> [Subject]
     func scores(subjectID: String, start: Date, end: Date) async throws -> [SubjectLesson]
@@ -20,9 +20,10 @@ nonisolated final class HomeRepository: HomeRepositoryProtocol {
         self.api = api
     }
 
-    func attendance(monday: Date) async throws -> [AttendanceRecord] {
-        let end = ScheduleCalendar.adding(days: 6, to: monday)
-        return HomeParsing.records(from: try await api.attendance(start: monday, end: end))
+    func attendance(month: Date) async throws -> [AttendanceRecord] {
+        let start = ScheduleCalendar.monthStart(of: month)
+        let end = ScheduleCalendar.monthEnd(of: month)
+        return HomeParsing.records(from: try await api.attendance(start: start, end: end))
     }
 
     func streak() async throws -> Streak {

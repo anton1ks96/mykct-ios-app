@@ -67,7 +67,7 @@ struct AttendanceStatsTests {
         let records = [record(.present), record(.present), record(.excused), record(.absent), record(.unknown)]
         let stats = AttendanceStats.of(records)
 
-        #expect(stats.total == 5)
+        #expect(stats.total == 4)
         #expect(stats.present == 2)
         #expect(stats.excused == 1)
         #expect(stats.absent == 1)
@@ -85,6 +85,16 @@ struct AttendanceStatsTests {
         #expect(AttendanceStats.of([]).percent == 0)
     }
 
+    @Test("Будущие пары не тянут процент вниз")
+    func futureLessons() {
+        let records = Array(repeating: record(.present), count: 3)
+            + Array(repeating: record(.unknown), count: 17)
+        let stats = AttendanceStats.of(records)
+
+        #expect(stats.total == 3)
+        #expect(stats.percent == 100)
+    }
+
     @Test("Статусы приходят числами")
     func statuses() {
         #expect(Attendance.of(status: 2) == .present)
@@ -92,6 +102,30 @@ struct AttendanceStatsTests {
         #expect(Attendance.of(status: 0) == .absent)
         #expect(Attendance.of(status: 7) == .unknown)
         #expect(Attendance.of(status: -1) == .unknown)
+    }
+}
+
+@Suite("Мотивация месяца")
+struct MotivationTests {
+
+    @Test("Фраза меняется на границах процента")
+    func borders() {
+        #expect(HomeFormat.motivation(percent: 100) == "Ни одного пропуска")
+        #expect(HomeFormat.motivation(percent: 95) == "Ни одного пропуска")
+        #expect(HomeFormat.motivation(percent: 94) == "Почти идеальный месяц")
+        #expect(HomeFormat.motivation(percent: 85) == "Почти идеальный месяц")
+        #expect(HomeFormat.motivation(percent: 84) == "Хорошо идёшь, не сбавляй")
+        #expect(HomeFormat.motivation(percent: 70) == "Хорошо идёшь, не сбавляй")
+        #expect(HomeFormat.motivation(percent: 69) == "Половина есть, подтянись")
+        #expect(HomeFormat.motivation(percent: 50) == "Половина есть, подтянись")
+        #expect(HomeFormat.motivation(percent: 49) == "Пора возвращаться на пары")
+        #expect(HomeFormat.motivation(percent: 0) == "Пора возвращаться на пары")
+    }
+
+    @Test("Заголовок месяца пишется строчными в винительном падеже")
+    func caption() {
+        #expect(HomeFormat.monthCaption(date("2026-09-17")) == "Посещаемость за сентябрь")
+        #expect(HomeFormat.monthCaption(date("2026-05-01")) == "Посещаемость за май")
     }
 }
 

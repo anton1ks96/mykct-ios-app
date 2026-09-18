@@ -67,7 +67,7 @@ struct AttendanceStatsTests {
         let records = [record(.present), record(.present), record(.excused), record(.absent), record(.unknown)]
         let stats = AttendanceStats.of(records)
 
-        #expect(stats.total == 5)
+        #expect(stats.total == 4)
         #expect(stats.present == 2)
         #expect(stats.excused == 1)
         #expect(stats.absent == 1)
@@ -83,6 +83,16 @@ struct AttendanceStatsTests {
     func emptyWeek() {
         #expect(AttendanceStats.empty.percent == 0)
         #expect(AttendanceStats.of([]).percent == 0)
+    }
+
+    @Test("Будущие пары не тянут процент вниз")
+    func futureLessons() {
+        let records = Array(repeating: record(.present), count: 3)
+            + Array(repeating: record(.unknown), count: 17)
+        let stats = AttendanceStats.of(records)
+
+        #expect(stats.total == 3)
+        #expect(stats.percent == 100)
     }
 
     @Test("Статусы приходят числами")

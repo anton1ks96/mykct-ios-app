@@ -63,11 +63,13 @@ nonisolated struct AttendanceStats: Equatable, Sendable {
     }
 
     static func of(_ records: [AttendanceRecord]) -> AttendanceStats {
-        AttendanceStats(
-            total: records.count,
-            present: records.count(where: { $0.attendance == .present }),
-            absent: records.count(where: { $0.attendance == .absent }),
-            excused: records.count(where: { $0.attendance == .excused })
+        let marked = records.filter { $0.attendance != .unknown }
+
+        return AttendanceStats(
+            total: marked.count,
+            present: marked.count(where: { $0.attendance == .present }),
+            absent: marked.count(where: { $0.attendance == .absent }),
+            excused: marked.count(where: { $0.attendance == .excused })
         )
     }
 }

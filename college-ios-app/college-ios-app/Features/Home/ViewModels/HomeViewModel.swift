@@ -17,7 +17,10 @@ final class HomeViewModel {
 
     init(repository: HomeRepositoryProtocol = AppDependencies.homeRepository) {
         self.repository = repository
-        state = HomeState(weekStart: ScheduleCalendar.monday(of: .now))
+        state = HomeState(
+            month: ScheduleCalendar.monthStart(of: .now),
+            selected: ScheduleCalendar.day(of: .now)
+        )
     }
 
     // MARK: - Intents
@@ -43,16 +46,25 @@ final class HomeViewModel {
         await reload()
     }
 
-    func shiftWeek(by weeks: Int) {
-        state.weekStart = ScheduleCalendar.adding(weeks: weeks, to: state.weekStart)
+    func shiftMonth(by months: Int) {
+        let month = ScheduleCalendar.adding(months: months, to: state.month)
+        state.month = month
+        state.selected = pick(in: month)
         Task { await reload() }
     }
 
-    func goToCurrentWeek() {
-        let monday = ScheduleCalendar.monday(of: .now)
-        guard monday != state.weekStart else { return }
-        state.weekStart = monday
+    func goToToday() {
+        let today = ScheduleCalendar.day(of: .now)
+        state.selected = today
+
+        let month = ScheduleCalendar.monthStart(of: today)
+        guard month != state.month else { return }
+        state.month = month
         Task { await reload() }
+    }
+
+    func select(date: Date) {
+        state.selected = date
     }
 
     func openSubject(_ subject: Subject) {
@@ -105,17 +117,20 @@ final class HomeViewModel {
 
     private func loadAttendance() async {
         do {
-            let records = try await repository.attendance(monday: state.weekStart)
+            let records = try await repository.attendance(month: state.month)
             try Task.checkCancellation()
+            let stats = AttendanceStats.of(records)
             state.records = records
-            state.days = HomeParsing.days(from: records)
-            state.stats = AttendanceStats.of(records)
+            state.marks = HomeParsing.marks(from: records)
+            state.stats = stats
+            state.motivation = stats.total > 0 ? HomeFormat.motivation(percent: stats.percent) : nil
             state.error = nil
         } catch {
             guard !ErrorText.isCancellation(error) else { return }
             state.records = []
-            state.days = []
+            state.marks = [:]
             state.stats = .empty
+            state.motivation = nil
             state.error = ErrorText.message(for: error) ?? "Не удалось загрузить посещаемость"
         }
     }
@@ -140,12 +155,18 @@ final class HomeViewModel {
         }
     }
 
+    private func pick(in month: Date) -> Date {
+        let today = ScheduleCalendar.day(of: .now)
+        return ScheduleCalendar.isSameMonth(month, today) ? today : month
+    }
+
     private func clear() {
         loadTask?.cancel()
         scoresTask?.cancel()
         state.records = []
-        state.days = []
+        state.marks = [:]
         state.stats = .empty
+        state.motivation = nil
         state.streak = nil
         state.subjects = []
         state.scores = nil

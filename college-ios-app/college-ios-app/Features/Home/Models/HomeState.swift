@@ -45,10 +45,12 @@ nonisolated struct SubjectScores: Equatable, Sendable {
 nonisolated struct HomeState: Equatable, Sendable {
     var user: User?
     var isBootstrapping: Bool = true
-    var weekStart: Date
+    var month: Date
+    var selected: Date
     var records: [AttendanceRecord] = []
-    var days: [AttendanceDay] = []
+    var marks: [Date: DayMark] = [:]
     var stats: AttendanceStats = .empty
+    var motivation: String?
     var streak: Streak?
     var subjects: [Subject] = []
     var isLoading: Bool = false
@@ -56,6 +58,12 @@ nonisolated struct HomeState: Equatable, Sendable {
     var scores: SubjectScores?
 
     var isAuthenticated: Bool { user != nil }
+
+    var weekStart: Date { ScheduleCalendar.monday(of: .now) }
+
+    var selectedDay: AttendanceDay {
+        AttendanceDay(date: selected, records: records.filter { $0.date == selected })
+    }
 
     var gate: HomeGate {
         if isBootstrapping { return .loading }

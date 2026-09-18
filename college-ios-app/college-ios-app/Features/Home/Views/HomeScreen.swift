@@ -105,9 +105,9 @@ struct HomeScreen: View {
             )
 
             WeekNav(
-                onToday: viewModel.goToCurrentWeek,
-                onPrevious: { viewModel.shiftWeek(by: -1) },
-                onNext: { viewModel.shiftWeek(by: 1) }
+                onToday: viewModel.goToToday,
+                onPrevious: { viewModel.shiftMonth(by: -1) },
+                onNext: { viewModel.shiftMonth(by: 1) }
             )
 
             Fade(value: attendancePhase) { phase in
@@ -156,10 +156,10 @@ struct HomeScreen: View {
             StatsRow(stats: state.stats)
                 .padding(.bottom, 24)
 
-            ForEach(Array(state.days.enumerated()), id: \.element.id) { index, day in
-                AttendanceDayCard(day: day, isToday: day.date == ScheduleCalendar.day(of: .now))
-                    .padding(.top, index == 0 ? 0 : 24)
-            }
+            AttendanceDayCard(
+                day: state.selectedDay,
+                isToday: state.selected == ScheduleCalendar.day(of: .now)
+            )
         }
     }
 
@@ -207,8 +207,7 @@ struct HomeScreen: View {
     // MARK: - Copy
 
     private var weekTitle: String {
-        let end = ScheduleCalendar.adding(days: 6, to: state.weekStart)
-        return "Неделя \(ScheduleFormat.dateRange(from: state.weekStart, to: end))"
+        ScheduleFormat.monthYear(state.month)
     }
 
     private var ringValue: String {

@@ -32,12 +32,6 @@ nonisolated enum HomeParsing {
         )
     }
 
-    static func days(from records: [AttendanceRecord]) -> [AttendanceDay] {
-        Dictionary(grouping: records, by: \.date)
-            .sorted { $0.key < $1.key }
-            .map { AttendanceDay(date: $0.key, records: $0.value) }
-    }
-
     static func marks(from records: [AttendanceRecord]) -> [Date: DayMark] {
         Dictionary(grouping: records, by: \.date).mapValues(DayMark.of)
     }

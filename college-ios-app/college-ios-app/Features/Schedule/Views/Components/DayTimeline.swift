@@ -130,7 +130,7 @@ private struct SlotRow: Identifiable {
     var id: Slot { slot }
 }
 
-private struct DashedLine: Shape {
+nonisolated private struct DashedLine: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
         path.move(to: CGPoint(x: rect.minX, y: rect.midY))

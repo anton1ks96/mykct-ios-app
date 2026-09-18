@@ -16,7 +16,7 @@ struct StreakSheet: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                StreakFlame(diameter: 132, frameRate: 60)
+                StreakFlame(diameter: 132, frameRate: 60, isActive: streak.current > 0)
 
                 Text("\(streak.current)")
                     .textStyle(AppType.displayLarge)

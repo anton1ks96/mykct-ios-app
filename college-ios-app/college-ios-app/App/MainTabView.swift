@@ -89,11 +89,11 @@ struct MainTabView: View {
 
     @ViewBuilder
     private var streakButton: some View {
-        if homeViewModel.state.streak != nil {
+        if let streak = homeViewModel.state.streak {
             Button {
                 isStreakPresented = true
             } label: {
-                StreakFlame(diameter: 30)
+                StreakFlame(diameter: 30, isAnimated: false, isActive: streak.current > 0)
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Стрик посещений")

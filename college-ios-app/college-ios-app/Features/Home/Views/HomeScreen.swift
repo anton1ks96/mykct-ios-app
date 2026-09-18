@@ -106,6 +106,13 @@ struct HomeScreen: View {
                 onSelect: viewModel.select(date:)
             )
 
+            MonthSummary(
+                percent: state.stats.percent,
+                caption: state.motivation ?? HomeFormat.monthCaption(state.month),
+                detail: summaryDetail,
+                hasData: state.stats.total > 0
+            )
+
             Fade(value: attendancePhase) { phase in
                 attendanceBody(for: phase)
             }
@@ -206,6 +213,13 @@ struct HomeScreen: View {
     }
 
     // MARK: - Copy
+
+    private var summaryDetail: String {
+        if state.isLoading && state.records.isEmpty { return "Загружаем…" }
+        if state.error != nil { return "Нет данных" }
+        if state.stats.total == 0 { return "Отметок за месяц нет" }
+        return HomeFormat.attended(present: state.stats.present, total: state.stats.total)
+    }
 
     private var attendancePhase: Phase {
         phaseOf(

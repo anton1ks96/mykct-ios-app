@@ -29,6 +29,11 @@ extension Color {
     static let statusWarning = Color(hex: 0xFFAE1A)
     static let statusDanger = Color(hex: 0xFF5A63)
 
+    static let statusGreenFill = Color(hex: 0x46A758)
+    static let statusWarningFill = Color(hex: 0xFFC53D)
+    static let statusDangerFill = Color(hex: 0xE5484D)
+    static let greenLime = Color(hex: 0xC3F26B)
+
     static let lightBackground = Color(hex: 0xF4F4F8)
     static let greyFill = Color(hex: 0xE7E7EE)
     static let greyText = Color(hex: 0x6E6E7A)
@@ -44,4 +49,10 @@ let accentGradient = LinearGradient(
     colors: [.violetTint, .violetLight, .violet, .violetDeep],
     startPoint: .topLeading,
     endPoint: .bottomTrailing
+)
+
+let successGradient = LinearGradient(
+    colors: [.greenLime, .statusGreen],
+    startPoint: .top,
+    endPoint: .bottom
 )

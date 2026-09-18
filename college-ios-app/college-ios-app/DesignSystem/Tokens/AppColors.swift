@@ -24,6 +24,10 @@ struct AppColors: Equatable, Sendable {
     let success: Color
     let warning: Color
     let danger: Color
+    let successFill: Color
+    let warningFill: Color
+    let dangerFill: Color
+    let onStatusFill: Color
     let isDark: Bool
 
     static let light = AppColors(
@@ -45,6 +49,10 @@ struct AppColors: Equatable, Sendable {
         success: .statusGreen,
         warning: .statusWarning,
         danger: .statusDanger,
+        successFill: .statusGreenFill,
+        warningFill: .statusWarningFill,
+        dangerFill: .statusDangerFill,
+        onStatusFill: .ink,
         isDark: false
     )
 
@@ -67,6 +75,10 @@ struct AppColors: Equatable, Sendable {
         success: .statusGreen,
         warning: .statusWarning,
         danger: .statusDanger,
+        successFill: .statusGreenFill,
+        warningFill: .statusWarningFill,
+        dangerFill: .statusDangerFill,
+        onStatusFill: .ink,
         isDark: true
     )
 

@@ -193,8 +193,9 @@ private struct DayTile: View {
     }
 
     private var foreground: Color {
-        if isSelected { return colors.isDark ? .white : colors.onStatusFill }
-        return mark.accent(colors) ?? colors.onSurfaceVariant
+        guard isSelected else { return mark.accent(colors) ?? colors.onSurfaceVariant }
+        guard !colors.isDark, mark != .empty else { return .white }
+        return colors.onStatusFill
     }
 }
 

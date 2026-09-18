@@ -16,7 +16,7 @@ enum Tab: String {
 struct MainTabView: View {
     @EnvironmentObject private var sessionViewModel: SessionViewModel
     @Environment(\.colorScheme) private var colorScheme
-    @SceneStorage("selectedTab") private var selectedTab: Tab = .schedule
+    @State private var selectedTab: Tab = .schedule
     @State private var homeViewModel = HomeViewModel()
     @State private var isLoginPresented = false
     @State private var isStreakPresented = false

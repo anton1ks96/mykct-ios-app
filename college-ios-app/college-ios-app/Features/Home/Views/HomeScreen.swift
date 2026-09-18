@@ -142,14 +142,7 @@ struct HomeScreen: View {
                 .padding(.top, 12)
             }
 
-        case .empty:
-            HomePlaceholder {
-                Text("За этот месяц отметок нет")
-                    .textStyle(AppType.bodyLarge)
-                    .foregroundStyle(colors.onSurfaceVariant)
-            }
-
-        case .content:
+        case .empty, .content:
             days
         }
     }
@@ -222,11 +215,7 @@ struct HomeScreen: View {
     }
 
     private var attendancePhase: Phase {
-        phaseOf(
-            isLoading: state.isLoading && state.records.isEmpty,
-            error: state.error,
-            isEmpty: state.records.isEmpty
-        )
+        phaseOf(isLoading: state.isLoading && state.records.isEmpty, error: state.error)
     }
 
     private var performancePhase: Phase {

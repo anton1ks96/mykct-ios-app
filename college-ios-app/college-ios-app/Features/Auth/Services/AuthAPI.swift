@@ -33,7 +33,7 @@ public nonisolated final class AuthAPI: AuthAPIProtocol {
         struct Body: Encodable { let username: String; let password: String }
         let bodyData = try Self.encoder.encode(Body(username: username, password: password))
         let endpoint = Endpoint(
-            path: "auth/api/v1/app/signin",
+            path: "api/mykct/v1/auth/signin",
             method: .post,
             body: bodyData,
             contentType: "application/json"
@@ -52,7 +52,7 @@ public nonisolated final class AuthAPI: AuthAPIProtocol {
         struct Body: Encodable { let refreshToken: String }
         let bodyData = try Self.encoder.encode(Body(refreshToken: refreshToken))
         let endpoint = Endpoint(
-            path: "auth/api/v1/app/access",
+            path: "api/mykct/v1/auth/access",
             method: .post,
             body: bodyData,
             contentType: "application/json"
@@ -71,7 +71,7 @@ public nonisolated final class AuthAPI: AuthAPIProtocol {
         struct Body: Encodable { let refreshToken: String }
         let bodyData = try Self.encoder.encode(Body(refreshToken: refreshToken))
         let endpoint = Endpoint(
-            path: "auth/api/v1/app/refresh",
+            path: "api/mykct/v1/auth/refresh",
             method: .post,
             body: bodyData,
             contentType: "application/json"
@@ -91,7 +91,7 @@ public nonisolated final class AuthAPI: AuthAPIProtocol {
         struct Empty: Decodable {}
         let bodyData = try Self.encoder.encode(Body(refreshToken: refreshToken))
         let endpoint = Endpoint(
-            path: "auth/api/v1/app/signout",
+            path: "api/mykct/v1/auth/signout",
             method: .post,
             body: bodyData,
             contentType: "application/json"

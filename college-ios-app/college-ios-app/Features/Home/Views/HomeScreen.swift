@@ -26,11 +26,6 @@ struct HomeScreen: View {
         }
         .appBackground()
         .navigationTitle("Главная")
-        .toolbar {
-            if let username = state.user?.username {
-                ToolbarItem(placement: .topBarTrailing) { userPill(username) }
-            }
-        }
         .refreshable { await viewModel.refresh() }
         .sheet(isPresented: isScoresPresented) {
             if let scores = state.scores {
@@ -49,21 +44,6 @@ struct HomeScreen: View {
     }
 
     // MARK: - Sections
-
-    private func userPill(_ username: String) -> some View {
-        HStack(spacing: 6) {
-            Image(systemName: "person.fill")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(colors.primary)
-
-            Text(username)
-                .lineLimit(1)
-                .truncationMode(.tail)
-        }
-        .frame(maxWidth: 150)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("Вы вошли как \(username)")
-    }
 
     @ViewBuilder
     private func body(for gate: HomeGate) -> some View {

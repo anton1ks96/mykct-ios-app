@@ -8,8 +8,6 @@ import SwiftUI
 struct SettingsScreen: View {
     @Environment(\.colors) private var colors
 
-    let onLogin: () -> Void
-
     @AppStorage(AppTheme.storageKey) private var theme: AppTheme = .system
     @AppStorage(ScheduleDefaultsKey.view) private var scheduleView: ScheduleView = .threeDays
     @AppStorage(ScheduleDefaultsKey.skipWeekends) private var skipWeekends: Bool = false
@@ -17,8 +15,6 @@ struct SettingsScreen: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                AccountSection(onLogin: onLogin)
-
                 SettingsSectionTitle("Тема")
                 SettingsCard {
                     ForEach(Array(AppTheme.allCases.enumerated()), id: \.element.id) { index, mode in
@@ -176,7 +172,7 @@ private extension Bundle {
 
 #Preview {
     NavigationStack {
-        SettingsScreen(onLogin: {})
+        SettingsScreen()
     }
     .environmentObject(PreviewMocks.sessionViewModel())
 }

@@ -18,6 +18,7 @@ struct GlassChip: View {
             Text(text)
                 .textStyle(AppType.labelSmall)
                 .fontWeight(.semibold)
+                .contentTransition(.numericText())
         }
         .foregroundStyle(foreground)
         .padding(.horizontal, 10)

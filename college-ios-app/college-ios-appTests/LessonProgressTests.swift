@@ -32,14 +32,6 @@ struct LessonProgressTests {
         #expect(LessonProgress.secondsLeft(of: lesson, at: time(11 * 60)) == 0)
     }
 
-    @Test("Доля прошедшего времени зажата в границах пары")
-    func fraction() {
-        #expect(LessonProgress.fraction(of: lesson, at: time(8 * 60)) == 0)
-        #expect(LessonProgress.fraction(of: lesson, at: time(9 * 60 + 45)) == 0.5)
-        #expect(LessonProgress.fraction(of: lesson, at: time(10 * 60 + 30)) == 1)
-        #expect(LessonProgress.fraction(of: lesson, at: time(23 * 60)) == 1)
-    }
-
     @Test("Остаток показывается минутами, в конце - секундами")
     func remainingText() {
         #expect(ScheduleFormat.remaining(seconds: 90 * 60) == "90 мин")

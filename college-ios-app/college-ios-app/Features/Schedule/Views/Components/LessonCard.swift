@@ -8,7 +8,6 @@ import SwiftUI
 private let cardPadding: CGFloat = 11
 private let watermarkSize: CGFloat = 76
 private let pastOpacity: Double = 0.55
-private let progressHeight: CGFloat = 4
 
 struct LessonCard: View {
     @Environment(\.colors) private var colors
@@ -72,10 +71,10 @@ struct LessonCard: View {
     private var footer: some View {
         if isNow {
             TimelineView(.periodic(from: .now, by: 1)) { context in
-                VStack(alignment: .leading, spacing: 10) {
-                    chips(secondsLeft: LessonProgress.secondsLeft(of: lesson, at: context.date))
-                    progress(LessonProgress.fraction(of: lesson, at: context.date))
-                }
+                let left = LessonProgress.secondsLeft(of: lesson, at: context.date)
+
+                chips(secondsLeft: left)
+                    .animation(.snappy(duration: 0.3), value: left / 60)
             }
         } else {
             chips(secondsLeft: nil)
@@ -99,21 +98,6 @@ struct LessonCard: View {
                 }
             }
         }
-    }
-
-    private func progress(_ fraction: Double) -> some View {
-        Capsule()
-            .fill(.white.opacity(0.25))
-            .frame(height: progressHeight)
-            .overlay(alignment: .leading) {
-                GeometryReader { proxy in
-                    Capsule()
-                        .fill(.white)
-                        .frame(width: proxy.size.width * fraction)
-                        .animation(.linear(duration: 1), value: fraction)
-                }
-            }
-            .accessibilityHidden(true)
     }
 
     private var watermark: some View {

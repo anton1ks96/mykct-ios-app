@@ -37,6 +37,7 @@ struct DayTimeline: View {
 
             if let now, now >= gridStart, now <= gridEnd {
                 nowLine(at: now)
+                    .animation(.snappy(duration: 0.4), value: now)
             }
 
             ForEach(rows) { row in
@@ -70,6 +71,7 @@ struct DayTimeline: View {
                 .textStyle(AppType.labelMedium)
                 .fontWeight(.bold)
                 .foregroundStyle(colors.onBackground)
+                .contentTransition(.numericText())
                 .frame(width: gutter, alignment: .leading)
 
             Circle()

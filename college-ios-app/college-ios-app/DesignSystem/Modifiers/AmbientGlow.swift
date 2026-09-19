@@ -8,7 +8,7 @@ import SwiftUI
 private let driftPeriod: Double = 90
 private let topTravel: ClosedRange<CGFloat> = 0.0...1.0
 private let bottomTravel: ClosedRange<CGFloat> = 0.1...1.0
-private let frameRate: Double = 12
+private let frameRate: Double = 8
 
 struct AmbientGlow: View {
     @Environment(\.colors) private var colors

@@ -15,7 +15,4 @@ enum Metrics {
     static let sectionSpacing: CGFloat = 16
 
     static let hairlineOpacity: Double = 0.08
-    static let dotGridOpacity: Double = 0.05
-    static let dotGridStep: CGFloat = 24
-    static let dotGridDot: CGFloat = 1
 }

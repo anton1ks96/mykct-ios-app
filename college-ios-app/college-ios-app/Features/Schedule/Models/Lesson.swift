@@ -21,6 +21,11 @@ nonisolated struct LessonSubgroup: Identifiable, Equatable, Sendable {
     }
 }
 
+nonisolated struct LessonSlot: Hashable, Sendable {
+    let start: Int
+    let end: Int
+}
+
 nonisolated struct Lesson: Identifiable, Equatable, Sendable {
     let id: String
     let day: Date
@@ -51,6 +56,8 @@ nonisolated struct Lesson: Identifiable, Equatable, Sendable {
         self.subgroups = subgroups
     }
 
+    var slot: LessonSlot { LessonSlot(start: start, end: end) }
+
     var displayTitle: String {
         var names: [String] = []
         for name in subgroups.map(\.title) where !name.isEmpty && !names.contains(name) {
@@ -69,5 +76,12 @@ nonisolated struct Lesson: Identifiable, Equatable, Sendable {
             topic: subgroup.topic.isEmpty ? topic : subgroup.topic,
             room: subgroup.room.isEmpty ? room : subgroup.room
         )
+    }
+}
+
+nonisolated extension Collection<Lesson> {
+
+    var slotCount: Int {
+        Set(map(\.slot)).count
     }
 }

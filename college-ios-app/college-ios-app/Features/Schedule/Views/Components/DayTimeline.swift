@@ -86,7 +86,7 @@ struct DayTimeline: View {
     }
 
     private var rows: [SlotRow] {
-        Dictionary(grouping: lessons) { Slot(start: $0.start, end: $0.end) }
+        Dictionary(grouping: lessons, by: \.slot)
             .map { SlotRow(slot: $0.key, lessons: $0.value) }
             .sorted { $0.slot.start < $1.slot.start }
     }
@@ -101,7 +101,7 @@ struct DayTimeline: View {
         .offset(y: offset(for: row.slot.start))
     }
 
-    private func card(_ lesson: Lesson, in slot: Slot) -> some View {
+    private func card(_ lesson: Lesson, in slot: LessonSlot) -> some View {
         let isNow = now.map { $0 >= slot.start && $0 < slot.end } ?? false
 
         return LessonCard(
@@ -118,16 +118,11 @@ struct DayTimeline: View {
     }
 }
 
-private struct Slot: Hashable {
-    let start: Int
-    let end: Int
-}
-
 private struct SlotRow: Identifiable {
-    let slot: Slot
+    let slot: LessonSlot
     let lessons: [Lesson]
 
-    var id: Slot { slot }
+    var id: LessonSlot { slot }
 }
 
 nonisolated private struct DashedLine: Shape {

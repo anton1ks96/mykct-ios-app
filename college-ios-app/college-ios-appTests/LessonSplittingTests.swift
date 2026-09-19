@@ -135,4 +135,16 @@ struct LessonDisplayTitleTests {
         #expect(lesson(english, title: "АнглЯз").displayTitle == "АнглЯз")
         #expect(lesson([], title: "Математика").displayTitle == "Математика")
     }
+
+
+    @Test("Параллельные пары считаются одной парой в слоте")
+    func parallelLessonsCountAsOneSlot() {
+        let split = LessonSplitting.split(
+            [lesson(ownPair)],
+            selection: Selection(group: "ИТ24-11", subgroup: "FE")
+        )
+
+        #expect(split.count == 2)
+        #expect(split.slotCount == 1)
+    }
 }

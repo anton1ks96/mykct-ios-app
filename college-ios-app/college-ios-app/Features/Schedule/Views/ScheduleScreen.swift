@@ -199,7 +199,7 @@ struct ScheduleScreen: View {
                         date: day.date,
                         detail: day.lessons.isEmpty
                             ? "Пар нет"
-                            : ScheduleFormat.lessonsCount(day.lessons.count),
+                            : ScheduleFormat.lessonsCount(day.lessons.slotCount),
                         isToday: day.date == ScheduleCalendar.day(of: now)
                     )
                     .padding(.horizontal, 16)

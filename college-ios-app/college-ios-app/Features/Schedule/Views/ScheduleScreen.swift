@@ -214,7 +214,7 @@ struct ScheduleScreen: View {
                 if !day.lessons.isEmpty {
                     DayTimeline(
                         lessons: day.lessons,
-                        now: minutes(on: day.date, at: now),
+                        now: dayTime(on: day.date, at: now),
                         onSelect: viewModel.openLesson
                     )
                     .padding(.horizontal, 16)
@@ -258,8 +258,8 @@ struct ScheduleScreen: View {
         return " · \(ScheduleFormat.time(first.start)) – \(ScheduleFormat.time(last.end))"
     }
 
-    private func minutes(on date: Date, at now: Date) -> Int? {
-        date == ScheduleCalendar.day(of: now) ? ScheduleCalendar.minutes(of: now) : nil
+    private func dayTime(on date: Date, at now: Date) -> Date? {
+        date == ScheduleCalendar.day(of: now) ? now : nil
     }
 
 }

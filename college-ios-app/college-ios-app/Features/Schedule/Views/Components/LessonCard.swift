@@ -15,8 +15,10 @@ struct LessonCard: View {
     let lesson: Lesson
     let minHeight: CGFloat
     let isPast: Bool
-    let isNow: Bool
+    let now: Date?
     let onTap: () -> Void
+
+    private var isNow: Bool { now != nil }
 
     private var shape: RoundedRectangle {
         RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
@@ -69,13 +71,11 @@ struct LessonCard: View {
 
     @ViewBuilder
     private var footer: some View {
-        if isNow {
-            TimelineView(.periodic(from: .now, by: 1)) { context in
-                let left = LessonProgress.secondsLeft(of: lesson, at: context.date)
+        if let now {
+            let left = LessonProgress.secondsLeft(of: lesson, at: now)
 
-                chips(secondsLeft: left)
-                    .animation(.snappy(duration: 0.3), value: left / 60)
-            }
+            chips(secondsLeft: left)
+                .animation(.snappy(duration: 0.3), value: left)
         } else {
             chips(secondsLeft: nil)
         }
@@ -140,14 +140,14 @@ struct LessonCard: View {
             lesson: ScheduleMocks.lessons(day: day, weekday: 0)[0],
             minHeight: 150,
             isPast: false,
-            isNow: true,
+            now: .now,
             onTap: {}
         )
         LessonCard(
             lesson: ScheduleMocks.lessons(day: day, weekday: 0)[2],
             minHeight: 150,
             isPast: true,
-            isNow: false,
+            now: nil,
             onTap: {}
         )
     }

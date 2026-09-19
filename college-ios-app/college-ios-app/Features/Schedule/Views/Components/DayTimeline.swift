@@ -16,8 +16,10 @@ struct DayTimeline: View {
     @Environment(\.colors) private var colors
 
     let lessons: [Lesson]
-    let now: Int?
+    let now: Date?
     let onSelect: (Lesson) -> Void
+
+    private var nowMinutes: Int? { now.map(ScheduleCalendar.minutes(of:)) }
 
     private var gridStart: Int { (lessons.first?.start ?? 0) / 60 * 60 }
 
@@ -35,9 +37,9 @@ struct DayTimeline: View {
                 slotLine(at: index)
             }
 
-            if let now, now >= gridStart, now <= gridEnd {
-                nowLine(at: now)
-                    .animation(.snappy(duration: 0.4), value: now)
+            if let nowMinutes, nowMinutes >= gridStart, nowMinutes <= gridEnd {
+                nowLine(at: nowMinutes)
+                    .animation(.snappy(duration: 0.4), value: nowMinutes)
             }
 
             ForEach(rows) { row in
@@ -49,7 +51,7 @@ struct DayTimeline: View {
 
     private func slotLine(at index: Int) -> some View {
         let time = gridStart + index * slotMinutes
-        let showsLabel = now.map { abs($0 - time) > labelGap } ?? true
+        let showsLabel = nowMinutes.map { abs($0 - time) > labelGap } ?? true
 
         return HStack(spacing: 0) {
             Text(showsLabel ? ScheduleFormat.time(time) : "")
@@ -104,13 +106,13 @@ struct DayTimeline: View {
     }
 
     private func card(_ lesson: Lesson, in slot: LessonSlot) -> some View {
-        let isNow = now.map { $0 >= slot.start && $0 < slot.end } ?? false
+        let isNow = nowMinutes.map { $0 >= slot.start && $0 < slot.end } ?? false
 
         return LessonCard(
             lesson: lesson,
             minHeight: slotHeight * CGFloat(slot.end - slot.start) / CGFloat(slotMinutes),
-            isPast: now.map { slot.end <= $0 } ?? false,
-            isNow: isNow,
+            isPast: nowMinutes.map { slot.end <= $0 } ?? false,
+            now: isNow ? now : nil,
             onTap: { onSelect(lesson) }
         )
     }
@@ -142,7 +144,7 @@ nonisolated private struct DashedLine: Shape {
     return ScrollView {
         DayTimeline(
             lessons: ScheduleMocks.lessons(day: day, weekday: 0),
-            now: 11 * 60 + 20,
+            now: ScheduleCalendar.date(day, atMinutes: 11 * 60 + 20),
             onSelect: { _ in }
         )
         .padding(.horizontal, 16)

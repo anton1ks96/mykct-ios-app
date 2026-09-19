@@ -6,6 +6,10 @@
 import SwiftUI
 
 struct GroupSheet: View {
+    @Environment(\.colors) private var colors
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var sessionViewModel: SessionViewModel
+
     let selection: Selection
     let onSelect: (Selection) -> Void
 
@@ -14,10 +18,17 @@ struct GroupSheet: View {
         Groups.profileSubgroups(of: selection.group, subgroup: selection.subgroup)
     }
     private var englishGroups: [String] { Groups.englishGroups(of: selection.group) }
+    private var mySelection: Selection? {
+        sessionViewModel.user.flatMap(SelectionMapping.selection(of:))
+    }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
+                if let mySelection {
+                    myGroupButton(mySelection)
+                }
+
                 SelectionSection(title: "Группа") {
                     ForEach(Groups.all, id: \.self) { group in
                         SelectionChip(title: group, isSelected: group == selection.group) {
@@ -72,6 +83,36 @@ struct GroupSheet: View {
         .appBackground()
     }
 
+    private func myGroupButton(_ mine: Selection) -> some View {
+        Button {
+            onSelect(mine)
+            dismiss()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "person.crop.circle.fill")
+                    .font(.system(size: 20))
+                    .foregroundStyle(colors.primary)
+
+                Text("Моя группа")
+                    .textStyle(AppType.bodyLarge)
+                    .foregroundStyle(colors.onSurface)
+
+                Spacer(minLength: 12)
+
+                Text(mine.group)
+                    .textStyle(AppType.bodyMedium)
+                    .foregroundStyle(colors.onSurfaceVariant)
+                    .lineLimit(1)
+            }
+            .padding(16)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .glassSurface(interactive: true)
+        .padding(.top, 20)
+        .accessibilityElement(children: .combine)
+    }
+
     private func updating(_ key: WritableKeyPath<Selection, String?>, to value: String?) -> Selection {
         var updated = selection
         updated[keyPath: key] = value
@@ -82,4 +123,5 @@ struct GroupSheet: View {
 #Preview {
     GroupSheet(selection: ScheduleMocks.selection, onSelect: { _ in })
         .environment(\.colors, .dark)
+        .environmentObject(PreviewMocks.sessionViewModel())
 }

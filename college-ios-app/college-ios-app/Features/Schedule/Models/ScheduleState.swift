@@ -44,6 +44,6 @@ nonisolated struct ScheduleState: Equatable, Sendable {
     var fetchedAt: Date?
 
     var lessonCount: Int {
-        visible.reduce(0) { $0 + $1.lessons.count }
+        visible.reduce(0) { $0 + $1.lessons.slotCount }
     }
 }

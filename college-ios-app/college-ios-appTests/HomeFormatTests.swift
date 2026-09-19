@@ -199,18 +199,20 @@ struct StreakTests {
 
     @Test("Фраза о посещаемости меняется на границах")
     func status() {
-        #expect(HomeFormat.status(rate: 90) == "Ходишь почти без пропусков — так держать")
-        #expect(HomeFormat.status(rate: 89.9) == "Крепкая посещаемость, всё под контролем")
-        #expect(HomeFormat.status(rate: 75) == "Крепкая посещаемость, всё под контролем")
-        #expect(HomeFormat.status(rate: 74.9) == "Бывает по-разному — можно лучше")
-        #expect(HomeFormat.status(rate: 50) == "Бывает по-разному — можно лучше")
-        #expect(HomeFormat.status(rate: 49.9) == "Пропусков много, пора возвращаться")
+        #expect(HomeFormat.status(rate: 90, schoolDays: 10) == "Ходишь почти без пропусков — так держать")
+        #expect(HomeFormat.status(rate: 89.9, schoolDays: 10) == "Крепкая посещаемость, всё под контролем")
+        #expect(HomeFormat.status(rate: 75, schoolDays: 10) == "Крепкая посещаемость, всё под контролем")
+        #expect(HomeFormat.status(rate: 74.9, schoolDays: 10) == "Бывает по-разному — можно лучше")
+        #expect(HomeFormat.status(rate: 50, schoolDays: 10) == "Бывает по-разному — можно лучше")
+        #expect(HomeFormat.status(rate: 49.9, schoolDays: 10) == "Пропусков много, пора возвращаться")
     }
 
     @Test("Прерванный стрик пишется словами")
     func daysInRow() {
-        #expect(HomeFormat.daysInRow(0) == "Стрик прервался")
-        #expect(HomeFormat.daysInRow(1) == "1 день подряд")
-        #expect(HomeFormat.daysInRow(22) == "22 дня подряд")
+        #expect(HomeFormat.daysInRow(0, schoolDays: 10) == "Стрик прервался")
+        #expect(HomeFormat.daysInRow(1, schoolDays: 10) == "1 день подряд")
+        #expect(HomeFormat.daysInRow(22, schoolDays: 30) == "22 дня подряд")
+        #expect(HomeFormat.daysInRow(0, schoolDays: 0) == "Стрик ещё не начался")
+        #expect(HomeFormat.status(rate: 0, schoolDays: 0) == "Учебных дней пока не было")
     }
 }

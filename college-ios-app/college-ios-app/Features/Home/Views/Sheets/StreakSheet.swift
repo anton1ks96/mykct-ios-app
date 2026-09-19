@@ -16,7 +16,7 @@ struct StreakSheet: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                StreakFlame(diameter: 132, frameRate: 60)
+                StreakFlame(diameter: 132, frameRate: 60, isActive: streak.current > 0)
 
                 Text("\(streak.current)")
                     .textStyle(AppType.displayLarge)
@@ -24,11 +24,11 @@ struct StreakSheet: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
 
-                Text(HomeFormat.daysInRow(streak.current))
+                Text(HomeFormat.daysInRow(streak.current, schoolDays: streak.schoolDays))
                     .textStyle(AppType.titleMedium)
                     .foregroundStyle(colors.onSurface)
 
-                Text(HomeFormat.status(rate: streak.rate))
+                Text(HomeFormat.status(rate: streak.rate, schoolDays: streak.schoolDays))
                     .textStyle(AppType.bodyMedium)
                     .foregroundStyle(colors.onSurfaceVariant)
                     .multilineTextAlignment(.center)
@@ -84,7 +84,7 @@ struct StreakSheet: View {
     }
 
     private var period: String? {
-        guard let start = streak.periodStart else { return nil }
+        guard let start = streak.periodStart, streak.schoolDays > 0 else { return nil }
         let days = "\(streak.daysAttended) из \(streak.schoolDays) учебных дней"
         return "С \(ScheduleFormat.dayMonth(start)) · \(days)"
     }

@@ -9,6 +9,7 @@ struct GlassChip: View {
     let text: String
     let symbol: String
     var foreground: Color = .white
+    var fill: Color = .black.opacity(0.22)
 
     var body: some View {
         HStack(spacing: 4) {
@@ -16,12 +17,15 @@ struct GlassChip: View {
                 .font(.system(size: 11, weight: .semibold))
             Text(text)
                 .textStyle(AppType.labelSmall)
+                .fontWeight(.semibold)
+                .contentTransition(.numericText())
         }
         .foregroundStyle(foreground)
         .padding(.horizontal, 10)
         .padding(.vertical, 5)
+        .background(Capsule().fill(fill))
         .glassSurface(Capsule(), style: .clear)
-        .overlay(Capsule().stroke(foreground.opacity(0.5), lineWidth: 1))
+        .overlay(Capsule().stroke(foreground.opacity(0.6), lineWidth: 1))
     }
 }
 

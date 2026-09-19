@@ -34,11 +34,11 @@ func unknownGroupGivesNoSelection() {
 func firstYearTakesSubgroup() throws {
     let selection = try #require(
         SelectionMapping.selection(
-            of: makeUser(group: "ИТ25-11", profile: "BE", subgroup: "Подгр2", englishGroup: "A1.11")
+            of: makeUser(group: "ИТ26-11", profile: "BE", subgroup: "Подгр2", englishGroup: "A1.11")
         )
     )
 
-    #expect(selection.group == "ИТ25-11")
+    #expect(selection.group == "ИТ26-11")
     #expect(selection.subgroup == "Подгр2")
     #expect(selection.englishGroup == "A1.11")
     #expect(selection.profileSubgroup == nil)
@@ -48,7 +48,7 @@ func firstYearTakesSubgroup() throws {
 func seniorYearTakesProfile() throws {
     let selection = try #require(
         SelectionMapping.selection(
-            of: makeUser(group: "ИТ24-11", profile: "BE", subgroup: "Подгр1", englishGroup: "A1.21")
+            of: makeUser(group: "ИТ24-11", profile: "BE", subgroup: "Подгр1", englishGroup: "A1.31")
         )
     )
 

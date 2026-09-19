@@ -5,34 +5,49 @@
 
 import SwiftUI
 
-private let shiftPeriod: Double = 2.4
-private let glowPeriod: Double = 1.5
-private let spreadPeriod: Double = 2.1
-private let glowRange: ClosedRange<Double> = 0.22...0.6
-private let spreadRange: ClosedRange<Double> = 0.38...0.5
+private let shiftPeriod: Double = 3.6
+private let glowPeriod: Double = 4.2
+private let spreadPeriod: Double = 6.5
+private let glowRange: ClosedRange<Double> = 0.3...0.48
+private let spreadRange: ClosedRange<Double> = 0.42...0.48
 
-private let flameColors: [Color] = [
-    .violetTint, .violetLight, .violet, .violetDeep, .violet, .violetLight, .violetTint,
-]
+private let flameColors: [Color] = [.flameOrange, .flameRed]
+private let idleColors: [Color] = [.flameIdle, .flameIdle.opacity(0.7)]
 
 struct StreakFlame: View {
     var diameter: CGFloat = 48
     var frameRate: Double = 30
+    var isAnimated: Bool = true
+    var isActive: Bool = true
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1 / frameRate)) { timeline in
-            let time = timeline.date.timeIntervalSinceReferenceDate
+        content
+            .frame(width: diameter, height: diameter)
+    }
 
-            ZStack {
-                halo(
-                    glow: lerp(glowRange, ease(triangle(time / glowPeriod))),
-                    spread: lerp(spreadRange, ease(triangle(time / spreadPeriod)))
+    @ViewBuilder
+    private var content: some View {
+        if isAnimated {
+            TimelineView(.animation(minimumInterval: 1 / frameRate)) { timeline in
+                let time = timeline.date.timeIntervalSinceReferenceDate
+
+                shape(
+                    glow: wave(time / glowPeriod),
+                    spread: wave(time / spreadPeriod),
+                    shift: wave(time / shiftPeriod)
                 )
-
-                flame(shift: triangle(time / shiftPeriod))
             }
+        } else {
+            flame(shift: 0.5)
         }
-        .frame(width: diameter, height: diameter)
+    }
+
+    private func shape(glow: Double, spread: Double, shift: Double) -> some View {
+        ZStack {
+            halo(glow: lerp(glowRange, glow), spread: lerp(spreadRange, spread))
+
+            flame(shift: shift)
+        }
     }
 
     private func halo(glow: Double, spread: Double) -> some View {
@@ -40,9 +55,9 @@ struct StreakFlame: View {
             .fill(
                 RadialGradient(
                     stops: [
-                        .init(color: .violetLight.opacity(glow), location: 0),
-                        .init(color: .violetLight.opacity(glow * 0.5), location: 0.4),
-                        .init(color: .violetLight.opacity(glow * 0.16), location: 0.75),
+                        .init(color: tint.opacity(glow), location: 0),
+                        .init(color: tint.opacity(glow * 0.5), location: 0.4),
+                        .init(color: tint.opacity(glow * 0.16), location: 0.75),
                         .init(color: .clear, location: 1),
                     ],
                     center: .center,
@@ -57,20 +72,19 @@ struct StreakFlame: View {
             .font(.system(size: diameter * 0.5))
             .foregroundStyle(
                 LinearGradient(
-                    colors: flameColors,
-                    startPoint: UnitPoint(x: 0.5, y: shift - 1),
-                    endPoint: UnitPoint(x: 0.5, y: shift + 0.6)
+                    colors: isActive ? flameColors : idleColors,
+                    startPoint: UnitPoint(x: 0.5, y: shift * 0.4 - 0.2),
+                    endPoint: UnitPoint(x: 0.5, y: shift * 0.4 + 0.8)
                 )
             )
     }
 
-    private func triangle(_ value: Double) -> Double {
-        let phase = value.truncatingRemainder(dividingBy: 2)
-        return phase < 1 ? phase : 2 - phase
+    private var tint: Color {
+        isActive ? .flameOrange : .flameIdle
     }
 
-    private func ease(_ value: Double) -> Double {
-        value * value * (3 - 2 * value)
+    private func wave(_ value: Double) -> Double {
+        (1 - cos(value * 2 * .pi)) / 2
     }
 
     private func lerp(_ range: ClosedRange<Double>, _ value: Double) -> Double {

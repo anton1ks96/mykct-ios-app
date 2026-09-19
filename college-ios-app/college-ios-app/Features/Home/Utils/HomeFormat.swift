@@ -7,12 +7,15 @@ import Foundation
 
 nonisolated enum HomeFormat {
 
-    static func daysInRow(_ count: Int) -> String {
-        count == 0 ? "Стрик прервался" : "\(ScheduleFormat.daysCount(count)) подряд"
+    static func daysInRow(_ count: Int, schoolDays: Int) -> String {
+        guard schoolDays > 0 else { return "Стрик ещё не начался" }
+        return count == 0 ? "Стрик прервался" : "\(ScheduleFormat.daysCount(count)) подряд"
     }
 
-    static func status(rate: Double) -> String {
-        switch rate {
+    static func status(rate: Double, schoolDays: Int) -> String {
+        guard schoolDays > 0 else { return "Учебных дней пока не было" }
+
+        return switch rate {
         case 90...: "Ходишь почти без пропусков — так держать"
         case 75..<90: "Крепкая посещаемость, всё под контролем"
         case 50..<75: "Бывает по-разному — можно лучше"

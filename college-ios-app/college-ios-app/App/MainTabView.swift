@@ -16,10 +16,12 @@ enum Tab: String {
 struct MainTabView: View {
     @EnvironmentObject private var sessionViewModel: SessionViewModel
     @Environment(\.colorScheme) private var colorScheme
-    @SceneStorage("selectedTab") private var selectedTab: Tab = .schedule
+    @AppStorage(AppTheme.storageKey) private var theme: AppTheme = .system
+    @State private var selectedTab: Tab = .schedule
     @State private var homeViewModel = HomeViewModel()
     @State private var isLoginPresented = false
     @State private var isStreakPresented = false
+    @State private var isAccountPresented = false
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -27,6 +29,7 @@ struct MainTabView: View {
                 ScheduleScreen()
                     .toolbar {
                         ToolbarItem(placement: .topBarLeading) { streakButton }
+                        ToolbarItem(placement: .topBarTrailing) { accountButton }
                     }
             }
             .tabItem {
@@ -41,6 +44,7 @@ struct MainTabView: View {
                 )
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) { streakButton }
+                    ToolbarItem(placement: .topBarTrailing) { accountButton }
                 }
             }
             .tabItem {
@@ -49,7 +53,10 @@ struct MainTabView: View {
             .tag(Tab.home)
 
             NavigationStack {
-                SettingsScreen(onLogin: { isLoginPresented = true })
+                SettingsScreen()
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) { accountButton }
+                    }
             }
             .tabItem {
                 Label("Настройки", systemImage: "gearshape")
@@ -71,23 +78,43 @@ struct MainTabView: View {
                 .presentationDragIndicator(.visible)
             }
         }
+        .sheet(isPresented: $isAccountPresented) {
+            AccountSheet()
+                .presentationDragIndicator(.visible)
+        }
         .fullScreenCover(isPresented: $isLoginPresented) {
             LoginScreen(onClose: { isLoginPresented = false })
         }
-        .environment(\.colors, AppColors.of(colorScheme))
+        .environment(\.colors, AppColors.of(colorScheme, theme: theme))
     }
 
     @ViewBuilder
     private var streakButton: some View {
-        if homeViewModel.state.streak != nil {
+        if let streak = homeViewModel.state.streak {
             Button {
                 isStreakPresented = true
             } label: {
-                StreakFlame(diameter: 30)
+                StreakFlame(diameter: 30, isAnimated: false, isActive: streak.current > 0)
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Стрик посещений")
         }
+    }
+
+    private var accountButton: some View {
+        Button {
+            if sessionViewModel.isAuthenticated {
+                isAccountPresented = true
+            } else {
+                isLoginPresented = true
+            }
+        } label: {
+            Image(systemName: sessionViewModel.isAuthenticated
+                  ? "person.circle.fill"
+                  : "rectangle.portrait.and.arrow.forward")
+                .imageScale(.medium)
+        }
+        .accessibilityLabel(sessionViewModel.isAuthenticated ? "Профиль" : "Войти")
     }
 
     private var session: HomeSession {

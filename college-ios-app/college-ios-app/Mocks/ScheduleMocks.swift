@@ -35,7 +35,7 @@ nonisolated final class MockScheduleRepository: ScheduleRepositoryProtocol {
 
 nonisolated enum ScheduleMocks {
 
-    static let selection = Selection(group: "ИТ25-11", subgroup: "Подгр1", englishGroup: "A0.11")
+    static let selection = Selection(group: "ИТ26-11", subgroup: "Подгр1", englishGroup: "A0.11")
 
     static func lessons(day: Date, weekday: Int) -> [Lesson] {
         plan(for: weekday).enumerated().map { index, item in

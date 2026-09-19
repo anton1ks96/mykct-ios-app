@@ -9,6 +9,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
     case system = "Системная"
     case light = "Светлая"
     case dark = "Тёмная"
+    case oled = "Чёрная"
 
     static let storageKey = "selectedTheme"
 
@@ -18,7 +19,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
         switch self {
         case .system: return nil
         case .light: return .light
-        case .dark: return .dark
+        case .dark, .oled: return .dark
         }
     }
 }

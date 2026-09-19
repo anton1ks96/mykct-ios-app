@@ -8,7 +8,6 @@ import SwiftUI
 struct ScheduleScreen: View {
     @Environment(\.colors) private var colors
     @State private var viewModel: ScheduleViewModel
-    @State private var now: Date = .now
     @State private var isGroupSheetPresented = false
 
     @AppStorage(ScheduleDefaultsKey.view) private var scheduleView: ScheduleView = .threeDays
@@ -80,7 +79,6 @@ struct ScheduleScreen: View {
         }
         .refreshable { await viewModel.retry() }
         .task { await viewModel.start() }
-        .task { await tick() }
         .onChange(of: settings, initial: true) { _, updated in viewModel.apply(settings: updated) }
         .onChange(of: storedSelection) { _, updated in viewModel.update(selection: updated) }
     }
@@ -192,6 +190,12 @@ struct ScheduleScreen: View {
     }
 
     private var days: some View {
+        TimelineView(.everyMinute) { context in
+            days(at: context.date)
+        }
+    }
+
+    private func days(at now: Date) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             ForEach(Array(state.visible.enumerated()), id: \.element.id) { index, day in
                 if state.visible.count > 1 {
@@ -199,7 +203,7 @@ struct ScheduleScreen: View {
                         date: day.date,
                         detail: day.lessons.isEmpty
                             ? "Пар нет"
-                            : ScheduleFormat.lessonsCount(day.lessons.count),
+                            : ScheduleFormat.lessonsCount(day.lessons.slotCount),
                         isToday: day.date == ScheduleCalendar.day(of: now)
                     )
                     .padding(.horizontal, 16)
@@ -210,7 +214,7 @@ struct ScheduleScreen: View {
                 if !day.lessons.isEmpty {
                     DayTimeline(
                         lessons: day.lessons,
-                        now: minutes(on: day.date),
+                        now: dayTime(on: day.date, at: now),
                         onSelect: viewModel.openLesson
                     )
                     .padding(.horizontal, 16)
@@ -254,17 +258,10 @@ struct ScheduleScreen: View {
         return " · \(ScheduleFormat.time(first.start)) – \(ScheduleFormat.time(last.end))"
     }
 
-    private func minutes(on date: Date) -> Int? {
-        date == ScheduleCalendar.day(of: now) ? ScheduleCalendar.minutes(of: now) : nil
+    private func dayTime(on date: Date, at now: Date) -> Date? {
+        date == ScheduleCalendar.day(of: now) ? now : nil
     }
 
-    private func tick() async {
-        while !Task.isCancelled {
-            let seconds = ScheduleCalendar.calendar.component(.second, from: .now)
-            try? await Task.sleep(for: .seconds(60 - seconds))
-            now = .now
-        }
-    }
 }
 
 #Preview {

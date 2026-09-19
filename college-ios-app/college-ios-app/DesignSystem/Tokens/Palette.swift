@@ -25,6 +25,10 @@ extension Color {
     static let violetSoft = Color(hex: 0xE8E5FF)
     static let violetInk = Color(hex: 0x3F1FD6)
 
+    static let flameOrange = Color.orange
+    static let flameRed = Color.red
+    static let flameIdle = Color.gray
+
     static let statusGreen = Color(hex: 0x30D97C)
     static let statusWarning = Color(hex: 0xFFAE1A)
     static let statusDanger = Color(hex: 0xFF5A63)
@@ -39,6 +43,9 @@ extension Color {
     static let greyText = Color(hex: 0x6E6E7A)
     static let ink = Color(hex: 0x16161D)
 
+    static let oledBackground = Color.black
+    static let oledSurface = Color(hex: 0x0C0C11)
+
     static let darkBackground = Color(hex: 0x0C0C11)
     static let darkSurface = Color(hex: 0x16161D)
     static let darkGreyFill = Color(hex: 0x23232D)
@@ -46,7 +53,7 @@ extension Color {
 }
 
 let accentGradient = LinearGradient(
-    colors: [.violetTint, .violetLight, .violet, .violetDeep],
+    colors: [.violet, .violetDeep],
     startPoint: .topLeading,
     endPoint: .bottomTrailing
 )

@@ -164,7 +164,7 @@ final class ScheduleViewModel {
         let dates = ScheduleDays.week(from: state.weekStart, settings: state.settings)
 
         state.days = dates.map {
-            DayCell(date: $0, lessonCount: byDate[$0]?.count ?? 0, isToday: $0 == today)
+            DayCell(date: $0, lessonCount: byDate[$0]?.slotCount ?? 0, isToday: $0 == today)
         }
         state.visible = ScheduleDays
             .visible(in: dates, selected: state.selectedDate, settings: state.settings)

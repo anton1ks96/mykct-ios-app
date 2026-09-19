@@ -16,8 +16,10 @@ struct DayTimeline: View {
     @Environment(\.colors) private var colors
 
     let lessons: [Lesson]
-    let now: Int?
+    let now: Date?
     let onSelect: (Lesson) -> Void
+
+    private var nowMinutes: Int? { now.map(ScheduleCalendar.minutes(of:)) }
 
     private var gridStart: Int { (lessons.first?.start ?? 0) / 60 * 60 }
 
@@ -35,8 +37,9 @@ struct DayTimeline: View {
                 slotLine(at: index)
             }
 
-            if let now, now >= gridStart, now <= gridEnd {
-                nowLine(at: now)
+            if let nowMinutes, nowMinutes >= gridStart, nowMinutes <= gridEnd {
+                nowLine(at: nowMinutes)
+                    .animation(.snappy(duration: 0.4), value: nowMinutes)
             }
 
             ForEach(rows) { row in
@@ -48,7 +51,7 @@ struct DayTimeline: View {
 
     private func slotLine(at index: Int) -> some View {
         let time = gridStart + index * slotMinutes
-        let showsLabel = now.map { abs($0 - time) > labelGap } ?? true
+        let showsLabel = nowMinutes.map { abs($0 - time) > labelGap } ?? true
 
         return HStack(spacing: 0) {
             Text(showsLabel ? ScheduleFormat.time(time) : "")
@@ -70,6 +73,7 @@ struct DayTimeline: View {
                 .textStyle(AppType.labelMedium)
                 .fontWeight(.bold)
                 .foregroundStyle(colors.onBackground)
+                .contentTransition(.numericText())
                 .frame(width: gutter, alignment: .leading)
 
             Circle()
@@ -86,7 +90,7 @@ struct DayTimeline: View {
     }
 
     private var rows: [SlotRow] {
-        Dictionary(grouping: lessons) { Slot(start: $0.start, end: $0.end) }
+        Dictionary(grouping: lessons, by: \.slot)
             .map { SlotRow(slot: $0.key, lessons: $0.value) }
             .sorted { $0.slot.start < $1.slot.start }
     }
@@ -101,14 +105,14 @@ struct DayTimeline: View {
         .offset(y: offset(for: row.slot.start))
     }
 
-    private func card(_ lesson: Lesson, in slot: Slot) -> some View {
-        let isNow = now.map { $0 >= slot.start && $0 < slot.end } ?? false
+    private func card(_ lesson: Lesson, in slot: LessonSlot) -> some View {
+        let isNow = nowMinutes.map { $0 >= slot.start && $0 < slot.end } ?? false
 
         return LessonCard(
             lesson: lesson,
             minHeight: slotHeight * CGFloat(slot.end - slot.start) / CGFloat(slotMinutes),
-            isPast: now.map { slot.end <= $0 } ?? false,
-            isNow: isNow,
+            isPast: nowMinutes.map { slot.end <= $0 } ?? false,
+            now: isNow ? now : nil,
             onTap: { onSelect(lesson) }
         )
     }
@@ -118,16 +122,11 @@ struct DayTimeline: View {
     }
 }
 
-private struct Slot: Hashable {
-    let start: Int
-    let end: Int
-}
-
 private struct SlotRow: Identifiable {
-    let slot: Slot
+    let slot: LessonSlot
     let lessons: [Lesson]
 
-    var id: Slot { slot }
+    var id: LessonSlot { slot }
 }
 
 nonisolated private struct DashedLine: Shape {
@@ -145,7 +144,7 @@ nonisolated private struct DashedLine: Shape {
     return ScrollView {
         DayTimeline(
             lessons: ScheduleMocks.lessons(day: day, weekday: 0),
-            now: 11 * 60 + 20,
+            now: ScheduleCalendar.date(day, atMinutes: 11 * 60 + 20),
             onSelect: { _ in }
         )
         .padding(.horizontal, 16)

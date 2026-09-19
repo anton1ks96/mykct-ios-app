@@ -8,7 +8,6 @@ import SwiftUI
 private let cardPadding: CGFloat = 11
 private let watermarkSize: CGFloat = 76
 private let pastOpacity: Double = 0.55
-private let progressHeight: CGFloat = 4
 
 struct LessonCard: View {
     @Environment(\.colors) private var colors
@@ -16,8 +15,10 @@ struct LessonCard: View {
     let lesson: Lesson
     let minHeight: CGFloat
     let isPast: Bool
-    let isNow: Bool
+    let now: Date?
     let onTap: () -> Void
+
+    private var isNow: Bool { now != nil }
 
     private var shape: RoundedRectangle {
         RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
@@ -70,13 +71,11 @@ struct LessonCard: View {
 
     @ViewBuilder
     private var footer: some View {
-        if isNow {
-            TimelineView(.periodic(from: .now, by: 1)) { context in
-                VStack(alignment: .leading, spacing: 10) {
-                    chips(secondsLeft: LessonProgress.secondsLeft(of: lesson, at: context.date))
-                    progress(LessonProgress.fraction(of: lesson, at: context.date))
-                }
-            }
+        if let now {
+            let left = LessonProgress.secondsLeft(of: lesson, at: now)
+
+            chips(secondsLeft: left)
+                .animation(.snappy(duration: 0.3), value: left)
         } else {
             chips(secondsLeft: nil)
         }
@@ -99,21 +98,6 @@ struct LessonCard: View {
                 }
             }
         }
-    }
-
-    private func progress(_ fraction: Double) -> some View {
-        Capsule()
-            .fill(.white.opacity(0.25))
-            .frame(height: progressHeight)
-            .overlay(alignment: .leading) {
-                GeometryReader { proxy in
-                    Capsule()
-                        .fill(.white)
-                        .frame(width: proxy.size.width * fraction)
-                        .animation(.linear(duration: 1), value: fraction)
-                }
-            }
-            .accessibilityHidden(true)
     }
 
     private var watermark: some View {
@@ -156,14 +140,14 @@ struct LessonCard: View {
             lesson: ScheduleMocks.lessons(day: day, weekday: 0)[0],
             minHeight: 150,
             isPast: false,
-            isNow: true,
+            now: .now,
             onTap: {}
         )
         LessonCard(
             lesson: ScheduleMocks.lessons(day: day, weekday: 0)[2],
             minHeight: 150,
             isPast: true,
-            isNow: false,
+            now: nil,
             onTap: {}
         )
     }

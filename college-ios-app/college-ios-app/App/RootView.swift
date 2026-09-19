@@ -18,6 +18,7 @@ struct RootView: View {
     @Environment(\.colorScheme) private var colorScheme
 
     @AppStorage(AuthDefaultsKey.welcomePassed) private var welcomePassed = false
+    @AppStorage(AppTheme.storageKey) private var theme: AppTheme = .system
 
     private var phase: RootPhase {
         if !welcomePassed && !sessionViewModel.hasStoredSession { return .welcome }
@@ -29,7 +30,7 @@ struct RootView: View {
             switch phase {
             case .welcome:
                 WelcomeScreen(onEnter: { welcomePassed = true })
-                    .environment(\.colors, AppColors.of(colorScheme))
+                    .environment(\.colors, AppColors.of(colorScheme, theme: theme))
 
             case .splash:
                 SplashView()

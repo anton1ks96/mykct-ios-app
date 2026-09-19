@@ -43,6 +43,9 @@ extension Color {
     static let greyText = Color(hex: 0x6E6E7A)
     static let ink = Color(hex: 0x16161D)
 
+    static let oledBackground = Color.black
+    static let oledSurface = Color(hex: 0x0C0C11)
+
     static let darkBackground = Color(hex: 0x0C0C11)
     static let darkSurface = Color(hex: 0x16161D)
     static let darkGreyFill = Color(hex: 0x23232D)

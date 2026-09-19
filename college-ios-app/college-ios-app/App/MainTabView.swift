@@ -16,6 +16,7 @@ enum Tab: String {
 struct MainTabView: View {
     @EnvironmentObject private var sessionViewModel: SessionViewModel
     @Environment(\.colorScheme) private var colorScheme
+    @AppStorage(AppTheme.storageKey) private var theme: AppTheme = .system
     @State private var selectedTab: Tab = .schedule
     @State private var homeViewModel = HomeViewModel()
     @State private var isLoginPresented = false
@@ -84,7 +85,7 @@ struct MainTabView: View {
         .fullScreenCover(isPresented: $isLoginPresented) {
             LoginScreen(onClose: { isLoginPresented = false })
         }
-        .environment(\.colors, AppColors.of(colorScheme))
+        .environment(\.colors, AppColors.of(colorScheme, theme: theme))
     }
 
     @ViewBuilder

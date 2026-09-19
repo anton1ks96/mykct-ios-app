@@ -160,6 +160,7 @@ private extension AppTheme {
         case .system: return "iphone"
         case .light: return "sun.max"
         case .dark: return "moon"
+        case .oled: return "moon.fill"
         }
     }
 }

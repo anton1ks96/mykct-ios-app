@@ -29,6 +29,7 @@ struct AppColors: Equatable, Sendable {
     let dangerFill: Color
     let onStatusFill: Color
     let isDark: Bool
+    let hasGlow: Bool
 
     static let light = AppColors(
         primary: .violet,
@@ -53,7 +54,8 @@ struct AppColors: Equatable, Sendable {
         warningFill: .statusWarningFill,
         dangerFill: .statusDangerFill,
         onStatusFill: .ink,
-        isDark: false
+        isDark: false,
+        hasGlow: true
     )
 
     static let dark = AppColors(
@@ -79,10 +81,39 @@ struct AppColors: Equatable, Sendable {
         warningFill: .statusWarningFill,
         dangerFill: .statusDangerFill,
         onStatusFill: .ink,
-        isDark: true
+        isDark: true,
+        hasGlow: true
     )
 
-    static func of(_ scheme: ColorScheme) -> AppColors {
-        scheme == .dark ? .dark : .light
+    static let oled = AppColors(
+        primary: .violet,
+        onPrimary: .white,
+        primaryContainer: .violetDeep,
+        onPrimaryContainer: .white,
+        secondary: .statusGreen,
+        onSecondary: .white,
+        tertiary: .violet,
+        onTertiary: .white,
+        background: .oledBackground,
+        onBackground: .white,
+        surface: .oledSurface,
+        onSurface: .white,
+        surfaceVariant: .darkGreyFill,
+        onSurfaceVariant: .darkGreyText,
+        outlineVariant: .darkGreyFill,
+        success: .statusGreen,
+        warning: .statusWarning,
+        danger: .statusDanger,
+        successFill: .statusGreenFill,
+        warningFill: .statusWarningFill,
+        dangerFill: .statusDangerFill,
+        onStatusFill: .ink,
+        isDark: true,
+        hasGlow: false
+    )
+
+    static func of(_ scheme: ColorScheme, theme: AppTheme = .system) -> AppColors {
+        guard theme != .oled else { return .oled }
+        return scheme == .dark ? .dark : .light
     }
 }

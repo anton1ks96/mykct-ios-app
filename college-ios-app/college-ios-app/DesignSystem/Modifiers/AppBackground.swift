@@ -14,7 +14,10 @@ private struct AppBackground: ViewModifier {
             .background {
                 ZStack {
                     colors.background
-                    AmbientGlow()
+
+                    if colors.hasGlow {
+                        AmbientGlow()
+                    }
                 }
                 .ignoresSafeArea()
             }

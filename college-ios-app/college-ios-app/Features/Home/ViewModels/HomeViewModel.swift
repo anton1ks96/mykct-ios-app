@@ -14,6 +14,7 @@ final class HomeViewModel {
 
     private var loadTask: Task<Void, Never>?
     private var scoresTask: Task<Void, Never>?
+    private var leaderboardTask: Task<Void, Never>?
 
     init(repository: HomeRepositoryProtocol = AppDependencies.homeRepository) {
         self.repository = repository
@@ -95,6 +96,33 @@ final class HomeViewModel {
         state.scores = nil
     }
 
+    func loadLeaderboard() async {
+        switch state.leaderboard {
+        case .loading, .loaded: return
+        case .idle, .unavailable, .failed: await reloadLeaderboard()
+        }
+    }
+
+    func reloadLeaderboard() async {
+        guard state.canSeeLeaderboard else { return }
+
+        leaderboardTask?.cancel()
+        state.leaderboard = .loading
+
+        let task = Task {
+            do {
+                let board = try await repository.leaderboard()
+                try Task.checkCancellation()
+                state.leaderboard = .loaded(board)
+            } catch {
+                guard !ErrorText.isCancellation(error) else { return }
+                state.leaderboard = feed(for: error)
+            }
+        }
+        leaderboardTask = task
+        _ = await task.value
+    }
+
     // MARK: - Loading
 
     private func reload() async {
@@ -155,6 +183,21 @@ final class HomeViewModel {
         }
     }
 
+    private func feed(for error: Error) -> LeaderboardFeed {
+        if let apiError = error as? APIError, isUnavailable(apiError) {
+            return .unavailable
+        }
+
+        return .failed(ErrorText.message(for: error) ?? "Не удалось загрузить рейтинг")
+    }
+
+    private func isUnavailable(_ error: APIError) -> Bool {
+        switch error {
+        case .notFound, .forbidden, .api(code: "LEADERBOARD_DISABLED", message: _): true
+        default: false
+        }
+    }
+
     private func pick(in month: Date) -> Date {
         let today = ScheduleCalendar.day(of: .now)
         return ScheduleCalendar.isSameMonth(month, today) ? today : month
@@ -163,11 +206,13 @@ final class HomeViewModel {
     private func clear() {
         loadTask?.cancel()
         scoresTask?.cancel()
+        leaderboardTask?.cancel()
         state.records = []
         state.marks = [:]
         state.stats = .empty
         state.motivation = nil
         state.streak = nil
+        state.leaderboard = .idle
         state.subjects = []
         state.scores = nil
         state.error = nil

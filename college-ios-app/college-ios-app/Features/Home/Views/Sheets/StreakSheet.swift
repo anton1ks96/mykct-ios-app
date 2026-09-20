@@ -103,7 +103,7 @@ struct StreakSheet: View {
     private func numbers(for streak: Streak) -> some View {
         HStack(spacing: 0) {
             number("Дней", "\(streak.daysAttended)")
-            number("Пар", "\(state.stats.total)")
+            number("Учебных", "\(streak.schoolDays)")
             number("Посещал", "\(Int(streak.rate))%")
             number("Лучший", "\(streak.longest)")
         }
@@ -129,8 +129,7 @@ struct StreakSheet: View {
 
     private func period(for streak: Streak) -> String? {
         guard let start = streak.periodStart, streak.schoolDays > 0 else { return nil }
-        let days = "\(streak.daysAttended) из \(streak.schoolDays) учебных дней"
-        return "С \(ScheduleFormat.dayMonth(start)) · \(days)"
+        return "Считаем с \(ScheduleFormat.dayMonth(start))"
     }
 
     // MARK: - Рейтинг

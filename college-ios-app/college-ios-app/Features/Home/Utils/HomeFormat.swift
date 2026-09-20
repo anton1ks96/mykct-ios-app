@@ -23,6 +23,14 @@ nonisolated enum HomeFormat {
         }
     }
 
+    static func place(_ rank: Int) -> String {
+        "\(rank) место"
+    }
+
+    static func cohort(participants: Int) -> String {
+        "Твоё место среди \(ScheduleFormat.studentsCount(participants)) курса"
+    }
+
     static func average(_ value: Double) -> String {
         value.formatted(.number.precision(.fractionLength(1)).locale(ScheduleCalendar.locale))
     }

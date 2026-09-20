@@ -67,16 +67,9 @@ struct MainTabView: View {
             homeViewModel.sync(user: updated.user, isBootstrapping: updated.isBootstrapping)
         }
         .sheet(isPresented: $isStreakPresented) {
-            if let streak = homeViewModel.state.streak {
-                StreakSheet(
-                    streak: streak,
-                    stats: homeViewModel.state.stats,
-                    weekStart: homeViewModel.state.weekStart,
-                    records: homeViewModel.state.records
-                )
+            StreakSheet(viewModel: homeViewModel)
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
-            }
         }
         .sheet(isPresented: $isAccountPresented) {
             AccountSheet()

@@ -93,7 +93,7 @@ nonisolated struct HomeState: Equatable, Sendable {
     var isAuthenticated: Bool { user != nil }
 
     var canSeeLeaderboard: Bool {
-        user?.role == "student" && user?.academicGroup?.isEmpty == false
+        user?.isStudent == true && user?.academicGroup?.isEmpty == false
     }
 
     var weekStart: Date { ScheduleCalendar.monday(of: .now) }

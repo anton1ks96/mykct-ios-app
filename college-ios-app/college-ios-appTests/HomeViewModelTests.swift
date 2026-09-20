@@ -278,6 +278,25 @@ struct HomeLeaderboardTests {
         #expect(await repository.calls == 0)
     }
 
+    @Test("Роль читается без оглядки на регистр")
+    func roleCase() async {
+        let shouting = User(
+            id: user.id,
+            username: user.username,
+            role: "Student",
+            academicGroup: user.academicGroup,
+            profile: user.profile,
+            subgroup: user.subgroup,
+            englishGroup: user.englishGroup
+        )
+        let (model, repository) = withLeaderboard(user: shouting)
+
+        await model.loadLeaderboard()
+
+        #expect(model.state.canSeeLeaderboard)
+        #expect(await repository.calls == 1)
+    }
+
     @Test("Выход из аккаунта стирает рейтинг")
     func signOut() async {
         let (model, _) = withLeaderboard()

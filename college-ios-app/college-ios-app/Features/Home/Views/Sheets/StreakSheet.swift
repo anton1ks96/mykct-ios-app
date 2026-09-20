@@ -144,20 +144,11 @@ struct StreakSheet: View {
             HomePlaceholder { Swirl().frame(width: 44, height: 44) }
 
         case .error:
-            HomePlaceholder {
-                Text(state.leaderboard.message ?? "Не удалось загрузить рейтинг")
-                    .textStyle(AppType.bodyLarge)
-                    .foregroundStyle(colors.onSurfaceVariant)
-                    .multilineTextAlignment(.center)
-
-                Button {
-                    Task { await viewModel.reloadLeaderboard() }
-                } label: {
-                    Label("Обновить", systemImage: "arrow.clockwise")
-                }
-                .glassAction()
-                .frame(maxWidth: 240)
-                .padding(.top, 12)
+            HomeFailure(
+                message: state.leaderboard.message ?? "Не удалось загрузить рейтинг",
+                retry: "Обновить"
+            ) {
+                Task { await viewModel.reloadLeaderboard() }
             }
 
         case .empty:

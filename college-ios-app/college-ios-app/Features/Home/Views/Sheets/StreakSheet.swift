@@ -55,8 +55,12 @@ struct StreakSheet: View {
     private var streak: some View {
         if let streak = state.streak {
             content(for: streak)
-        } else {
+        } else if state.isLoading {
             HomePlaceholder { Swirl().frame(width: 44, height: 44) }
+        } else {
+            HomeFailure(message: "Не удалось загрузить стрик", retry: "Обновить") {
+                Task { await viewModel.refresh() }
+            }
         }
     }
 

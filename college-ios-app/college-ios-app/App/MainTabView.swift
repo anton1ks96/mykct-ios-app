@@ -83,15 +83,19 @@ struct MainTabView: View {
 
     @ViewBuilder
     private var streakButton: some View {
-        if let streak = homeViewModel.state.streak {
+        if sessionViewModel.isAuthenticated {
             Button {
                 isStreakPresented = true
             } label: {
-                StreakFlame(diameter: 30, isAnimated: false, isActive: streak.current > 0)
+                StreakFlame(diameter: 30, isAnimated: false, isActive: isStreakAlive)
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Стрик посещений")
         }
+    }
+
+    private var isStreakAlive: Bool {
+        (homeViewModel.state.streak?.current ?? 0) > 0
     }
 
     private var accountButton: some View {

@@ -5,16 +5,13 @@
 
 import SwiftUI
 
-private let rowRadius: CGFloat = 18
-private let rankSide: CGFloat = 36
-
 struct LeaderboardRow: View {
     @Environment(\.colors) private var colors
 
     let entry: LeaderboardEntry
 
     private var shape: RoundedRectangle {
-        RoundedRectangle(cornerRadius: rowRadius, style: .continuous)
+        RoundedRectangle(cornerRadius: Metrics.listRowRadius, style: .continuous)
     }
 
     private var foreground: Color {
@@ -29,7 +26,7 @@ struct LeaderboardRow: View {
                 .foregroundStyle(entry.isMe ? colors.onTertiary : colors.primary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
-                .frame(width: rankSide, height: rankSide)
+                .frame(width: Metrics.listIconSide, height: Metrics.listIconSide)
                 .background(
                     entry.isMe ? colors.onTertiary.opacity(0.22) : colors.primary.opacity(0.14),
                     in: Circle()

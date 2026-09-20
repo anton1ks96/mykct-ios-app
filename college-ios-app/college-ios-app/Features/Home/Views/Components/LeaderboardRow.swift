@@ -39,7 +39,7 @@ struct LeaderboardRow: View {
                 .textStyle(AppType.bodyLarge)
                 .foregroundStyle(foreground)
                 .lineLimit(2)
-                .minimumScaleFactor(0.8)
+                .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             HStack(spacing: 2) {

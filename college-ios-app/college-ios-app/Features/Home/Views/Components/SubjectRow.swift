@@ -5,9 +5,6 @@
 
 import SwiftUI
 
-private let iconSide: CGFloat = 36
-private let rowRadius: CGFloat = 18
-
 struct SubjectRow: View {
     @Environment(\.colors) private var colors
 
@@ -20,7 +17,7 @@ struct SubjectRow: View {
                 Image(systemName: SubjectIcon.symbol(for: subject.title))
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(colors.primary)
-                    .frame(width: iconSide, height: iconSide)
+                    .frame(width: Metrics.listIconSide, height: Metrics.listIconSide)
                     .background(colors.primary.opacity(0.14), in: Circle())
 
                 Text(subject.title)
@@ -34,10 +31,10 @@ struct SubjectRow: View {
                     .foregroundStyle(colors.onSurfaceVariant)
             }
             .padding(16)
-            .contentShape(RoundedRectangle(cornerRadius: rowRadius, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: Metrics.listRowRadius, style: .continuous))
         }
         .buttonStyle(.plain)
-        .glassSurface(RoundedRectangle(cornerRadius: rowRadius, style: .continuous), interactive: true)
+        .glassSurface(RoundedRectangle(cornerRadius: Metrics.listRowRadius, style: .continuous), interactive: true)
     }
 }
 

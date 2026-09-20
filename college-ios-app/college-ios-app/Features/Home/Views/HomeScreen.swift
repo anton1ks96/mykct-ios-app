@@ -106,20 +106,8 @@ struct HomeScreen: View {
             HomePlaceholder { Swirl().frame(width: 44, height: 44) }
 
         case .error:
-            HomePlaceholder {
-                Text(state.error ?? "Не удалось загрузить посещаемость")
-                    .textStyle(AppType.bodyLarge)
-                    .foregroundStyle(colors.onSurfaceVariant)
-                    .multilineTextAlignment(.center)
-
-                Button {
-                    Task { await viewModel.refresh() }
-                } label: {
-                    Label("Повторить", systemImage: "arrow.clockwise")
-                }
-                .glassAction()
-                .frame(maxWidth: 240)
-                .padding(.top, 12)
+            HomeFailure(message: state.error ?? "Не удалось загрузить посещаемость") {
+                Task { await viewModel.refresh() }
             }
 
         case .empty, .content:

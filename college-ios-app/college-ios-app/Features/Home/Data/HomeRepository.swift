@@ -8,6 +8,7 @@ import Foundation
 nonisolated protocol HomeRepositoryProtocol: Sendable {
     func attendance(month: Date) async throws -> [AttendanceRecord]
     func streak() async throws -> Streak
+    func leaderboard() async throws -> Leaderboard
     func subjects() async throws -> [Subject]
     func scores(subjectID: String, start: Date, end: Date) async throws -> [SubjectLesson]
 }
@@ -28,6 +29,13 @@ nonisolated final class HomeRepository: HomeRepositoryProtocol {
 
     func streak() async throws -> Streak {
         HomeParsing.streak(from: try await api.streak())
+    }
+
+    func leaderboard() async throws -> Leaderboard {
+        guard let board = HomeParsing.leaderboard(from: try await api.leaderboard()) else {
+            throw APIError.decodingFailed
+        }
+        return board
     }
 
     func subjects() async throws -> [Subject] {

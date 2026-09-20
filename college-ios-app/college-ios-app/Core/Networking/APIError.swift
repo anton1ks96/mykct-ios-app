@@ -25,7 +25,7 @@ public enum APIError: LocalizedError, Sendable {
     case notFound
     case server(code: Int)
     case statusCode(Int, Data?)
-    case api(code: String, message: String)
+    case api(code: String, message: String, status: Int)
     
     // Transport errors
     case transport(Error)
@@ -44,7 +44,7 @@ public enum APIError: LocalizedError, Sendable {
         }
 
         if let body = data.flatMap({ try? JSONDecoder().decode(APIErrorBody.self, from: $0) }) {
-            return .api(code: body.code, message: body.message)
+            return .api(code: body.code, message: body.message, status: statusCode)
         }
 
         switch statusCode {
@@ -65,7 +65,7 @@ public enum APIError: LocalizedError, Sendable {
         case .notFound: return "Ресурс не найден"
         case .server(let code): return "Ошибка сервера (\(code))"
         case .statusCode(let code, _): return "Сервер вернул код \(code)"
-        case .api(_, let message): return message
+        case .api(_, let message, _): return message
         case .transport(let err): return "Сетевая ошибка: \(err.localizedDescription)"
         case .url(let err): return err.localizedDescription
         case .missingRefreshToken: return "Refresh-токен отсутствует"

@@ -48,6 +48,23 @@ nonisolated enum HomeParsing {
         )
     }
 
+    static func leaderboard(from dto: LeaderboardDTO) -> Leaderboard? {
+        guard let me = dto.me.flatMap(entry(from:)) else { return nil }
+
+        return Leaderboard(
+            top: dto.top.compactMap(entry(from:)),
+            me: me,
+            participants: max(dto.participants, 0)
+        )
+    }
+
+    static func entry(from dto: LeaderboardEntryDTO) -> LeaderboardEntry? {
+        let alias = dto.alias.trimmingCharacters(in: .whitespaces)
+        guard !alias.isEmpty, dto.rank > 0 else { return nil }
+
+        return LeaderboardEntry(rank: dto.rank, alias: alias, streak: dto.streak, isMe: dto.isMe)
+    }
+
     static func subjects(from dtos: [SubjectDTO]) -> [Subject] {
         dtos
             .filter { !$0.suID.isEmpty }

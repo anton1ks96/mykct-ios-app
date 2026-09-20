@@ -61,6 +61,10 @@ nonisolated enum ScheduleFormat {
         plural(count, one: "оценка", few: "оценки", many: "оценок")
     }
 
+    static func studentsCount(_ count: Int) -> String {
+        plural(count, one: "студент", few: "студента", many: "студентов")
+    }
+
     private static func plural(_ count: Int, one: String, few: String, many: String) -> String {
         let word: String
         switch (count % 100, count % 10) {

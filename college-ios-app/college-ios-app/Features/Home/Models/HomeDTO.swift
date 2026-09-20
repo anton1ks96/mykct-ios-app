@@ -69,6 +69,44 @@ nonisolated struct StreakDTO: Decodable, Sendable {
     }
 }
 
+nonisolated struct LeaderboardEntryDTO: Decodable, Sendable {
+    let rank: Int
+    let alias: String
+    let streak: Int
+    let isMe: Bool
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        rank = try container.decodeIfPresent(Int.self, forKey: .rank) ?? 0
+        alias = try container.decodeIfPresent(String.self, forKey: .alias) ?? ""
+        streak = try container.decodeIfPresent(Int.self, forKey: .streak) ?? 0
+        isMe = try container.decodeIfPresent(Bool.self, forKey: .isMe) ?? false
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case rank, alias
+        case streak = "current_streak"
+        case isMe = "is_me"
+    }
+}
+
+nonisolated struct LeaderboardDTO: Decodable, Sendable {
+    let top: [LeaderboardEntryDTO]
+    let me: LeaderboardEntryDTO?
+    let participants: Int
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        top = try container.decodeIfPresent([LeaderboardEntryDTO].self, forKey: .top) ?? []
+        me = try container.decodeIfPresent(LeaderboardEntryDTO.self, forKey: .me)
+        participants = try container.decodeIfPresent(Int.self, forKey: .participants) ?? 0
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case top, me, participants
+    }
+}
+
 nonisolated struct SubjectDTO: Decodable, Sendable {
     let suID: String
     let title: String

@@ -84,11 +84,12 @@ struct APIErrorTests {
     func envelopeMessageIsUsed() {
         let error = APIError.from(statusCode: 503, data: envelope)
 
-        guard case .api(let code, let message) = error else {
+        guard case .api(let code, let message, let status) = error else {
             Issue.record("ожидался кейс api, получен \(error)")
             return
         }
         #expect(code == "SCHEDULE_UNAVAILABLE")
+        #expect(status == 503)
         #expect(error.errorDescription == message)
     }
 

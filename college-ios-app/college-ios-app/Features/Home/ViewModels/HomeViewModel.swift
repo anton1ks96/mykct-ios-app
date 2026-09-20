@@ -193,7 +193,8 @@ final class HomeViewModel {
 
     private func isUnavailable(_ error: APIError) -> Bool {
         switch error {
-        case .notFound, .forbidden, .api(code: "LEADERBOARD_DISABLED", message: _): true
+        case .notFound, .forbidden: true
+        case let .api(_, _, status): status == 404 || status == 403
         default: false
         }
     }

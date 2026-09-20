@@ -199,7 +199,9 @@ struct HomeLeaderboardTests {
         arguments: [
             APIError.notFound,
             APIError.forbidden,
-            APIError.api(code: "LEADERBOARD_DISABLED", message: "Рейтинг посещаемости отключён"),
+            APIError.api(code: "LEADERBOARD_DISABLED", message: "Рейтинг отключён", status: 404),
+            APIError.api(code: "NOT_FOUND", message: "Маршрут не найден", status: 404),
+            APIError.api(code: "LEADERBOARD_FORBIDDEN", message: "Только студентам", status: 403),
         ]
     )
     func unavailable(_ failure: APIError) async {
@@ -214,7 +216,7 @@ struct HomeLeaderboardTests {
     func notReady() async {
         let message = "Ваше место в рейтинге ещё рассчитывается, попробуйте позже"
         let (model, _) = withLeaderboard(
-            failure: .api(code: "LEADERBOARD_NOT_READY", message: message)
+            failure: .api(code: "LEADERBOARD_NOT_READY", message: message, status: 409)
         )
 
         await model.loadLeaderboard()

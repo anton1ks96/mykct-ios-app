@@ -185,3 +185,97 @@ struct ScoresParsingTests {
         #expect(scores.average == 4.5)
     }
 }
+
+@Suite("Разбор рейтинга")
+struct LeaderboardParsingTests {
+
+    @Test("Спортивные места приходят из ответа и не пересчитываются")
+    func sportingRanks() throws {
+        let dto = try decode(LeaderboardDTO.self, """
+        {
+          "top": [
+            {"rank": 1, "alias": "Быстрый Кэш 0x0001", "current_streak": 12, "is_me": false},
+            {"rank": 2, "alias": "Атомарный Буфер 0x0002", "current_streak": 9, "is_me": false},
+            {"rank": 2, "alias": "Гибкий Сокет 0x0003", "current_streak": 9, "is_me": false},
+            {"rank": 4, "alias": "Модульный Демон 0x0004", "current_streak": 7, "is_me": true}
+          ],
+          "me": {"rank": 4, "alias": "Модульный Демон 0x0004", "current_streak": 7, "is_me": true},
+          "participants": 37
+        }
+        """)
+        let board = try #require(HomeParsing.leaderboard(from: dto))
+
+        #expect(board.top.map(\.rank) == [1, 2, 2, 4])
+        #expect(board.participants == 37)
+        #expect(board.isMeInTop)
+    }
+
+    @Test("Своя строка вне топа переживает разбор")
+    func meOutsideTop() throws {
+        let dto = try decode(LeaderboardDTO.self, """
+        {
+          "top": [{"rank": 1, "alias": "Быстрый Кэш 0x0001", "current_streak": 12, "is_me": false}],
+          "me": {"rank": 41, "alias": "Тихий Индекс 0x00FF", "current_streak": 2, "is_me": true},
+          "participants": 214
+        }
+        """)
+        let board = try #require(HomeParsing.leaderboard(from: dto))
+
+        #expect(!board.isMeInTop)
+        #expect(board.me.rank == 41)
+        #expect(board.me.streak == 2)
+    }
+
+    @Test("Строка без псевдонима выбрасывается")
+    func brokenEntry() throws {
+        let dto = try decode(LeaderboardDTO.self, """
+        {
+          "top": [
+            {"rank": 1, "alias": "   ", "current_streak": 12},
+            {"rank": 2, "alias": "Быстрый Кэш 0x0001", "current_streak": 9}
+          ],
+          "me": {"rank": 2, "alias": "Быстрый Кэш 0x0001", "current_streak": 9, "is_me": true},
+          "participants": 20
+        }
+        """)
+        let board = try #require(HomeParsing.leaderboard(from: dto))
+
+        #expect(board.top.map(\.alias) == ["Быстрый Кэш 0x0001"])
+    }
+
+    @Test("Строка без места выбрасывается")
+    func missingRank() throws {
+        let dto = try decode(LeaderboardDTO.self, """
+        {
+          "top": [
+            {"alias": "Безместный Демон 0x0007", "current_streak": 12},
+            {"rank": 2, "alias": "Быстрый Кэш 0x0001", "current_streak": 9}
+          ],
+          "me": {"rank": 2, "alias": "Быстрый Кэш 0x0001", "current_streak": 9, "is_me": true},
+          "participants": 20
+        }
+        """)
+        let board = try #require(HomeParsing.leaderboard(from: dto))
+
+        #expect(board.top.map(\.alias) == ["Быстрый Кэш 0x0001"])
+    }
+
+    @Test("Своя строка без места разбору не поддаётся")
+    func meWithoutRank() throws {
+        let dto = try decode(LeaderboardDTO.self, """
+        {
+          "top": [{"rank": 1, "alias": "Быстрый Кэш 0x0001", "current_streak": 12}],
+          "me": {"alias": "Тихий Индекс 0x00FF", "current_streak": 2, "is_me": true},
+          "participants": 20
+        }
+        """)
+
+        #expect(HomeParsing.leaderboard(from: dto) == nil)
+    }
+
+    @Test("Ответ без своей строки разбору не поддаётся")
+    func missingMe() throws {
+        let dto = try decode(LeaderboardDTO.self, #"{"top": [], "participants": 0}"#)
+        #expect(HomeParsing.leaderboard(from: dto) == nil)
+    }
+}

@@ -19,6 +19,10 @@ private actor CountingHomeRepository: HomeRepositoryProtocol {
         throw APIError.cancelled
     }
 
+    func leaderboard() async throws -> Leaderboard {
+        throw APIError.cancelled
+    }
+
     func subjects() async throws -> [Subject] {
         throw APIError.cancelled
     }

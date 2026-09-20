@@ -8,6 +8,7 @@ import Foundation
 nonisolated protocol HomeAPIProtocol: Sendable {
     func attendance(start: Date, end: Date) async throws -> [AttendanceDTO]
     func streak() async throws -> StreakDTO
+    func leaderboard() async throws -> LeaderboardDTO
     func subjects() async throws -> [SubjectDTO]
     func scores(subjectID: String, start: Date, end: Date) async throws -> ScoresResponse
 }
@@ -37,6 +38,11 @@ nonisolated final class HomeAPI: HomeAPIProtocol {
     func streak() async throws -> StreakDTO {
         let endpoint = Endpoint(path: "/api/mykct/v1/attendance/streak", method: .get)
         return try await client.send(endpoint, as: StreakDTO.self)
+    }
+
+    func leaderboard() async throws -> LeaderboardDTO {
+        let endpoint = Endpoint(path: "/api/mykct/v1/attendance/leaderboard", method: .get)
+        return try await client.send(endpoint, as: LeaderboardDTO.self)
     }
 
     func subjects() async throws -> [SubjectDTO] {

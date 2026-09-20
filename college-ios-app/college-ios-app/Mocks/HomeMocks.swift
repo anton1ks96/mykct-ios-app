@@ -28,6 +28,12 @@ nonisolated final class MockHomeRepository: HomeRepositoryProtocol {
         return HomeMocks.streak
     }
 
+    func leaderboard() async throws -> Leaderboard {
+        try? await Task.sleep(for: delay)
+        if let failure { throw failure }
+        return HomeMocks.leaderboard
+    }
+
     func subjects() async throws -> [Subject] {
         try? await Task.sleep(for: delay)
         if let failure { throw failure }
@@ -62,6 +68,25 @@ nonisolated enum HomeMocks {
         periodStart: HomeSemester.bounds(for: .now).start,
         periodEnd: HomeSemester.bounds(for: .now).end
     )
+
+    static let leaderboard = Leaderboard(
+        top: topRows.map { LeaderboardEntry(rank: $0.0, alias: $0.1, streak: $0.2, isMe: false) },
+        me: LeaderboardEntry(rank: 14, alias: "Асинхронный Планировщик 0x5D91", streak: 5, isMe: true),
+        participants: 214
+    )
+
+    private static let topRows: [(Int, String, Int)] = [
+        (1, "Рекурсивный Компилятор 0x1A7C", 14),
+        (2, "Атомарный Планировщик 0x04F1", 12),
+        (2, "Векторный Кэш 0x7B20", 12),
+        (4, "Гибридный Маршрутизатор 0x2E55", 11),
+        (5, "Детерминированный Индекс 0x9C13", 9),
+        (5, "Реактивный Сокет 0x3F8A", 9),
+        (7, "Потоковый Дескриптор 0x60D4", 8),
+        (8, "Модульный Транслятор 0x11B9", 7),
+        (8, "Кластерный Демон 0x8A47", 7),
+        (10, "Символьный Буфер 0xC302", 6),
+    ]
 
     static let subjects = [
         Subject(id: "1", title: "Разработка программных модулей"),

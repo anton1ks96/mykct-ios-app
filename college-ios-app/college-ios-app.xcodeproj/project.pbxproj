@@ -10,6 +10,7 @@
 		4F16D0D62E93B388001E552E /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4F16D0D42E93B388001E552E /* Launch Screen.storyboard */; };
 		4F49B9312ECB5F2C00943378 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4F49B9302ECB5F2C00943378 /* GoogleService-Info.plist */; };
 		4F49B9342ECB5FCA00943378 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 4F49B9332ECB5FCA00943378 /* FirebaseCrashlytics */; };
+		4F49B9352ECB5FCA00943378 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 4F49B9362ECB5FCA00943378 /* FirebaseMessaging */; };
 		4F79A2BC2E80352900660834 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 4F79A2BB2E80352900660834 /* Alamofire */; };
 /* End PBXBuildFile section */
 
@@ -65,6 +66,7 @@
 			files = (
 				4F79A2BC2E80352900660834 /* Alamofire in Frameworks */,
 				4F49B9342ECB5FCA00943378 /* FirebaseCrashlytics in Frameworks */,
+				4F49B9352ECB5FCA00943378 /* FirebaseMessaging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,6 +123,7 @@
 			packageProductDependencies = (
 				4F79A2BB2E80352900660834 /* Alamofire */,
 				4F49B9332ECB5FCA00943378 /* FirebaseCrashlytics */,
+				4F49B9362ECB5FCA00943378 /* FirebaseMessaging */,
 			);
 			productName = "college-ios-app";
 			productReference = 4F3866432E7F004E00C9993A /* college-ios-app.app */;
@@ -578,6 +581,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4F49B9322ECB5FCA00943378 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCrashlytics;
+		};
+		4F49B9362ECB5FCA00943378 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4F49B9322ECB5FCA00943378 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 		4F79A2BB2E80352900660834 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;

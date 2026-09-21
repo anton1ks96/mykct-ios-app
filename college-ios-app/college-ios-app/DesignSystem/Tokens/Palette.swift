@@ -53,9 +53,14 @@ extension Color {
 }
 
 let accentGradient = LinearGradient(
-    colors: [.violetTint, .violetLight, .violet, .violetDeep],
-    startPoint: .topLeading,
-    endPoint: .bottomTrailing
+    stops: [
+        .init(color: .violetTint, location: 0),
+        .init(color: .violetLight, location: 0.12),
+        .init(color: .violet, location: 0.4),
+        .init(color: .violetDeep, location: 1)
+    ],
+    startPoint: .topTrailing,
+    endPoint: .bottomLeading
 )
 
 let successGradient = LinearGradient(

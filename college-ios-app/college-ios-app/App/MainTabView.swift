@@ -67,11 +67,19 @@ struct MainTabView: View {
         }
         .onChange(of: session, initial: true) { _, updated in
             homeViewModel.sync(user: updated.user, isBootstrapping: updated.isBootstrapping)
-            pushService.sync(userID: updated.user?.id, isBootstrapping: updated.isBootstrapping)
+            pushService.sync(
+                userID: updated.user?.id,
+                group: updated.user?.academicGroup,
+                isBootstrapping: updated.isBootstrapping
+            )
         }
         .onChange(of: pushService.pendingRoute, initial: true) { _, route in
             guard let route else { return }
+            isStreakPresented = false
+            isAccountPresented = false
+            isLoginPresented = false
             selectedTab = .schedule
+            scheduleViewModel.closeLesson()
             scheduleViewModel.show(week: route.weekStart)
             pushService.consumeRoute()
         }

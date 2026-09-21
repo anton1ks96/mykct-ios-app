@@ -11,16 +11,19 @@ import UserNotifications
 final class PushService {
 
     private(set) var pendingRoute: PushRoute?
-    private(set) var isEnabled = false
     private(set) var isSystemDenied = false
+
+    var isEnabled: Bool { wantsNotifications && Self.isGranted(status) }
 
     private let api: PushAPIProtocol
     private let store: PushRegistrationStore
     private let permissions: PushPermissionsProtocol
 
+    private var wantsNotifications: Bool
+    private var status: UNAuthorizationStatus = .notDetermined
     private var token: String?
     private var userID: String?
-    private var status: UNAuthorizationStatus = .notDetermined
+    private var group: String?
     private var isSessionKnown = false
     private var queue: Task<Void, Never>?
 
@@ -32,18 +35,20 @@ final class PushService {
         self.api = api
         self.store = store
         self.permissions = permissions
+        self.wantsNotifications = store.isEnabled
     }
 
     // MARK: - Intents
 
-    func sync(userID: String?, isBootstrapping: Bool) {
+    func sync(userID: String?, group: String?, isBootstrapping: Bool) {
         guard !isBootstrapping else { return }
         self.userID = userID
+        self.group = group
         isSessionKnown = true
 
         enqueue { [weak self] in
             guard let self else { return }
-            if userID != nil, self.status == .notDetermined, self.store.isEnabled {
+            if userID != nil, self.status == .notDetermined, self.wantsNotifications {
                 await self.ask()
             }
             await self.apply()
@@ -51,22 +56,15 @@ final class PushService {
     }
 
     func setEnabled(_ isEnabled: Bool) {
+        wantsNotifications = isEnabled
+        store.isEnabled = isEnabled
+
         enqueue { [weak self] in
             guard let self else { return }
-            guard isEnabled else {
-                self.store.isEnabled = false
-                self.isEnabled = false
-                await self.apply()
-                return
+            if isEnabled {
+                await self.ask()
+                self.isSystemDenied = !Self.isGranted(self.status)
             }
-
-            await self.ask()
-            guard Self.isGranted(self.status) else {
-                self.isSystemDenied = true
-                return
-            }
-            self.store.isEnabled = true
-            self.isEnabled = true
             await self.apply()
         }
     }
@@ -75,7 +73,7 @@ final class PushService {
         enqueue { [weak self] in
             guard let self else { return }
             self.status = await self.permissions.status
-            self.updateEnabled()
+            self.registerForRemoteNotificationsIfNeeded()
             await self.apply()
         }
     }
@@ -111,14 +109,12 @@ final class PushService {
             _ = await permissions.request()
             status = await permissions.status
         }
-        updateEnabled()
+        registerForRemoteNotificationsIfNeeded()
     }
 
-    private func updateEnabled() {
-        isEnabled = store.isEnabled && Self.isGranted(status)
-        if isEnabled {
-            permissions.registerForRemoteNotifications()
-        }
+    private func registerForRemoteNotificationsIfNeeded() {
+        guard isEnabled else { return }
+        permissions.registerForRemoteNotifications()
     }
 
     private static func isGranted(_ status: UNAuthorizationStatus) -> Bool {
@@ -143,25 +139,47 @@ final class PushService {
     private func apply() async {
         guard isSessionKnown else { return }
 
-        if let userID, isEnabled {
-            guard let token else { return }
-            let wanted = PushRegistration(token: token, userID: userID)
-            guard store.load() != wanted else { return }
-            do {
-                try await api.registerDevice(token: token, deviceID: store.deviceID)
-                store.save(wanted)
-            } catch {
-                CrashlyticsLogger.recordBreadcrumb("Push registration will be retried")
-            }
+        guard isEnabled, let userID, let group, let token else {
+            await unregister()
             return
         }
 
+        let wanted = PushRegistration(token: token, userID: userID, group: group)
+        guard store.load() != wanted || store.isExpired() else { return }
+
+        do {
+            try await api.registerDevice(token: token, deviceID: store.deviceID)
+            store.save(wanted)
+        } catch {
+            CrashlyticsLogger.recordBreadcrumb("Push registration will be retried")
+        }
+    }
+
+    private func unregister() async {
         guard let sent = store.load() else { return }
         do {
             try await api.unregisterDevice(token: sent.token)
             store.save(nil)
         } catch {
+            guard Self.isRetryable(error) else {
+                store.save(nil)
+                return
+            }
             CrashlyticsLogger.recordBreadcrumb("Push removal will be retried")
+        }
+    }
+
+    private static func isRetryable(_ error: Error) -> Bool {
+        guard let apiError = error as? APIError else { return true }
+        switch apiError {
+        case .unauthorized, .forbidden, .notFound, .decodingFailed:
+            return false
+        case .statusCode(let code, _):
+            return !(400..<500).contains(code)
+        case .api(_, _, let status):
+            return !(400..<500).contains(status)
+        default:
+            return true
         }
     }
 }

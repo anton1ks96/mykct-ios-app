@@ -102,5 +102,14 @@ nonisolated enum PreviewMocks {
         }
         return viewModel
     }
+
+    @MainActor
+    static func pushService() -> PushService {
+        PushService(
+            api: MockPushAPI(),
+            store: PushRegistrationStore(defaults: UserDefaults(suiteName: "preview.push")!),
+            permissions: MockPushPermissions()
+        )
+    }
 }
 #endif

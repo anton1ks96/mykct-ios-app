@@ -49,6 +49,8 @@ enum AppDependencies {
 #endif
     }()
 
+    static let pushService = PushService()
+
     static let homeRepository: HomeRepositoryProtocol = {
         let live = HomeRepository(api: HomeAPI(client: authenticatedClient))
 #if DEBUG

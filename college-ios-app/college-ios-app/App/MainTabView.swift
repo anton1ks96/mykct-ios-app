@@ -15,10 +15,12 @@ enum Tab: String {
 
 struct MainTabView: View {
     @EnvironmentObject private var sessionViewModel: SessionViewModel
+    @Environment(PushService.self) private var pushService
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage(AppTheme.storageKey) private var theme: AppTheme = .system
     @State private var selectedTab: Tab = .schedule
     @State private var homeViewModel = HomeViewModel()
+    @State private var scheduleViewModel = ScheduleViewModel()
     @State private var isLoginPresented = false
     @State private var isStreakPresented = false
     @State private var isAccountPresented = false
@@ -26,7 +28,7 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             NavigationStack {
-                ScheduleScreen()
+                ScheduleScreen(viewModel: scheduleViewModel)
                     .toolbar {
                         ToolbarItem(placement: .topBarLeading) { streakButton }
                         ToolbarItem(placement: .topBarTrailing) { accountButton }
@@ -65,6 +67,21 @@ struct MainTabView: View {
         }
         .onChange(of: session, initial: true) { _, updated in
             homeViewModel.sync(user: updated.user, isBootstrapping: updated.isBootstrapping)
+            pushService.sync(
+                userID: updated.user?.id,
+                group: updated.user?.academicGroup,
+                isBootstrapping: updated.isBootstrapping
+            )
+        }
+        .onChange(of: pushService.pendingRoute, initial: true) { _, route in
+            guard let route else { return }
+            isStreakPresented = false
+            isAccountPresented = false
+            isLoginPresented = false
+            selectedTab = .schedule
+            scheduleViewModel.closeLesson()
+            scheduleViewModel.show(week: route.weekStart)
+            pushService.consumeRoute()
         }
         .sheet(isPresented: $isStreakPresented) {
             StreakSheet(viewModel: homeViewModel)

@@ -71,6 +71,16 @@ final class ScheduleViewModel {
         Task { await reload() }
     }
 
+    func show(week start: Date) {
+        let weekStart = ScheduleCalendar.monday(of: ScheduleCalendar.day(of: start))
+        let today = ScheduleCalendar.day(of: .now)
+
+        didStart = true
+        state.weekStart = weekStart
+        state.selectedDate = ScheduleCalendar.monday(of: today) == weekStart ? today : weekStart
+        Task { await reload() }
+    }
+
     func update(selection: Selection) {
         guard selection != state.selection else { return }
         state.selection = selection

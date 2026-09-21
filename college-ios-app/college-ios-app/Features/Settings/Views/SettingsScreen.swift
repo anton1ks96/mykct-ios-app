@@ -4,9 +4,13 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct SettingsScreen: View {
     @Environment(\.colors) private var colors
+    @Environment(PushService.self) private var pushService
+    @EnvironmentObject private var sessionViewModel: SessionViewModel
+    @Environment(\.openURL) private var openURL
 
     @AppStorage(AppTheme.storageKey) private var theme: AppTheme = .system
     @AppStorage(ScheduleDefaultsKey.view) private var scheduleView: ScheduleView = .threeDays
@@ -40,6 +44,17 @@ struct SettingsScreen: View {
                         Toggle("", isOn: $skipWeekends)
                             .labelsHidden()
                             .tint(colors.primary)
+                    }
+                }
+
+                if sessionViewModel.isAuthenticated {
+                    SettingsSectionTitle("Уведомления")
+                    SettingsCard {
+                        SettingsRow(icon: "bell.badge", title: "Изменения в расписании") {
+                            Toggle("", isOn: notifications)
+                                .labelsHidden()
+                                .tint(colors.primary)
+                        }
                     }
                 }
 
@@ -85,6 +100,32 @@ struct SettingsScreen: View {
         }
         .appBackground()
         .navigationTitle("Настройки")
+        .alert("Уведомления выключены", isPresented: systemDenied) {
+            Button("Отмена", role: .cancel) {}
+            Button("Настройки") {
+                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                openURL(url)
+            }
+        } message: {
+            Text("Разрешите уведомления в Настройках iOS, чтобы узнавать об изменениях в расписании.")
+        }
+    }
+
+    private var notifications: Binding<Bool> {
+        Binding(
+            get: { pushService.isEnabled },
+            set: { pushService.setEnabled($0) }
+        )
+    }
+
+    private var systemDenied: Binding<Bool> {
+        Binding(
+            get: { pushService.isSystemDenied },
+            set: { isPresented in
+                guard !isPresented else { return }
+                pushService.dismissSystemDenied()
+            }
+        )
     }
 
     private func themeRow(_ mode: AppTheme) -> some View {
@@ -176,4 +217,5 @@ private extension Bundle {
         SettingsScreen()
     }
     .environmentObject(PreviewMocks.sessionViewModel())
+    .environment(PreviewMocks.pushService())
 }

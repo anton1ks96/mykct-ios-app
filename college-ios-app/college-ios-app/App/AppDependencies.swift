@@ -40,6 +40,17 @@ enum AppDependencies {
 #endif
     }()
 
+    static let pushAPI: PushAPIProtocol = {
+        let live = PushAPI(authenticatedClient: authenticatedClient, publicClient: scheduleClient)
+#if DEBUG
+        return AppEnvironment.usesMockData ? MockPushAPI() : live
+#else
+        return live
+#endif
+    }()
+
+    static let pushService = PushService()
+
     static let homeRepository: HomeRepositoryProtocol = {
         let live = HomeRepository(api: HomeAPI(client: authenticatedClient))
 #if DEBUG

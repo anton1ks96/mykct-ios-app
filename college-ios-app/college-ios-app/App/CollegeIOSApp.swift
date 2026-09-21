@@ -17,14 +17,20 @@ struct CollegeIOSApp: App {
     )
 
     @AppStorage(AppTheme.storageKey) private var selectedTheme: AppTheme = .system
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .preferredColorScheme(selectedTheme.colorScheme)
                 .environmentObject(sessionViewModel)
+                .environment(AppDependencies.pushService)
                 .task {
                     sessionViewModel.bootstrapAutoLogin()
+                }
+                .onChange(of: scenePhase, initial: true) { _, phase in
+                    guard phase == .active else { return }
+                    AppDependencies.pushService.refreshAuthorization()
                 }
         }
     }

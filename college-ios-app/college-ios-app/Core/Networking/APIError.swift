@@ -20,7 +20,7 @@ public enum APIError: LocalizedError, Sendable {
     
     // Response errors
     case decodingFailed
-    case unauthorized
+    case unauthorized(message: String?)
     case forbidden
     case notFound
     case server(code: Int)
@@ -37,13 +37,15 @@ public enum APIError: LocalizedError, Sendable {
     case keychainError(status: OSStatus)
     
     public static func from(statusCode: Int, data: Data?) -> APIError {
+        let body = data.flatMap { try? JSONDecoder().decode(APIErrorBody.self, from: $0) }
+
         switch statusCode {
-        case 401: return .unauthorized
+        case 401: return .unauthorized(message: body?.message)
         case 403: return .forbidden
         default: break
         }
 
-        if let body = data.flatMap({ try? JSONDecoder().decode(APIErrorBody.self, from: $0) }) {
+        if let body {
             return .api(code: body.code, message: body.message, status: statusCode)
         }
 
@@ -60,7 +62,7 @@ public enum APIError: LocalizedError, Sendable {
         case .requestBuildFailed: return "Не удалось собрать запрос"
         case .cancelled: return "Запрос отменён"
         case .decodingFailed: return "Не удалось разобрать ответ сервера"
-        case .unauthorized: return "Требуется авторизация"
+        case .unauthorized(let message): return message ?? "Требуется авторизация"
         case .forbidden: return "Доступ запрещён"
         case .notFound: return "Ресурс не найден"
         case .server(let code): return "Ошибка сервера (\(code))"

@@ -89,7 +89,7 @@ func successfulSignInRaisesFlag() async throws {
 @MainActor
 @Test("Отказ сервера показывается пользователю по-русски")
 func serverErrorIsShown() async throws {
-    let viewModel = makeViewModel(api: StubAuthAPI(signInError: APIError.unauthorized))
+    let viewModel = makeViewModel(api: StubAuthAPI(signInError: APIError.unauthorized(message: nil)))
     viewModel.login = "i24s0291"
     viewModel.password = "secret"
 
@@ -102,7 +102,7 @@ func serverErrorIsShown() async throws {
 @MainActor
 @Test("Правка поля гасит прежнюю ошибку")
 func editingClearsError() async throws {
-    let viewModel = makeViewModel(api: StubAuthAPI(signInError: APIError.unauthorized))
+    let viewModel = makeViewModel(api: StubAuthAPI(signInError: APIError.unauthorized(message: nil)))
     viewModel.login = "i24s0291"
     viewModel.password = "secret"
     await viewModel.signIn()

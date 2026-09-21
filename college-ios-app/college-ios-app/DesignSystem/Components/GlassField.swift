@@ -70,11 +70,14 @@ struct GlassField<Field: Hashable>: View {
             isRevealed.toggle()
             focus = field
         } label: {
-            Text(isRevealed ? "Скрыть" : "Показать")
-                .textStyle(AppType.labelLarge)
+            Image(systemName: isRevealed ? "eye.slash" : "eye")
+                .font(.system(size: 17))
                 .foregroundStyle(colors.primary)
+                .frame(width: 24, height: 24)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(isRevealed ? "Скрыть пароль" : "Показать пароль")
     }
 }
 

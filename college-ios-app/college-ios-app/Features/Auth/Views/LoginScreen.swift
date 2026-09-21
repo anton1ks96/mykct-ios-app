@@ -59,7 +59,7 @@ struct LoginScreen: View {
                 .textStyle(AppType.heroValue)
                 .foregroundStyle(colors.onBackground)
 
-            Text("Логин и пароль — те же, что в личном кабинете колледжа.")
+            Text("Введите ваш корпоративный логин и пароль")
                 .textStyle(AppType.bodyLarge)
                 .foregroundStyle(colors.onSurfaceVariant)
                 .padding(.top, 8)
@@ -161,8 +161,10 @@ struct LoginScreen: View {
 }
 
 #Preview("С приветствия") {
-    LoginScreen(
-        viewModel: PreviewMocks.loginViewModel(error: .unauthorized),
+    let error = APIError.unauthorized(message: "Неверный логин или пароль")
+
+    return LoginScreen(
+        viewModel: PreviewMocks.loginViewModel(error: error),
         onClose: {},
         onSkip: {}
     )

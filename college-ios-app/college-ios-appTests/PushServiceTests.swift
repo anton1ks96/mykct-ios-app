@@ -126,6 +126,24 @@ struct PushServiceTests {
         #expect(api.unregistered.isEmpty)
     }
 
+    @Test("Проверка разрешения до появления сессии устройство не снимает")
+    func keepsRegistrationBeforeSessionIsKnown() async {
+        let api = SpyPushAPI()
+        let defaults = UserDefaults(suiteName: "push.tests.\(UUID().uuidString)")!
+        let store = PushRegistrationStore(defaults: defaults)
+
+        let first = PushService(api: api, store: store, permissions: GrantedPermissions())
+        await signIn(first, userID: "i24s0291", token: "fcm-1")
+
+        let second = PushService(api: api, store: store, permissions: GrantedPermissions())
+        second.refreshAuthorization()
+        second.handle(token: "fcm-1")
+        await second.settle()
+
+        #expect(api.unregistered.isEmpty)
+        #expect(api.registered == ["fcm-1"])
+    }
+
     @Test("Выключенный тумблер снимает устройство и не шлёт регистрацию")
     func disabledTogglerRemovesDevice() async {
         let api = SpyPushAPI()

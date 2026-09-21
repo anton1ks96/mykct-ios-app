@@ -21,6 +21,7 @@ final class PushService {
     private var token: String?
     private var userID: String?
     private var status: UNAuthorizationStatus = .notDetermined
+    private var isSessionKnown = false
     private var queue: Task<Void, Never>?
 
     init(
@@ -38,6 +39,7 @@ final class PushService {
     func sync(userID: String?, isBootstrapping: Bool) {
         guard !isBootstrapping else { return }
         self.userID = userID
+        isSessionKnown = true
 
         enqueue { [weak self] in
             guard let self else { return }
@@ -139,6 +141,8 @@ final class PushService {
     }
 
     private func apply() async {
+        guard isSessionKnown else { return }
+
         if let userID, isEnabled {
             guard let token else { return }
             let wanted = PushRegistration(token: token, userID: userID)

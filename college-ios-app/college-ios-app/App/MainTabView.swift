@@ -15,6 +15,7 @@ enum Tab: String {
 
 struct MainTabView: View {
     @EnvironmentObject private var sessionViewModel: SessionViewModel
+    @Environment(PushService.self) private var pushService
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage(AppTheme.storageKey) private var theme: AppTheme = .system
     @State private var selectedTab: Tab = .schedule
@@ -65,6 +66,7 @@ struct MainTabView: View {
         }
         .onChange(of: session, initial: true) { _, updated in
             homeViewModel.sync(user: updated.user, isBootstrapping: updated.isBootstrapping)
+            pushService.sync(userID: updated.user?.id, isBootstrapping: updated.isBootstrapping)
         }
         .sheet(isPresented: $isStreakPresented) {
             StreakSheet(viewModel: homeViewModel)

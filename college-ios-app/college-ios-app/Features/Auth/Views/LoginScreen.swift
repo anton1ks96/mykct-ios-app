@@ -59,7 +59,7 @@ struct LoginScreen: View {
                 .textStyle(AppType.heroValue)
                 .foregroundStyle(colors.onBackground)
 
-            Text("Логин и пароль — те же, что в личном кабинете колледжа.")
+            Text("Введите ваш корпоративный логин и пароль")
                 .textStyle(AppType.bodyLarge)
                 .foregroundStyle(colors.onSurfaceVariant)
                 .padding(.top, 8)

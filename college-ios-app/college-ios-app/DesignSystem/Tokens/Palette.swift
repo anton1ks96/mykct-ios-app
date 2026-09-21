@@ -53,7 +53,7 @@ extension Color {
 }
 
 let accentGradient = LinearGradient(
-    colors: [.violet, .violetDeep],
+    colors: [.violetTint, .violetLight, .violet, .violetDeep],
     startPoint: .topLeading,
     endPoint: .bottomTrailing
 )

@@ -99,7 +99,7 @@ private struct AccentGlass<S: InsettableShape>: ViewModifier {
 
     private var gradientOpacity: Double {
         guard GlassSupport.isAvailable else { return 1 }
-        return colors.isDark ? 0.88 : 1
+        return colors.isDark ? 0.7 : 0.95
     }
 
     func body(content: Content) -> some View {

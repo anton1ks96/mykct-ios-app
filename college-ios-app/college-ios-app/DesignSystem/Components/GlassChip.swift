@@ -17,15 +17,13 @@ struct GlassChip: View {
                 .font(.system(size: 11, weight: .semibold))
             Text(text)
                 .textStyle(AppType.labelSmall)
-                .fontWeight(.semibold)
                 .contentTransition(.numericText())
         }
         .foregroundStyle(foreground)
         .padding(.horizontal, 10)
         .padding(.vertical, 5)
-        .background(Capsule().fill(fill))
         .glassSurface(Capsule(), style: .clear)
-        .overlay(Capsule().stroke(foreground.opacity(0.6), lineWidth: 1))
+        .overlay(Capsule().stroke(foreground.opacity(0.5), lineWidth: 1))
     }
 }
 

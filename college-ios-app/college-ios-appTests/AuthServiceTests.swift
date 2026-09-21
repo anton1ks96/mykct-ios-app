@@ -99,7 +99,7 @@ func forceRefreshBypassesCachedToken() async throws {
 
 @Test("Отказ сервера в авторизации завершает сессию")
 func unauthorizedEndsSession() async throws {
-    let api = CountingAuthAPI(accessError: APIError.unauthorized)
+    let api = CountingAuthAPI(accessError: APIError.unauthorized(message: nil))
     let session = AuthSession(refreshStorage: makeStorage())
     let service = AuthService(api: api, session: session)
     await session.setCurrentUser(

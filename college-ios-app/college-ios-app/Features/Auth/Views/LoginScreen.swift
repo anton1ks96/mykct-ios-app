@@ -161,8 +161,10 @@ struct LoginScreen: View {
 }
 
 #Preview("С приветствия") {
-    LoginScreen(
-        viewModel: PreviewMocks.loginViewModel(error: .unauthorized),
+    let error = APIError.unauthorized(message: "Неверный логин или пароль")
+
+    return LoginScreen(
+        viewModel: PreviewMocks.loginViewModel(error: error),
         onClose: {},
         onSkip: {}
     )

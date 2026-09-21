@@ -103,16 +103,13 @@ private struct AccentGlass<S: InsettableShape>: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        content.background {
-            ZStack {
-                accentGradient.opacity(gradientOpacity)
-
-                if GlassSupport.isAvailable {
-                    Color.clear.glassSurface(shape, style: .clear, interactive: interactive)
-                }
+        content
+            .background {
+                accentGradient
+                    .opacity(gradientOpacity)
+                    .clipShape(shape)
             }
-            .clipShape(shape)
-        }
+            .glassSurface(shape, style: .clear, interactive: interactive)
     }
 }
 

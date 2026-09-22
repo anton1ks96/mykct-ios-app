@@ -5,6 +5,8 @@
 
 import SwiftUI
 
+private let pressedOpacity: Double = 0.7
+
 enum GlassStyle {
     case regular
     case clear
@@ -48,18 +50,28 @@ private struct GlassSurface<S: InsettableShape>: ViewModifier {
     }
 }
 
+@available(iOS 26, *)
+private struct GlassActionStyle: ButtonStyle {
+    let tint: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(tint)
+            .opacity(configuration.isPressed ? pressedOpacity : 1)
+            .padding(.vertical, 18)
+            .frame(maxWidth: .infinity)
+            .contentShape(Capsule())
+            .glassEffect(.regular.interactive(), in: .capsule)
+    }
+}
+
 private struct GlassAction: ViewModifier {
     let tint: Color
 
     @ViewBuilder
     func body(content: Content) -> some View {
         if #available(iOS 26, *) {
-            content
-                .buttonStyle(.plain)
-                .foregroundStyle(tint)
-                .padding(.vertical, 18)
-                .frame(maxWidth: .infinity)
-                .glassEffect(.regular.interactive(), in: .capsule)
+            content.buttonStyle(GlassActionStyle(tint: tint))
         } else {
             content
                 .buttonStyle(.borderedProminent)
@@ -70,18 +82,19 @@ private struct GlassAction: ViewModifier {
     }
 }
 
-private struct AccentAction: ViewModifier {
+private struct AccentActionStyle: ButtonStyle {
     @Environment(\.colors) private var colors
 
     let isEnabled: Bool
 
     @ViewBuilder
-    func body(content: Content) -> some View {
-        let shaped = content
-            .buttonStyle(.plain)
+    func makeBody(configuration: Configuration) -> some View {
+        let shaped = configuration.label
             .foregroundStyle(isEnabled ? colors.onPrimary : colors.onSurfaceVariant)
+            .opacity(configuration.isPressed ? pressedOpacity : 1)
             .padding(.vertical, 18)
             .frame(maxWidth: .infinity)
+            .contentShape(Capsule())
 
         if isEnabled {
             shaped.accentGlass(Capsule(), interactive: true)
@@ -168,7 +181,7 @@ extension View {
     }
 
     func accentAction(isEnabled: Bool = true) -> some View {
-        modifier(AccentAction(isEnabled: isEnabled))
+        buttonStyle(AccentActionStyle(isEnabled: isEnabled))
     }
 
     func accentGlass<S: InsettableShape>(_ shape: S, interactive: Bool = false) -> some View {

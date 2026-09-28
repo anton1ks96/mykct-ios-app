@@ -54,7 +54,7 @@ nonisolated enum SubjectIcon {
             return "chart.line.uptrend.xyaxis"
         }
 
-        if has("жизнедеятельн", "обж", "охран труда", "медицин") { return "cross.case" }
+        if has("жизнедеятельн", "обж", "охран труда", "медицин") { return "fire.extinguisher" }
         if has("черчени", "график", "дизайн", "инженерн") { return "paintbrush.pointed" }
         if has("практик", "производствен", "стажировк") { return "briefcase" }
         if has("проект", "курсов", "диплом", "вкр") { return "doc.text" }
@@ -92,10 +92,10 @@ nonisolated enum SubjectIcon {
         "АнлгЯзПро": "text.book.closed",
         "Физкульт": "figure.run",
         "Физкультура": "figure.run",
-        "ОБиЗР": "cross.case",
+        "ОБиЗР": "fire.extinguisher",
         "ЭлДок": "doc.on.doc",
-        "ТехДокиРус": "doc.richtext",
-        "ФинГрамота": "rublesign.circle",
+        "ТехДокиРус": "text.document",
+        "ФинГрамота": "rublesign.bank.building",
         "Экономика": "banknote",
         "ПОПД": "scroll",
         "Предпринимат": "chart.line.uptrend.xyaxis",
@@ -103,7 +103,7 @@ nonisolated enum SubjectIcon {
         "ПсихОбщен": "brain.head.profile",
         "КритМыш": "lightbulb",
         "ИнжМыш": "gearshape.2",
-        "ТРИЗ": "lightbulb.max",
+        "ТРИЗ": "wand.and.sparkles",
         "АктМаст": "theatermasks",
         "ЛичБренд": "person.crop.circle.badge.checkmark",
         "КреативМ": "sparkles",
@@ -180,7 +180,7 @@ nonisolated enum SubjectIcon {
         // Дизайн
         "Веб-Дизайн": "globe",
         "ВебДизайн": "globe",
-        "ГрафДизайн": "paintbrush.pointed",
+        "ГрафДизайн": "beziercurve",
         "ДизИнтерфейсов": "rectangle.3.group",
         "ИнтерфДиз": "rectangle.3.group",
         "ДизДиджитал": "ipad.and.iphone",
@@ -244,12 +244,12 @@ nonisolated enum SubjectIcon {
         "АлгоТруд-3": "person.text.rectangle",
         "Демоэкзамен": "checkmark.seal",
         "Предзащита": "rectangle.inset.filled.and.person.filled",
-        "Нормоконтроль": "text.magnifyingglass",
-        "В.Сборы": "shield.lefthalf.filled",
+        "Нормоконтроль": "text.line.magnify",
+        "В.Сборы": "helmet",
         "Буткемп": "tent",
         "Выставка": "photo.artframe",
         "ФорумБудущего": "bubble.left.and.bubble.right",
-        "ОргСобрание": "person.3",
+        "ОргСобрание": "calendar.and.person",
         "Подгруппы": "list.bullet.indent",
         "Подгруппы-1к": "1.square",
         "Подгруппы-2к": "2.square",

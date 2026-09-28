@@ -26,7 +26,7 @@ struct FlowLayout: Layout {
         for row in layout(width: bounds.width, subviews: subviews) {
             var x = bounds.minX
             for index in row.indices {
-                let size = subviews[index].sizeThatFits(.unspecified)
+                let size = measure(subviews[index], width: bounds.width)
                 subviews[index].place(
                     at: CGPoint(x: x, y: y + (row.height - size.height) / 2),
                     proposal: ProposedViewSize(size)
@@ -48,7 +48,7 @@ struct FlowLayout: Layout {
         var row = Row()
 
         for index in subviews.indices {
-            let size = subviews[index].sizeThatFits(.unspecified)
+            let size = measure(subviews[index], width: width)
             let advance = row.indices.isEmpty ? size.width : row.width + spacing + size.width
 
             if !row.indices.isEmpty, advance > width {
@@ -66,5 +66,11 @@ struct FlowLayout: Layout {
 
         if !row.indices.isEmpty { rows.append(row) }
         return rows
+    }
+
+    private func measure(_ subview: LayoutSubview, width: CGFloat) -> CGSize {
+        let ideal = subview.sizeThatFits(.unspecified)
+        guard width.isFinite, ideal.width > width else { return ideal }
+        return subview.sizeThatFits(ProposedViewSize(width: width, height: nil))
     }
 }

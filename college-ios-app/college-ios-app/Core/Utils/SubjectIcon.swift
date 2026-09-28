@@ -7,83 +7,99 @@ import Foundation
 
 nonisolated enum SubjectIcon {
 
-    private static let profiles = ["BE", "FE", "GD", "PM", "UI", "SA", "CD"]
+    static let placeholder = "graduationcap"
+
+    private static let profileSuffixes: [String] = {
+        let ids = StudyProfile.all.map(\.id)
+        let separated = (ids + ["UI"]).flatMap { ["-\($0)", ".\($0)"] }
+        return separated + ids
+    }()
 
     static func symbol(for title: String) -> String {
         let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
-        if let symbol = lookup(trimmed) { return symbol }
-        if let base = withoutProfile(trimmed), let symbol = lookup(base) { return symbol }
-        return keyword(for: trimmed)
+        let subject = subject(for: trimmed) ?? keywordSubject(in: trimmed)
+        return subject.flatMap { icons[$0] } ?? placeholder
     }
 
-    private static func lookup(_ title: String) -> String? {
-        icons[aliases[title] ?? title]
+    static func subject(for title: String) -> String? {
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return known(trimmed) ?? withoutProfile(trimmed).flatMap(known)
+    }
+
+    private static func known(_ title: String) -> String? {
+        let subject = aliases[title] ?? title
+        return icons[subject] == nil ? nil : subject
     }
 
     private static func withoutProfile(_ title: String) -> String? {
-        guard let profile = profiles.first(where: { title.hasSuffix($0) }) else { return nil }
-        var base = title.dropLast(profile.count)
-        if base.last == "-" || base.last == "." { base = base.dropLast() }
-        return base.isEmpty ? nil : String(base)
+        guard let suffix = profileSuffixes.first(where: {
+            title.hasSuffix($0) && title.count > $0.count
+        }) else { return nil }
+        return String(title.dropLast(suffix.count))
     }
 
-    private static func keyword(for title: String) -> String {
+    private static func keywordSubject(in title: String) -> String? {
         let name = title.lowercased().replacingOccurrences(of: "ё", with: "е")
         func has(_ parts: String...) -> Bool { parts.contains { name.contains($0) } }
 
-        if has("физкультур", "физическ", "спорт") { return "figure.run" }
+        if has("физкультур", "спорт") || (has("физическ") && has("культур")) {
+            return "Физкульт"
+        }
+        if has("мышлен") && has("инженерн") { return "ИнжМыш" }
+        if has("мышлен") && has("критическ") { return "КритМыш" }
 
-        if (has("баз") && has("данн")) || has("субд", "sql") { return "cylinder.split.1x2" }
-        if has("сет", "маршрутизац", "телекоммуникац") { return "network" }
-        if has("операционн", "linux", "windows") { return "terminal" }
-        if has("дискретн") { return "point.3.connected.trianglepath.dotted" }
-        if has("алгоритм", "структур данных") { return "arrow.triangle.branch" }
-        if has("тестирован", "отладк", "качеств") { return "ladybug" }
-        if has("мобильн", "android", "ios") { return "iphone" }
-        if has("веб", "web", "сайт", "html", "фронтенд") { return "globe" }
+        if (has("баз") && has("данн")) || has("субд", "sql") { return "СУБД" }
+        if has("сети", "сетев", "маршрутизац", "телекоммуникац") { return "КомпСети" }
+        if has("операционн", "linux", "windows") { return "ОперСистемы" }
+        if has("дискретн") { return "ДискрМат" }
+        if has("алгоритм") || (has("структур") && has("данн")) { return "АиСД" }
+        if has("тестирован", "отладк", "качеств") { return "Тестирование" }
+        if has("мобильн", "android", "ios") { return "Мобильная разработка" }
+        if has("веб", "web", "сайт", "html", "фронтенд") { return "Веб-Дизайн" }
         if has("криптограф")
             || (has("безопасн") && has("информ", "данн"))
-            || (has("защит") && has("информ")) { return "lock.shield" }
-        if has("разработ", "программ", "модул", "информатик") {
-            return "chevron.left.forwardslash.chevron.right"
-        }
-        if has("аппаратн", "эвм", "архитектур", "схемотехник") { return "memorychip" }
+            || (has("защит") && has("информ")) { return "ИнфоБез" }
+        if has("паттерн") { return "АрхПаттерны" }
+        if has("разработ", "программ", "модул", "информатик") { return "РазработкаПО" }
+        if has("аппаратн", "эвм", "архитектур", "схемотехник") { return "Hardware" }
 
-        if has("русск", "родн") { return "textformat.abc" }
-        if has("литератур") { return "book" }
-        if has("английск", "иностран", "язык") { return "character.book.closed" }
+        if has("русск", "родн") { return "РусЯз" }
+        if has("литератур") { return "Литер" }
+        if has("английск", "иностран") && has("профессиональн") { return "АнглЯзПро" }
+        if has("английск", "иностран", "язык") { return "АнглЯз" }
 
-        if has("статистик", "вероятност") { return "percent" }
-        if has("численн метод") { return "sum" }
-        if has("высш") && has("матем") { return "x.squareroot" }
-        if has("математик", "матем") { return "function" }
-        if has("астроном") { return "moon.stars" }
-        if has("физик") { return "atom" }
-        if has("хими") { return "flask" }
-        if has("биолог", "естествознан", "эколог") { return "leaf" }
-        if has("географ") { return "globe.europe.africa" }
+        if has("статистик", "вероятност") { return "ТеорВер" }
+        if has("численн") { return "ЧислМетоды" }
+        if has("высш") && has("матем") { return "ЭлВышМат" }
+        if has("математик", "матем") { return "Математика" }
+        if has("астроном") { return "Астрономия" }
+        if has("хими") { return "Химия" }
+        if has("физик") { return "Физика" }
+        if has("биолог", "естествознан", "эколог") { return "Биология" }
+        if has("географ") { return "География" }
 
-        if has("истори") { return "clock.arrow.circlepath" }
-        if has("обществ") { return "building.columns" }
-        if has("правов", "юрид", "законодат") { return "scroll" }
-        if has("философ") { return "brain" }
-        if has("психолог", "общени", "этик") { return "brain.head.profile" }
-        if has("финанс") { return "rublesign.bank.building" }
-        if has("эконом") { return "banknote" }
-        if has("маркетинг") { return "megaphone" }
-        if has("предпринимат", "бухгалт", "менеджмент") { return "chart.line.uptrend.xyaxis" }
+        if has("истори") && has("технолог") { return "ИстТехно" }
+        if has("истори") { return "История" }
+        if has("обществ") { return "Обществознание" }
+        if has("правов", "юрид", "законодат") { return "ПОПД" }
+        if has("философ") { return "Философия" }
+        if has("психолог", "общени", "этик") { return "ПсихОбщен" }
+        if has("финанс") { return "ФинГрамота" }
+        if has("эконом") { return "Экономика" }
+        if has("маркетинг") { return "Маркетинг" }
+        if has("предпринимат", "бухгалт", "менеджмент") { return "Предпринимат" }
 
-        if has("жизнедеятельн", "обж", "охран труда") { return "fire.extinguisher" }
-        if has("медицин") { return "cross.case" }
-        if has("график") { return "beziercurve" }
-        if has("черчени", "дизайн", "инженерн") { return "paintbrush.pointed" }
-        if has("практик", "производствен", "стажировк") { return "briefcase" }
-        if has("проект", "курсов", "диплом", "вкр") { return "doc.text" }
-        if has("экзамен", "зачет", "консультац", "аттестац") { return "checkmark.seal" }
-        if has("собрани") { return "calendar.and.person" }
-        if has("классн час", "куратор") { return "person.3" }
+        if has("жизнедеятельн", "обж", "охран труда") { return "ОБиЗР" }
+        if has("медицин") { return "Медицина" }
+        if has("график", "графическ") { return "ГрафДизайн" }
+        if has("черчени", "дизайн", "инженерн") { return "Дизайн" }
+        if has("практик", "производствен", "стажировк") { return "ПроизвПракт.01" }
+        if has("проект", "курсов", "диплом", "вкр") { return "Проект" }
+        if has("экзамен", "зачет", "консультац", "аттестац") { return "Демоэкзамен" }
+        if has("собрани") { return "ОргСобрание" }
+        if has("классн час", "куратор") { return "Классный час" }
 
-        return "graduationcap"
+        return nil
     }
 
     // MARK: - Названия портала
@@ -137,7 +153,7 @@ nonisolated enum SubjectIcon {
         "Frameworks": "square.3.layers.3d",
         "React": "circle.hexagongrid",
         "АиСД": "arrow.triangle.branch",
-        "АиСД-2BE": "arrow.triangle.merge",
+        "АиСД-2": "arrow.triangle.merge",
         "Hardware": "memorychip",
         "ОперСистемы": "terminal",
         "КомпСети": "network",
@@ -186,10 +202,10 @@ nonisolated enum SubjectIcon {
         "ИгроМех": "dice",
         "РазработкаИгрП": "puzzlepiece",
         "СопрИгрПрод": "shippingbox",
-        "РевьюКодаGD": "doc.text.magnifyingglass",
+        "РевьюКода": "doc.text.magnifyingglass",
         "РевьюИгроКейс2": "magnifyingglass.circle",
         "РевьюИгроКейс3": "binoculars",
-        "МаркетингGD": "megaphone",
+        "Маркетинг": "megaphone",
 
         "УпрИТ-проект": "list.bullet.clipboard",
         "ВидыПроект": "rectangle.stack",
@@ -214,7 +230,7 @@ nonisolated enum SubjectIcon {
         "УчПракт04": "screwdriver",
         "УчПракт06": "wrench",
         "УчПракт.БП": "hammer.circle",
-        "УчПракт.UI": "hammer.fill",
+        "УчПракт": "hammer.fill",
         "АлгоТруд-3": "person.text.rectangle",
         "Демоэкзамен": "checkmark.seal",
         "Предзащита": "rectangle.inset.filled.and.person.filled",
@@ -228,6 +244,12 @@ nonisolated enum SubjectIcon {
         "Подгруппы-1к": "1.square",
         "Подгруппы-2к": "2.square",
         "Подгруппы-3к": "3.square",
+
+        "Мобильная разработка": "iphone",
+        "География": "globe.europe.africa",
+        "Медицина": "cross.case",
+        "Дизайн": "paintbrush.pointed",
+        "Классный час": "person.3",
     ]
 
     // MARK: - Другие написания предметов
@@ -243,9 +265,7 @@ nonisolated enum SubjectIcon {
         "ИнтегрПО2": "ИнтегрПО",
         "ТестИнтерфейс": "ТестИнтерф",
         "ТестИнтерфейсов": "ТестИнтерф",
-        "Тест": "ТестИнтерф",
         "ТестUI": "ТестИнтерф",
-        "Разр": "РазрИнтерф",
         "РазрUI": "РазрИнтерф",
         "ИПИР": "ИнстРазрИнтерф",
         "Проект-ИТ-ИНФ": "ИТ-инфр-проект",
@@ -258,7 +278,7 @@ nonisolated enum SubjectIcon {
         "2D-Граф": "2D-КомпГраф",
         "3D-Граф": "3D-КомпГраф",
         "3D-Интерф": "3D-Интерфейсы",
-        "ИгроМаркетинг": "МаркетингGD",
+        "ИгроМаркетинг": "Маркетинг",
         "КейсыПроекта": "КейсыПроектов",
     ]
 }

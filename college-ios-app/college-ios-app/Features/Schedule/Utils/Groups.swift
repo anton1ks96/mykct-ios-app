@@ -43,14 +43,7 @@ nonisolated enum Groups {
         return english.keys.contains(course) ? course : nil
     }
 
-    private static let profiles: [Named] = [
-        Named(id: "BE", title: "Backend"),
-        Named(id: "FE", title: "Frontend"),
-        Named(id: "GD", title: "Game Dev"),
-        Named(id: "PM", title: "Project Management"),
-        Named(id: "SA", title: "System Administration"),
-        Named(id: "CD", title: "UX/UI Design"),
-    ]
+    private static let profiles = StudyProfile.all.map { Named(id: $0.id, title: $0.title) }
 
     private static let profilesWithSubgroups: Set<String> = ["FE", "CD"]
 

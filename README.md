@@ -4,7 +4,7 @@
 
 [![Swift](https://img.shields.io/badge/Swift-6-orange.svg)](https://swift.org)
 [![SwiftUI](https://img.shields.io/badge/SwiftUI-✅-blue.svg)](https://developer.apple.com/swiftui/)
-[![iOS](https://img.shields.io/badge/iOS-17.1%2B-brightgreen.svg)](https://developer.apple.com/ios/)
+[![iOS](https://img.shields.io/badge/iOS-18.0%2B-brightgreen.svg)](https://developer.apple.com/ios/)
 [![Xcode](https://img.shields.io/badge/Xcode-26%2B-lightgrey.svg)](https://developer.apple.com/xcode/)
 [![App Store](https://img.shields.io/itunes/v/6752833964?label=App%20Store%20Version&logo=apple)](https://apps.apple.com/app/id6752833964)
 
@@ -32,7 +32,7 @@
 
 ## 📋 Требования
 
-- iOS 17.1 или выше
+- iOS 18.0 или выше
 
 ## 🚀 Установка
 

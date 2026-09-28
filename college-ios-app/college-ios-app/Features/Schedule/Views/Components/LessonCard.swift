@@ -85,10 +85,7 @@ struct LessonCard: View {
         GlassGroup {
             FlowLayout {
                 if let secondsLeft {
-                    GlassChip(
-                        text: "Идёт · осталось \(ScheduleFormat.remaining(seconds: secondsLeft))",
-                        symbol: "clock"
-                    )
+                    remainingChip(ScheduleFormat.remaining(seconds: secondsLeft))
                 }
                 if !lesson.room.isEmpty {
                     GlassChip(text: lesson.room, symbol: "mappin.and.ellipse")
@@ -97,6 +94,14 @@ struct LessonCard: View {
                     GlassChip(text: "Подгруппы: \(lesson.subgroups.count)", symbol: "list.bullet")
                 }
             }
+        }
+    }
+
+    private func remainingChip(_ left: String) -> some View {
+        ViewThatFits(in: .horizontal) {
+            GlassChip(text: "Идёт · осталось \(left)", symbol: "clock")
+            GlassChip(text: "Осталось \(left)", symbol: "clock")
+            GlassChip(text: left, symbol: "clock")
         }
     }
 

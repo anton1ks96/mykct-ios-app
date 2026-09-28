@@ -25,7 +25,7 @@ struct SubjectIconTests {
 
     @Test("Точное совпадение выигрывает у поиска по подстрокам")
     func exactMatchWins() {
-        #expect(SubjectIcon.symbol(for: "Химия") == "testtube.2")
+        #expect(SubjectIcon.symbol(for: "Химия") == "flask")
         #expect(SubjectIcon.symbol(for: "АрхПаттерны3") == "building.2")
         #expect(SubjectIcon.symbol(for: " Математика ") == "function")
     }

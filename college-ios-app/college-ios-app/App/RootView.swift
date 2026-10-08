@@ -9,7 +9,6 @@ import SwiftUI
 
 private enum RootPhase: Hashable {
     case welcome
-    case splash
     case main
 }
 
@@ -22,7 +21,7 @@ struct RootView: View {
 
     private var phase: RootPhase {
         if !welcomePassed && !sessionViewModel.hasStoredSession { return .welcome }
-        return sessionViewModel.isBootstrapping ? .splash : .main
+        return .main
     }
 
     var body: some View {
@@ -31,9 +30,6 @@ struct RootView: View {
             case .welcome:
                 WelcomeScreen(onEnter: { welcomePassed = true })
                     .environment(\.colors, AppColors.of(colorScheme, theme: theme))
-
-            case .splash:
-                SplashView()
 
             case .main:
                 MainTabView()

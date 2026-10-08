@@ -26,11 +26,12 @@ final class HomeViewModel {
 
     // MARK: - Intents
 
-    func sync(user: User?, isBootstrapping: Bool) {
+    func sync(user: User?, isBootstrapping: Bool, hasStoredSession: Bool = false) {
         let wasAuthenticated = state.isAuthenticated
 
         state.user = user
         state.isBootstrapping = isBootstrapping
+        state.hasStoredSession = hasStoredSession
 
         if user == nil {
             clear()

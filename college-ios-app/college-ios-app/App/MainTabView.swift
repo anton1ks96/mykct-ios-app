@@ -42,7 +42,8 @@ struct MainTabView: View {
             NavigationStack {
                 HomeScreen(
                     viewModel: homeViewModel,
-                    onLogin: { isLoginPresented = true }
+                    onLogin: { isLoginPresented = true },
+                    onReconnect: sessionViewModel.bootstrapAutoLogin
                 )
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) { streakButton }
@@ -66,7 +67,11 @@ struct MainTabView: View {
             .tag(Tab.settings)
         }
         .onChange(of: session, initial: true) { _, updated in
-            homeViewModel.sync(user: updated.user, isBootstrapping: updated.isBootstrapping)
+            homeViewModel.sync(
+                user: updated.user,
+                isBootstrapping: updated.isBootstrapping,
+                hasStoredSession: updated.hasStoredSession
+            )
             pushService.sync(
                 userID: updated.user?.id,
                 group: updated.user?.academicGroup,
@@ -117,21 +122,29 @@ struct MainTabView: View {
 
     private var accountButton: some View {
         Button {
-            if sessionViewModel.isAuthenticated {
+            if hasAccount {
                 isAccountPresented = true
             } else {
                 isLoginPresented = true
             }
         } label: {
-            Image(systemName: sessionViewModel.isAuthenticated
+            Image(systemName: hasAccount
                   ? "person.circle.fill"
                   : "rectangle.portrait.and.arrow.forward")
                 .imageScale(.medium)
         }
-        .accessibilityLabel(sessionViewModel.isAuthenticated ? "Профиль" : "Войти")
+        .accessibilityLabel(hasAccount ? "Профиль" : "Войти")
+    }
+
+    private var hasAccount: Bool {
+        sessionViewModel.isAuthenticated || sessionViewModel.hasStoredSession
     }
 
     private var session: HomeSession {
-        HomeSession(user: sessionViewModel.user, isBootstrapping: sessionViewModel.isBootstrapping)
+        HomeSession(
+            user: sessionViewModel.user,
+            isBootstrapping: sessionViewModel.isBootstrapping,
+            hasStoredSession: sessionViewModel.hasStoredSession
+        )
     }
 }

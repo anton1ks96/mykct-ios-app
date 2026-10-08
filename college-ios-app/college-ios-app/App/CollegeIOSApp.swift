@@ -31,6 +31,7 @@ struct CollegeIOSApp: App {
                 .onChange(of: scenePhase, initial: true) { _, phase in
                     guard phase == .active else { return }
                     AppDependencies.pushService.refreshAuthorization()
+                    sessionViewModel.reconnectIfNeeded()
                 }
         }
     }

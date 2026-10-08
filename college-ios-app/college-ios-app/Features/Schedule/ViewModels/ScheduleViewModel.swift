@@ -47,6 +47,11 @@ final class ScheduleViewModel {
         await reload()
     }
 
+    func refreshIfOutdated() async {
+        guard didStart, state.isOffline || state.isStale else { return }
+        await reload()
+    }
+
     func select(date: Date) {
         state.selectedDate = date
         applyWeek()

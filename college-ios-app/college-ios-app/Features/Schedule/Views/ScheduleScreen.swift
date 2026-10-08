@@ -7,6 +7,7 @@ import SwiftUI
 
 struct ScheduleScreen: View {
     @Environment(\.colors) private var colors
+    @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel: ScheduleViewModel
     @State private var isGroupSheetPresented = false
 
@@ -79,6 +80,10 @@ struct ScheduleScreen: View {
             }
         }
         .task { await viewModel.start() }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            Task { await viewModel.refreshIfOutdated() }
+        }
         .onChange(of: settings, initial: true) { _, updated in viewModel.apply(settings: updated) }
         .onChange(of: storedSelection) { _, updated in viewModel.update(selection: updated) }
     }

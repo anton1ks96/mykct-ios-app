@@ -175,4 +175,33 @@ struct ScheduleOfflineTests {
         #expect(!viewModel.state.isOffline)
         #expect(viewModel.state.days.map(\.lessonCount).reduce(0, +) == 2)
     }
+
+    @Test("Возврат в приложение перезагружает неделю, показанную без связи")
+    func returningRefreshesOfflineWeek() async {
+        let fresh = WeekSchedule(lessons: [lesson(on: currentMonday)])
+        let repository = StubScheduleRepository(
+            cached: WeekSchedule(lessons: [], fetchedAt: .now),
+            responses: [nil, fresh]
+        )
+        let viewModel = makeViewModel(repository: repository)
+
+        await viewModel.start()
+        await viewModel.refreshIfOutdated()
+
+        #expect(!viewModel.state.isOffline)
+        #expect(viewModel.state.days.contains { $0.date == currentMonday && $0.lessonCount == 1 })
+    }
+
+    @Test("Возврат в приложение со свежей неделей в сеть не ходит")
+    func returningKeepsFreshWeek() async {
+        let fresh = WeekSchedule(lessons: [lesson(on: currentMonday)])
+        let repository = StubScheduleRepository(cached: nil, responses: [fresh])
+        let viewModel = makeViewModel(repository: repository)
+
+        await viewModel.start()
+        let requests = await repository.mondays.filter { $0 == currentMonday }.count
+        await viewModel.refreshIfOutdated()
+
+        #expect(await repository.mondays.filter { $0 == currentMonday }.count == requests)
+    }
 }

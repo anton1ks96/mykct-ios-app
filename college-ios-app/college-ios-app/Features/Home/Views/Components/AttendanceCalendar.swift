@@ -116,13 +116,11 @@ private struct MonthGrid: View {
     }
 
     var body: some View {
-        GlassGroup(spacing: cellSpacing) {
-            VStack(spacing: cellSpacing) {
-                ForEach(0..<rows, id: \.self) { row in
-                    HStack(spacing: cellSpacing) {
-                        ForEach(0..<7, id: \.self) { column in
-                            cell(at: row * 7 + column - lead + 1)
-                        }
+        VStack(spacing: cellSpacing) {
+            ForEach(0..<rows, id: \.self) { row in
+                HStack(spacing: cellSpacing) {
+                    ForEach(0..<7, id: \.self) { column in
+                        cell(at: row * 7 + column - lead + 1)
                     }
                 }
             }

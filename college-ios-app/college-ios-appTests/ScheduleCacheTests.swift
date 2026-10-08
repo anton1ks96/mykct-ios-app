@@ -7,15 +7,27 @@ import Foundation
 import Testing
 @testable import college_ios_app
 
-private actor OfflineScheduleRepository: ScheduleRepositoryProtocol {
+private actor StubScheduleRepository: ScheduleRepositoryProtocol {
     private let cached: WeekSchedule?
+    private let error: APIError
+    private var responses: [WeekSchedule?]
+    private(set) var mondays: [Date] = []
 
-    init(cached: WeekSchedule?) {
+    init(
+        cached: WeekSchedule?,
+        responses: [WeekSchedule?] = [nil],
+        error: APIError = .url(URLError(.notConnectedToInternet))
+    ) {
         self.cached = cached
+        self.responses = responses
+        self.error = error
     }
 
     func weekSchedule(monday: Date, selection: Selection) async throws -> WeekSchedule {
-        throw APIError.url(URLError(.notConnectedToInternet))
+        mondays.append(monday)
+        let response = responses.count > 1 ? responses.removeFirst() : responses[0]
+        guard let response else { throw error }
+        return response
     }
 
     func cachedWeek(monday: Date, selection: Selection) async -> WeekSchedule? {
@@ -43,9 +55,14 @@ private func lesson(on day: Date) -> Lesson {
 
 @MainActor
 private func makeViewModel(cached: WeekSchedule?) -> ScheduleViewModel {
+    makeViewModel(repository: StubScheduleRepository(cached: cached))
+}
+
+@MainActor
+private func makeViewModel(repository: StubScheduleRepository) -> ScheduleViewModel {
     let defaults = UserDefaults(suiteName: "schedule.cache.tests.\(UUID().uuidString)")!
     return ScheduleViewModel(
-        repository: OfflineScheduleRepository(cached: cached),
+        repository: repository,
         selectionStore: SelectionStore(defaults: defaults),
         settingsStore: ScheduleSettingsStore(defaults: defaults)
     )
@@ -122,5 +139,40 @@ struct ScheduleOfflineTests {
         #expect(viewModel.state.error != nil)
         #expect(!viewModel.state.isOffline)
         #expect(viewModel.state.days.isEmpty)
+    }
+
+    @Test("Ошибка сервера при кэше не выдаётся за отсутствие связи")
+    func serverErrorWithCacheIsStale() async {
+        let today = ScheduleCalendar.day(of: .now)
+        let repository = StubScheduleRepository(
+            cached: WeekSchedule(lessons: [lesson(on: today)], fetchedAt: .now),
+            error: .server(code: 503)
+        )
+        let viewModel = makeViewModel(repository: repository)
+
+        await viewModel.start()
+
+        #expect(viewModel.state.isStale)
+        #expect(!viewModel.state.isOffline)
+        #expect(viewModel.state.days.contains { $0.date == today && $0.lessonCount == 1 })
+    }
+
+    @Test("После возврата связи плашка снимается и показываются свежие данные")
+    func reconnectReplacesCachedWeek() async {
+        let tuesday = ScheduleCalendar.adding(days: 1, to: currentMonday)
+        let fresh = WeekSchedule(lessons: [lesson(on: currentMonday), lesson(on: tuesday)])
+        let repository = StubScheduleRepository(
+            cached: WeekSchedule(lessons: [lesson(on: currentMonday)], fetchedAt: .now),
+            responses: [nil, fresh]
+        )
+        let viewModel = makeViewModel(repository: repository)
+
+        await viewModel.start()
+        #expect(viewModel.state.isOffline)
+
+        await viewModel.retry()
+
+        #expect(!viewModel.state.isOffline)
+        #expect(viewModel.state.days.map(\.lessonCount).reduce(0, +) == 2)
     }
 }

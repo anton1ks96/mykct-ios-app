@@ -143,26 +143,33 @@ final class ScheduleViewModel {
     }
 
     private func performLoad() async {
-        let cached = await repository.cachedWeek(monday: state.weekStart, selection: state.selection)
-        guard !Task.isCancelled else { return }
+        let monday = state.weekStart
+        let selection = state.selection
+        func isCurrent() -> Bool {
+            !Task.isCancelled && state.weekStart == monday && state.selection == selection
+        }
+
+        let cached = await repository.cachedWeek(monday: monday, selection: selection)
+        guard isCurrent() else { return }
         if let cached {
             show(cached)
         } else {
+            state.isOffline = false
+            state.isStale = false
+            state.fetchedAt = nil
             state.isLoading = true
         }
 
         do {
-            let week = try await repository.weekSchedule(
-                monday: state.weekStart,
-                selection: state.selection
-            )
-            try Task.checkCancellation()
+            let week = try await repository.weekSchedule(monday: monday, selection: selection)
+            guard isCurrent() else { return }
             state.isOffline = false
             show(week)
         } catch {
-            guard !ErrorText.isCancellation(error) else { return }
+            guard !ErrorText.isCancellation(error), isCurrent() else { return }
             guard cached == nil else {
-                state.isOffline = true
+                state.isOffline = ErrorText.isConnectivity(error)
+                state.isStale = !state.isOffline
                 return
             }
             weekLessons = []

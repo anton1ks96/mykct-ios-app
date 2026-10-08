@@ -103,6 +103,28 @@ struct ScheduleCacheTests {
         #expect(await cache.week(monday: currentMonday, selection: selection) != nil)
     }
 
+    @Test("После смены часового пояса уроки остаются в своих днях недели")
+    func lessonsFollowTimeZoneChange() async {
+        let url = makeFileURL()
+        let selection = ScheduleMocks.selection
+        let savedMonday = currentMonday
+        let savedTuesday = ScheduleCalendar.adding(days: 1, to: savedMonday)
+        let shiftedMonday = savedMonday.addingTimeInterval(3 * 60 * 60)
+
+        await ScheduleCache(fileURL: url).save(
+            WeekSchedule(lessons: [lesson(on: savedTuesday)]),
+            monday: savedMonday,
+            selection: selection
+        )
+        let restored = await ScheduleCache(fileURL: url).week(
+            monday: shiftedMonday,
+            selection: selection
+        )
+
+        let shiftedTuesday = ScheduleCalendar.adding(days: 1, to: shiftedMonday)
+        #expect(restored?.lessons.map(\.day) == [shiftedTuesday])
+    }
+
     @Test("Битый файл читается как пустой кэш")
     func corruptedFileIsEmpty() async throws {
         let url = makeFileURL()

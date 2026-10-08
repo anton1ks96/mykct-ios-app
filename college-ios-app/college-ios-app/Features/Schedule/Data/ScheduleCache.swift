@@ -16,6 +16,7 @@ actor ScheduleCache: ScheduleCacheProtocol {
         .appending(path: "schedule-cache.json")
 
     private nonisolated struct Entry: Codable, Sendable {
+        let week: String
         let monday: Date
         let lessons: [Lesson]
         let fetchedAt: Date?
@@ -29,16 +30,22 @@ actor ScheduleCache: ScheduleCacheProtocol {
     }
 
     func week(monday: Date, selection: Selection) -> WeekSchedule? {
-        guard let entry = loaded()[Self.key(monday: monday, selection: selection)] else { return nil }
-        return WeekSchedule(lessons: entry.lessons, fetchedAt: entry.fetchedAt)
+        let key = Self.key(monday: monday, selection: selection)
+        guard let entry = loaded()[key] else { return nil }
+        return WeekSchedule(
+            lessons: entry.lessons.map { Self.move($0, from: entry.monday, to: monday) },
+            fetchedAt: entry.fetchedAt
+        )
     }
 
     func save(_ week: WeekSchedule, monday: Date, selection: Selection) {
         let currentMonday = ScheduleCalendar.monday(of: ScheduleCalendar.day(of: .now))
         guard monday >= currentMonday else { return }
 
-        var updated = loaded().filter { $0.value.monday >= currentMonday }
+        let currentWeek = ScheduleParsing.requestString(from: currentMonday)
+        var updated = loaded().filter { $0.value.week >= currentWeek }
         updated[Self.key(monday: monday, selection: selection)] = Entry(
+            week: ScheduleParsing.requestString(from: monday),
             monday: monday,
             lessons: week.lessons,
             fetchedAt: week.fetchedAt ?? .now
@@ -71,6 +78,24 @@ actor ScheduleCache: ScheduleCacheProtocol {
         } catch {
             CrashlyticsLogger.logDataError(error, operation: "save_schedule_cache", dataType: "ScheduleCache")
         }
+    }
+
+    private nonisolated static func move(
+        _ lesson: Lesson,
+        from old: Date,
+        to monday: Date
+    ) -> Lesson {
+        let offset = Int((lesson.day.timeIntervalSince(old) / 86_400).rounded())
+        return Lesson(
+            id: lesson.id,
+            day: ScheduleCalendar.adding(days: offset, to: monday),
+            start: lesson.start,
+            end: lesson.end,
+            title: lesson.title,
+            topic: lesson.topic,
+            room: lesson.room,
+            subgroups: lesson.subgroups
+        )
     }
 
     private nonisolated static func key(monday: Date, selection: Selection) -> String {

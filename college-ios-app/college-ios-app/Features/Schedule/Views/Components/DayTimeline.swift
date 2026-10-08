@@ -138,6 +138,7 @@ nonisolated private struct DashedLine: Shape {
     }
 }
 
+#if DEBUG
 #Preview {
     let day = ScheduleCalendar.day(of: .now)
 
@@ -152,3 +153,4 @@ nonisolated private struct DashedLine: Shape {
     .appBackground()
     .environment(\.colors, .dark)
 }
+#endif

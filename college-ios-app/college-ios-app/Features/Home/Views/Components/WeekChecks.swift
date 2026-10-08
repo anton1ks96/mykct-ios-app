@@ -63,6 +63,7 @@ struct WeekChecks: View {
     }
 }
 
+#if DEBUG
 #Preview {
     let monday = ScheduleCalendar.monday(of: .now)
 
@@ -71,3 +72,4 @@ struct WeekChecks: View {
         .appBackground()
         .environment(\.colors, .dark)
 }
+#endif

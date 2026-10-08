@@ -61,6 +61,7 @@ struct LeaderboardRow: View {
     }
 }
 
+#if DEBUG
 #Preview {
     GlassGroup(spacing: 8) {
         VStack(spacing: 8) {
@@ -75,3 +76,4 @@ struct LeaderboardRow: View {
     .appBackground()
     .environment(\.colors, .dark)
 }
+#endif

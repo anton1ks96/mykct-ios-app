@@ -276,8 +276,10 @@ struct ScheduleScreen: View {
 
 }
 
+#if DEBUG
 #Preview {
     NavigationStack {
         ScheduleScreen(viewModel: ScheduleViewModel(repository: MockScheduleRepository()))
     }
 }
+#endif

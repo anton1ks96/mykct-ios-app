@@ -45,6 +45,7 @@ struct AttendanceDayCard: View {
     }
 }
 
+#if DEBUG
 #Preview {
     let records = HomeMocks.records(month: .now)
     let dates = Set(records.map(\.date)).sorted().suffix(3)
@@ -63,3 +64,4 @@ struct AttendanceDayCard: View {
     .appBackground()
     .environment(\.colors, .dark)
 }
+#endif

@@ -283,6 +283,7 @@ private struct SheetChip: Identifiable {
     var id: String { "\(symbol)-\(text)" }
 }
 
+#if DEBUG
 #Preview("С подгруппами") {
     let lesson = ScheduleMocks.lessons(day: ScheduleCalendar.day(of: .now), weekday: 0)[2]
 
@@ -309,3 +310,4 @@ private struct SheetChip: Identifiable {
     )
     .environment(\.colors, .dark)
 }
+#endif

@@ -289,6 +289,7 @@ private extension DayMark {
     }
 }
 
+#if DEBUG
 #Preview {
     @Previewable @State var selected = ScheduleCalendar.day(of: .now)
     @Previewable @State var month = ScheduleCalendar.monthStart(of: .now)
@@ -311,3 +312,4 @@ private extension DayMark {
     .appBackground()
     .environment(\.colors, .dark)
 }
+#endif

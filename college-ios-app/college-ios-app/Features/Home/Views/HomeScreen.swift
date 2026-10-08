@@ -213,6 +213,7 @@ struct HomeScreen: View {
     }
 }
 
+#if DEBUG
 #Preview("Вошёл") {
     let viewModel = HomeViewModel(repository: MockHomeRepository())
     viewModel.sync(user: HomeMocks.user, isBootstrapping: false)
@@ -230,3 +231,4 @@ struct HomeScreen: View {
         HomeScreen(viewModel: viewModel, onLogin: {})
     }
 }
+#endif

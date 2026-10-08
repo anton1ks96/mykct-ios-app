@@ -96,7 +96,6 @@ struct AttendanceCalendar: View {
 
 private struct MonthGrid: View {
     @Environment(\.colors) private var colors
-    @Namespace private var glass
 
     let month: Date
     let selected: Date
@@ -116,27 +115,32 @@ private struct MonthGrid: View {
     }
 
     var body: some View {
-        GlassGroup(spacing: cellSpacing) {
-            VStack(spacing: cellSpacing) {
-                ForEach(0..<rows, id: \.self) { row in
-                    HStack(spacing: cellSpacing) {
-                        ForEach(0..<7, id: \.self) { column in
-                            cell(at: row * 7 + column - lead + 1)
-                        }
+        VStack(spacing: cellSpacing) {
+            ForEach(0..<rows, id: \.self) { row in
+                HStack(spacing: cellSpacing) {
+                    ForEach(0..<7, id: \.self) { column in
+                        cell(at: row * 7 + column - lead + 1)
                     }
                 }
             }
         }
-        .background(alignment: .topLeading) { selection }
+        .background(alignment: .topLeading) {
+            GeometryReader { proxy in selection(width: proxy.size.width) }
+        }
         .animation(.snappy(duration: 0.28), value: selected)
     }
 
-    private var selection: some View {
+    private func selection(width: CGFloat) -> some View {
         let mark = marks[selected] ?? .empty
+        let side = (width - cellSpacing * 6) / 7
+        let step = side + cellSpacing
+        let index = lead + ScheduleCalendar.calendar.component(.day, from: selected) - 1
 
         return RoundedRectangle(cornerRadius: cellRadius, style: .continuous)
             .fill(mark.fill(colors) ?? colors.primary)
-            .matchedGeometryEffect(id: "selection", in: glass, isSource: false)
+            .frame(width: side, height: side)
+            .offset(x: CGFloat(index % 7) * step, y: CGFloat(index / 7) * step)
+            .opacity(ScheduleCalendar.isSameMonth(selected, month) ? 1 : 0)
             .accessibilityHidden(true)
     }
 
@@ -153,7 +157,6 @@ private struct MonthGrid: View {
                 mark: marks[date] ?? .empty,
                 isSelected: date == selected,
                 isToday: date == ScheduleCalendar.day(of: .now),
-                namespace: glass,
                 onSelect: { onSelect(date) }
             )
         }
@@ -168,7 +171,6 @@ private struct DayTile: View {
     let mark: DayMark
     let isSelected: Bool
     let isToday: Bool
-    let namespace: Namespace.ID
     let onSelect: () -> Void
 
     private var shape: RoundedRectangle {
@@ -191,7 +193,7 @@ private struct DayTile: View {
                 .contentShape(shape)
         }
         .buttonStyle(.plain)
-        .modifier(DayTileSurface(mark: mark, isSelected: isSelected, namespace: namespace))
+        .modifier(DayTileSurface(mark: mark, isSelected: isSelected))
         .overlay {
             if isToday && !isSelected {
                 shape.strokeBorder(colors.primary, lineWidth: 1.5)
@@ -215,7 +217,6 @@ private struct DayTileSurface: ViewModifier {
 
     let mark: DayMark
     let isSelected: Bool
-    let namespace: Namespace.ID
 
     private var shape: RoundedRectangle {
         RoundedRectangle(cornerRadius: cellRadius, style: .continuous)
@@ -224,7 +225,7 @@ private struct DayTileSurface: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         if isSelected {
-            content.matchedGeometryEffect(id: "selection", in: namespace, isSource: true)
+            content
         } else if let accent = mark.accent(colors) {
             content.background(accent.opacity(0.16), in: shape)
         } else {

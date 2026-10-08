@@ -76,7 +76,11 @@ actor ScheduleCache: ScheduleCacheProtocol {
             var url = fileURL
             try url.setResourceValues(values)
         } catch {
-            CrashlyticsLogger.logDataError(error, operation: "save_schedule_cache", dataType: "ScheduleCache")
+            CrashlyticsLogger.logDataError(
+                error,
+                operation: "save_schedule_cache",
+                dataType: "ScheduleCache"
+            )
         }
     }
 

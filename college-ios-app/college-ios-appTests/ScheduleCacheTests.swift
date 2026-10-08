@@ -65,7 +65,13 @@ private var currentMonday: Date {
 }
 
 private func lesson(on day: Date) -> Lesson {
-    Lesson(id: "lesson-\(day.timeIntervalSince1970)", day: day, start: 9 * 60, end: 10 * 60 + 30, title: "Математика")
+    Lesson(
+        id: "lesson-\(day.timeIntervalSince1970)",
+        day: day,
+        start: 9 * 60,
+        end: 10 * 60 + 30,
+        title: "Математика"
+    )
 }
 
 @MainActor
@@ -102,7 +108,9 @@ struct ScheduleCacheTests {
         let restored = await ScheduleCache(fileURL: url).week(monday: monday, selection: selection)
         #expect(restored?.lessons == [lesson(on: monday)])
         #expect(restored?.fetchedAt == fetchedAt)
-        #expect(await ScheduleCache(fileURL: url).week(monday: monday, selection: Selection(group: "ИТ24-11")) == nil)
+        let otherGroup = Selection(group: "ИТ24-11")
+        let reopened = ScheduleCache(fileURL: url)
+        #expect(await reopened.week(monday: monday, selection: otherGroup) == nil)
     }
 
     @Test("Прошлые недели не хранятся, текущая остаётся")
@@ -111,8 +119,16 @@ struct ScheduleCacheTests {
         let selection = ScheduleMocks.selection
         let previous = ScheduleCalendar.adding(weeks: -1, to: currentMonday)
 
-        await cache.save(WeekSchedule(lessons: [lesson(on: previous)]), monday: previous, selection: selection)
-        await cache.save(WeekSchedule(lessons: [lesson(on: currentMonday)]), monday: currentMonday, selection: selection)
+        await cache.save(
+            WeekSchedule(lessons: [lesson(on: previous)]),
+            monday: previous,
+            selection: selection
+        )
+        await cache.save(
+            WeekSchedule(lessons: [lesson(on: currentMonday)]),
+            monday: currentMonday,
+            selection: selection
+        )
 
         #expect(await cache.week(monday: previous, selection: selection) == nil)
         #expect(await cache.week(monday: currentMonday, selection: selection) != nil)
@@ -158,10 +174,14 @@ struct ScheduleCacheTests {
     @Test("Битый файл читается как пустой кэш")
     func corruptedFileIsEmpty() async throws {
         let url = makeFileURL()
-        try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(
+            at: url.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
         try Data("not json".utf8).write(to: url)
 
-        #expect(await ScheduleCache(fileURL: url).week(monday: currentMonday, selection: ScheduleMocks.selection) == nil)
+        let cache = ScheduleCache(fileURL: url)
+        #expect(await cache.week(monday: currentMonday, selection: ScheduleMocks.selection) == nil)
     }
 }
 
@@ -172,7 +192,8 @@ struct ScheduleOfflineTests {
     @Test("Без сети показывается неделя из кэша с пометкой")
     func offlineShowsCachedWeek() async {
         let today = ScheduleCalendar.day(of: .now)
-        let viewModel = makeViewModel(cached: WeekSchedule(lessons: [lesson(on: today)], fetchedAt: .now))
+        let cached = WeekSchedule(lessons: [lesson(on: today)], fetchedAt: .now)
+        let viewModel = makeViewModel(cached: cached)
 
         await viewModel.start()
 

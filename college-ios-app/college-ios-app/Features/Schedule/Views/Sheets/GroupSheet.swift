@@ -120,8 +120,10 @@ struct GroupSheet: View {
     }
 }
 
+#if DEBUG
 #Preview {
     GroupSheet(selection: ScheduleMocks.selection, onSelect: { _ in })
         .environment(\.colors, .dark)
         .environmentObject(PreviewMocks.sessionViewModel())
 }
+#endif

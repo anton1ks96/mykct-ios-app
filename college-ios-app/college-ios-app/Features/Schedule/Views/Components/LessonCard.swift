@@ -137,6 +137,7 @@ struct LessonCard: View {
     }
 }
 
+#if DEBUG
 #Preview {
     let day = ScheduleCalendar.day(of: .now)
 
@@ -160,3 +161,4 @@ struct LessonCard: View {
     .appBackground()
     .environment(\.colors, .dark)
 }
+#endif

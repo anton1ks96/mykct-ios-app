@@ -144,6 +144,7 @@ private struct ScoreRow: View {
     }
 }
 
+#if DEBUG
 #Preview {
     ScoresSheet(
         scores: SubjectScores(
@@ -154,3 +155,4 @@ private struct ScoreRow: View {
     )
     .environment(\.colors, .dark)
 }
+#endif

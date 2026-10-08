@@ -186,6 +186,7 @@ struct StreakSheet: View {
     }
 }
 
+#if DEBUG
 #Preview {
     let viewModel = HomeViewModel(repository: MockHomeRepository())
     viewModel.sync(user: HomeMocks.user, isBootstrapping: false)
@@ -193,3 +194,4 @@ struct StreakSheet: View {
     return StreakSheet(viewModel: viewModel)
         .environment(\.colors, .dark)
 }
+#endif

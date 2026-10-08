@@ -48,6 +48,7 @@ struct LeaderboardBoard: View {
     }
 }
 
+#if DEBUG
 #Preview {
     ScrollView {
         LeaderboardBoard(board: HomeMocks.leaderboard)
@@ -56,3 +57,4 @@ struct LeaderboardBoard: View {
     .appBackground()
     .environment(\.colors, .dark)
 }
+#endif

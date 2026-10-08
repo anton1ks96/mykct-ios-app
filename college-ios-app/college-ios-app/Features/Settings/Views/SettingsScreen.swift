@@ -212,6 +212,7 @@ private extension Bundle {
     }
 }
 
+#if DEBUG
 #Preview {
     NavigationStack {
         SettingsScreen()
@@ -219,3 +220,4 @@ private extension Bundle {
     .environmentObject(PreviewMocks.sessionViewModel())
     .environment(PreviewMocks.pushService())
 }
+#endif

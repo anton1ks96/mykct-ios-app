@@ -155,6 +155,7 @@ struct LoginScreen: View {
         "Вход нужен для посещаемости и баллов. Расписание работает и без него."
 }
 
+#if DEBUG
 #Preview("Из настроек") {
     LoginScreen(viewModel: PreviewMocks.loginViewModel(), onClose: {})
 }
@@ -168,3 +169,4 @@ struct LoginScreen: View {
         onSkip: {}
     )
 }
+#endif

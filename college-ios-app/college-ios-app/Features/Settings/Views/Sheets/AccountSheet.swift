@@ -119,7 +119,9 @@ struct AccountSheet: View {
     }
 }
 
+#if DEBUG
 #Preview {
     AccountSheet()
         .environmentObject(PreviewMocks.sessionViewModel())
 }
+#endif

@@ -61,6 +61,7 @@ struct ScheduleScreen: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) { groupPill }
         }
+        .refreshable { await viewModel.retry() }
         .sheet(isPresented: $isGroupSheetPresented) {
             GroupSheet(selection: state.selection, onSelect: viewModel.update(selection:))
                 .presentationDetents([.medium, .large])
@@ -77,7 +78,6 @@ struct ScheduleScreen: View {
                     .presentationDragIndicator(.visible)
             }
         }
-        .refreshable { await viewModel.retry() }
         .task { await viewModel.start() }
         .onChange(of: settings, initial: true) { _, updated in viewModel.apply(settings: updated) }
         .onChange(of: storedSelection) { _, updated in viewModel.update(selection: updated) }

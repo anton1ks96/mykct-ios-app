@@ -14,5 +14,6 @@ struct HomePlaceholder<Content: View>: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 48)
+        .scrollCentered()
     }
 }

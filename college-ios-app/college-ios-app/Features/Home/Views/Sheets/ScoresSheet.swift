@@ -11,7 +11,7 @@ struct ScoresSheet: View {
     let scores: SubjectScores
 
     var body: some View {
-        ScrollView {
+        FillScroll(fills: phase != .content) {
             VStack(alignment: .leading, spacing: 0) {
                 Text(scores.subject.title)
                     .textStyle(AppType.titleLarge)
@@ -44,14 +44,20 @@ struct ScoresSheet: View {
             HomePlaceholder { Swirl().frame(width: 44, height: 44) }
 
         case .error:
-            Text(scores.error ?? "Не удалось загрузить баллы")
-                .textStyle(AppType.bodyLarge)
-                .foregroundStyle(colors.onSurfaceVariant)
+            HomePlaceholder {
+                Text(scores.error ?? "Не удалось загрузить баллы")
+                    .textStyle(AppType.bodyLarge)
+                    .foregroundStyle(colors.onSurfaceVariant)
+                    .multilineTextAlignment(.center)
+            }
 
         case .empty:
-            Text("За это полугодие баллов нет")
-                .textStyle(AppType.bodyLarge)
-                .foregroundStyle(colors.onSurfaceVariant)
+            HomePlaceholder {
+                Text("За это полугодие баллов нет")
+                    .textStyle(AppType.bodyLarge)
+                    .foregroundStyle(colors.onSurfaceVariant)
+                    .multilineTextAlignment(.center)
+            }
 
         case .content:
             lessons

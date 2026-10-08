@@ -15,7 +15,7 @@ struct StreakSheet: View {
     private var state: HomeState { viewModel.state }
 
     var body: some View {
-        ScrollView {
+        FillScroll(fills: isPlaceholder) {
             VStack(spacing: 0) {
                 if state.canSeeLeaderboard {
                     SegmentedSwitch(items: StreakTab.allCases, title: \.title, selection: $tab)
@@ -166,6 +166,13 @@ struct StreakSheet: View {
             if let board = state.leaderboard.board {
                 LeaderboardBoard(board: board)
             }
+        }
+    }
+
+    private var isPlaceholder: Bool {
+        switch tab {
+        case .streak: state.streak == nil
+        case .leaderboard: leaderboardPhase != .content
         }
     }
 

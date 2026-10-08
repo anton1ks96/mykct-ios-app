@@ -9,6 +9,8 @@ struct FillScroll<Content: View>: View {
     var fills: Bool
     @ViewBuilder let content: () -> Content
 
+    @State private var viewport = Viewport(height: 0, topInset: 0)
+    @State private var isScrolling = false
     @State private var topInset: CGFloat = 0
     @State private var height: CGFloat = 0
 
@@ -23,10 +25,20 @@ struct FillScroll<Content: View>: View {
                 height: geometry.containerSize.height,
                 topInset: geometry.contentInsets.top
             )
-        } action: { _, viewport in
-            topInset = max(topInset, viewport.topInset)
-            height = viewport.height - (topInset - viewport.topInset)
+        } action: { _, updated in
+            viewport = updated
+            measure()
         }
+        .onScrollPhaseChange { _, phase in
+            isScrolling = phase.isScrolling
+            measure()
+        }
+    }
+
+    private func measure() {
+        guard !isScrolling, viewport.topInset >= topInset else { return }
+        topInset = viewport.topInset
+        height = viewport.height
     }
 }
 

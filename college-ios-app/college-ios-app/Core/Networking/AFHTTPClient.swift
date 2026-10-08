@@ -98,6 +98,14 @@ public nonisolated final class AFHTTPClient: HTTPClientProtocol {
     private let requestTimeout: TimeInterval
     private let interceptor: RequestInterceptor?
 
+    private static let offlineCodes: Set<URLError.Code> = [
+        .notConnectedToInternet,
+        .networkConnectionLost,
+        .dataNotAllowed,
+        .internationalRoamingOff,
+        .timedOut,
+    ]
+
     public init(
         baseURL: URL,
         session: Session = NetworkingStack.session,
@@ -168,12 +176,15 @@ public nonisolated final class AFHTTPClient: HTTPClientProtocol {
                 throw APIError.cancelled
             }
             guard let http = response.response else {
-                let urlError = URLError(.badServerResponse)
-                CrashlyticsLogger.logNetworkError(
-                    urlError,
-                    endpoint: endpoint.path,
-                    method: endpoint.method.rawValue
-                )
+                let urlError = response.error?.underlyingError as? URLError
+                    ?? URLError(.badServerResponse)
+                if !Self.offlineCodes.contains(urlError.code) {
+                    CrashlyticsLogger.logNetworkError(
+                        urlError,
+                        endpoint: endpoint.path,
+                        method: endpoint.method.rawValue
+                    )
+                }
                 throw APIError.url(urlError)
             }
             guard (200...299).contains(http.statusCode) else {

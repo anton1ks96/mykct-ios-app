@@ -101,10 +101,12 @@ public actor AuthService {
         do {
             return try await task.value
         } catch {
-            let hadSession = await session.currentUser != nil
-            if hadSession, Self.isSessionExpired(error) {
+            if Self.isSessionExpired(error) {
+                let hadSession = await session.currentUser != nil
                 try? await session.logoutLocal()
-                eventContinuation.yield(.signedOut(.sessionExpired))
+                if hadSession {
+                    eventContinuation.yield(.signedOut(.sessionExpired))
+                }
             }
             throw error
         }

@@ -5,11 +5,8 @@
 
 import SwiftUI
 
-private let logoSide: CGFloat = 84
-private let logoRadius: CGFloat = 26
-
 struct WelcomeScreen: View {
-    @Environment(\.colors) private var colors
+    private let colors = AppColors.dark
 
     let onEnter: () -> Void
 
@@ -19,13 +16,10 @@ struct WelcomeScreen: View {
         VStack(spacing: 0) {
             Spacer(minLength: 0)
 
-            logo
-
             Text("Добро пожаловать в МойКЦТ")
                 .textStyle(AppType.heroValue)
                 .foregroundStyle(colors.onBackground)
                 .multilineTextAlignment(.center)
-                .padding(.top, 28)
 
             Text("Расписание, посещаемость и баллы — всё в одном приложении.")
                 .textStyle(AppType.bodyLarge)
@@ -63,7 +57,7 @@ struct WelcomeScreen: View {
         }
         .padding(.horizontal, 24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .appBackground()
+        .loginBackdrop()
         .fullScreenCover(isPresented: $isLoginPresented) {
             LoginScreen(
                 onClose: { isLoginPresented = false },
@@ -72,26 +66,8 @@ struct WelcomeScreen: View {
         }
     }
 
-    // MARK: - Parts
-
-    private var logo: some View {
-        Image("LaunchIcon")
-            .resizable()
-            .scaledToFit()
-            .frame(width: logoSide, height: logoSide)
-            .padding(10)
-            .glassSurface(RoundedRectangle(cornerRadius: logoRadius, style: .continuous))
-            .shadow(color: colors.primary.opacity(colors.isDark ? 0.45 : 0.25), radius: 40)
-            .accessibilityHidden(true)
-    }
 }
 
-#Preview("Тёмная") {
+#Preview {
     WelcomeScreen(onEnter: {})
-        .environment(\.colors, .dark)
-}
-
-#Preview("Светлая") {
-    WelcomeScreen(onEnter: {})
-        .environment(\.colors, .light)
 }

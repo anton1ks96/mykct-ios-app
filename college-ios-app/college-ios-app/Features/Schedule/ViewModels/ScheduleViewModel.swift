@@ -17,6 +17,7 @@ final class ScheduleViewModel {
     private var weekLessons: [Lesson] = []
     private var loadTask: Task<Void, Never>?
     private var detailsTask: Task<Void, Never>?
+    private var prefetchTask: Task<Void, Never>?
     private var didStart = false
 
     init(
@@ -170,6 +171,7 @@ final class ScheduleViewModel {
             guard isCurrent() else { return }
             state.isOffline = false
             show(week)
+            prefetchNextWeek(after: monday, selection: selection)
         } catch {
             guard !ErrorText.isCancellation(error), isCurrent() else { return }
             guard cached == nil else {
@@ -185,6 +187,15 @@ final class ScheduleViewModel {
             state.fetchedAt = nil
             state.isLoading = false
             state.error = ErrorText.message(for: error) ?? "Не удалось загрузить расписание"
+        }
+    }
+
+    private func prefetchNextWeek(after monday: Date, selection: Selection) {
+        guard monday == ScheduleCalendar.monday(of: ScheduleCalendar.day(of: .now)) else { return }
+        let next = ScheduleCalendar.adding(weeks: 1, to: monday)
+        prefetchTask?.cancel()
+        prefetchTask = Task { [repository] in
+            _ = try? await repository.weekSchedule(monday: next, selection: selection)
         }
     }
 

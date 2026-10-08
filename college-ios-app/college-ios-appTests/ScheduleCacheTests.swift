@@ -204,4 +204,20 @@ struct ScheduleOfflineTests {
 
         #expect(await repository.mondays.filter { $0 == currentMonday }.count == requests)
     }
+
+    @Test("После загрузки текущей недели следующая подгружается в кэш заранее")
+    func currentWeekPrefetchesNext() async {
+        let nextMonday = ScheduleCalendar.adding(weeks: 1, to: currentMonday)
+        let repository = StubScheduleRepository(
+            cached: nil,
+            responses: [WeekSchedule(lessons: [])]
+        )
+        let viewModel = makeViewModel(repository: repository)
+
+        await viewModel.start()
+        while await !repository.mondays.contains(nextMonday) { await Task.yield() }
+
+        #expect(viewModel.state.weekStart == currentMonday)
+        #expect(await repository.mondays == [currentMonday, nextMonday])
+    }
 }

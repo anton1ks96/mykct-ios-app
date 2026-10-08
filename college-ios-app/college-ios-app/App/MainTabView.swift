@@ -75,7 +75,7 @@ struct MainTabView: View {
             pushService.sync(
                 userID: updated.user?.id,
                 group: updated.user?.academicGroup,
-                isBootstrapping: updated.isBootstrapping
+                isBootstrapping: updated.isPending
             )
         }
         .onChange(of: pushService.pendingRoute, initial: true) { _, route in

@@ -115,4 +115,8 @@ nonisolated struct HomeSession: Equatable, Sendable {
     let user: User?
     let isBootstrapping: Bool
     let hasStoredSession: Bool
+
+    var isPending: Bool {
+        isBootstrapping || (user == nil && hasStoredSession)
+    }
 }

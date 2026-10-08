@@ -18,6 +18,7 @@ struct CollegeIOSApp: App {
 
     @AppStorage(AppTheme.storageKey) private var selectedTheme: AppTheme = .system
     @Environment(\.scenePhase) private var scenePhase
+    @State private var wasInBackground = false
 
     var body: some Scene {
         WindowGroup {
@@ -29,9 +30,18 @@ struct CollegeIOSApp: App {
                     sessionViewModel.bootstrapAutoLogin()
                 }
                 .onChange(of: scenePhase, initial: true) { _, phase in
-                    guard phase == .active else { return }
-                    AppDependencies.pushService.refreshAuthorization()
-                    sessionViewModel.reconnectIfNeeded()
+                    switch phase {
+                    case .background:
+                        wasInBackground = true
+                    case .active:
+                        AppDependencies.pushService.refreshAuthorization()
+                        if wasInBackground {
+                            sessionViewModel.reconnectIfNeeded()
+                        }
+                        wasInBackground = false
+                    default:
+                        break
+                    }
                 }
         }
     }

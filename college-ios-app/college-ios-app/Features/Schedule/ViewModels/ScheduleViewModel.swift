@@ -47,6 +47,11 @@ final class ScheduleViewModel {
         await reload()
     }
 
+    func refreshIfOutdated() async {
+        guard didStart, state.isOffline || state.isStale else { return }
+        await reload()
+    }
+
     func select(date: Date) {
         state.selectedDate = date
         applyWeek()
@@ -143,29 +148,53 @@ final class ScheduleViewModel {
     }
 
     private func performLoad() async {
-        state.isLoading = true
+        let monday = state.weekStart
+        let selection = state.selection
+        func isCurrent() -> Bool {
+            !Task.isCancelled && state.weekStart == monday && state.selection == selection
+        }
+
+        let cached = await repository.cachedWeek(monday: monday, selection: selection)
+        guard isCurrent() else { return }
+        if let cached {
+            show(cached)
+        } else {
+            state.isOffline = false
+            state.isStale = false
+            state.fetchedAt = nil
+            state.isLoading = true
+        }
+
         do {
-            let week = try await repository.weekSchedule(
-                monday: state.weekStart,
-                selection: state.selection
-            )
-            try Task.checkCancellation()
-            weekLessons = LessonSplitting.split(week.lessons, selection: state.selection)
-            state.isStale = week.isStale
-            state.fetchedAt = week.fetchedAt
-            state.error = nil
-            state.isLoading = false
-            applyWeek()
+            let week = try await repository.weekSchedule(monday: monday, selection: selection)
+            guard isCurrent() else { return }
+            state.isOffline = false
+            show(week)
         } catch {
-            guard !ErrorText.isCancellation(error) else { return }
+            guard !ErrorText.isCancellation(error), isCurrent() else { return }
+            guard cached == nil else {
+                state.isOffline = ErrorText.isConnectivity(error)
+                state.isStale = !state.isOffline
+                return
+            }
             weekLessons = []
             state.days = []
             state.visible = []
             state.isStale = false
+            state.isOffline = false
             state.fetchedAt = nil
             state.isLoading = false
             state.error = ErrorText.message(for: error) ?? "Не удалось загрузить расписание"
         }
+    }
+
+    private func show(_ week: WeekSchedule) {
+        weekLessons = LessonSplitting.split(week.lessons, selection: state.selection)
+        state.isStale = week.isStale
+        state.fetchedAt = week.fetchedAt
+        state.error = nil
+        state.isLoading = false
+        applyWeek()
     }
 
     private func applyWeek() {

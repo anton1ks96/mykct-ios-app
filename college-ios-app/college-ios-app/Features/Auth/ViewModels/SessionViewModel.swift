@@ -22,6 +22,7 @@ final class SessionViewModel: ObservableObject {
     private let authSession: AuthSession
     private let refreshStorage: RefreshTokenStorage
     private var eventsTask: Task<Void, Never>?
+    private var bootstrapTask: Task<Void, Never>?
 
     init(
         authService: AuthService,
@@ -52,14 +53,19 @@ final class SessionViewModel: ObservableObject {
     }
     
     func bootstrapAutoLogin() {
-        Task {
-            isBootstrapping = true
-            
+        guard bootstrapTask == nil else { return }
+        isBootstrapping = true
+        bootstrapTask = Task {
             await authService.bootstrapAutoLogin()
             await syncFromSession()
-            
             isBootstrapping = false
+            bootstrapTask = nil
         }
+    }
+
+    func reconnectIfNeeded() {
+        guard hasStoredSession, !isAuthenticated else { return }
+        bootstrapAutoLogin()
     }
     
     func syncFromSession() async {

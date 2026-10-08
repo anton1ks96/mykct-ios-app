@@ -13,6 +13,15 @@ nonisolated enum ErrorText {
         return false
     }
 
+    static func isConnectivity(_ error: Error) -> Bool {
+        switch error {
+        case APIError.url, APIError.transport, is URLError:
+            return true
+        default:
+            return false
+        }
+    }
+
     static func message(for error: Error) -> String? {
         (error as? LocalizedError)?.errorDescription
     }

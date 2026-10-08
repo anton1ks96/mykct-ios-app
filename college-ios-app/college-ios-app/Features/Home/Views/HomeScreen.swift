@@ -10,6 +10,7 @@ struct HomeScreen: View {
 
     let viewModel: HomeViewModel
     let onLogin: () -> Void
+    var onReconnect: () -> Void = {}
 
     @State private var tab: HomeTab = .attendance
 
@@ -53,6 +54,9 @@ struct HomeScreen: View {
 
         case .invite:
             SignInInvite(onLogin: onLogin)
+
+        case .offline:
+            HomeFailure(message: "Нет связи с сервером", onRetry: onReconnect)
 
         case .content:
             content

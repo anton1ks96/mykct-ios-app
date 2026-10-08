@@ -115,6 +115,28 @@ func unauthorizedEndsSession() async throws {
     #expect(await session.accessToken == nil)
 }
 
+@Test("Отозванный refresh-токен на холодном старте удаляет сохранённую сессию")
+func unauthorizedOnColdStartClearsStoredSession() async throws {
+    let api = CountingAuthAPI(accessError: APIError.unauthorized(message: nil))
+    let storage = makeStorage()
+    let service = AuthService(api: api, session: AuthSession(refreshStorage: storage))
+
+    await service.bootstrapAutoLogin()
+
+    #expect(try storage.load() == nil)
+}
+
+@Test("Сетевая ошибка на холодном старте сохранённую сессию не трогает")
+func networkFailureOnColdStartKeepsStoredSession() async throws {
+    let api = CountingAuthAPI(accessError: APIError.url(URLError(.notConnectedToInternet)))
+    let storage = makeStorage()
+    let service = AuthService(api: api, session: AuthSession(refreshStorage: storage))
+
+    await service.bootstrapAutoLogin()
+
+    #expect(try storage.load() != nil)
+}
+
 @Test("Сетевая ошибка сессию не рвёт")
 func networkFailureKeepsSession() async throws {
     let api = CountingAuthAPI(accessError: APIError.url(URLError(.notConnectedToInternet)))

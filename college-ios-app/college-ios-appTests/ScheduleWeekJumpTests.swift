@@ -15,6 +15,10 @@ private actor CountingScheduleRepository: ScheduleRepositoryProtocol {
         return WeekSchedule(lessons: [])
     }
 
+    func cachedWeek(monday: Date, selection: Selection) async -> WeekSchedule? {
+        nil
+    }
+
     func classDetails(id: String) async throws -> [DetailRow] {
         []
     }

@@ -41,6 +41,7 @@ nonisolated struct ScheduleState: Equatable, Sendable {
     var error: String?
     var details: LessonDetails?
     var isStale: Bool = false
+    var isOffline: Bool = false
     var fetchedAt: Date?
 
     var lessonCount: Int {

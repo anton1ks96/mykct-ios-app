@@ -31,8 +31,13 @@ enum AppDependencies {
 
     static let scheduleClient = AFHTTPClient(baseURL: AppEnvironment.scheduleBaseURL, decoder: decoder)
 
+    static let scheduleCache = ScheduleCache()
+
     static let scheduleRepository: ScheduleRepositoryProtocol = {
-        let live = ScheduleRepository(api: ScheduleAPI(client: scheduleClient))
+        let live = ScheduleRepository(
+            api: ScheduleAPI(client: scheduleClient),
+            cache: scheduleCache
+        )
 #if DEBUG
         return AppEnvironment.usesMockData ? MockScheduleRepository() : live
 #else

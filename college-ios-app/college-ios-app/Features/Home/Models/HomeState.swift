@@ -36,6 +36,7 @@ nonisolated enum StreakTab: String, CaseIterable, Identifiable, Sendable {
 nonisolated enum HomeGate: Equatable, Sendable {
     case loading
     case invite
+    case offline
     case content
 }
 
@@ -77,6 +78,7 @@ nonisolated enum LeaderboardFeed: Equatable, Sendable {
 nonisolated struct HomeState: Equatable, Sendable {
     var user: User?
     var isBootstrapping: Bool = true
+    var hasStoredSession: Bool = false
     var month: Date
     var selected: Date
     var records: [AttendanceRecord] = []
@@ -104,11 +106,17 @@ nonisolated struct HomeState: Equatable, Sendable {
 
     var gate: HomeGate {
         if isBootstrapping { return .loading }
-        return isAuthenticated ? .content : .invite
+        if isAuthenticated { return .content }
+        return hasStoredSession ? .offline : .invite
     }
 }
 
 nonisolated struct HomeSession: Equatable, Sendable {
     let user: User?
     let isBootstrapping: Bool
+    let hasStoredSession: Bool
+
+    var isPending: Bool {
+        isBootstrapping || (user == nil && hasStoredSession)
+    }
 }

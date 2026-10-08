@@ -16,7 +16,6 @@ public nonisolated enum NetworkingStack {
     public static let session: Session = {
         let configuration = URLSessionConfiguration.af.default
         configuration.timeoutIntervalForRequest = requestTimeout
-        configuration.waitsForConnectivity = true
         return Session(configuration: configuration, eventMonitors: [AFLogger()])
     }()
 }

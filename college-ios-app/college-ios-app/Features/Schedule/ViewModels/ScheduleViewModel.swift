@@ -143,29 +143,46 @@ final class ScheduleViewModel {
     }
 
     private func performLoad() async {
-        state.isLoading = true
+        let cached = await repository.cachedWeek(monday: state.weekStart, selection: state.selection)
+        guard !Task.isCancelled else { return }
+        if let cached {
+            show(cached)
+        } else {
+            state.isLoading = true
+        }
+
         do {
             let week = try await repository.weekSchedule(
                 monday: state.weekStart,
                 selection: state.selection
             )
             try Task.checkCancellation()
-            weekLessons = LessonSplitting.split(week.lessons, selection: state.selection)
-            state.isStale = week.isStale
-            state.fetchedAt = week.fetchedAt
-            state.error = nil
-            state.isLoading = false
-            applyWeek()
+            state.isOffline = false
+            show(week)
         } catch {
             guard !ErrorText.isCancellation(error) else { return }
+            guard cached == nil else {
+                state.isOffline = true
+                return
+            }
             weekLessons = []
             state.days = []
             state.visible = []
             state.isStale = false
+            state.isOffline = false
             state.fetchedAt = nil
             state.isLoading = false
             state.error = ErrorText.message(for: error) ?? "Не удалось загрузить расписание"
         }
+    }
+
+    private func show(_ week: WeekSchedule) {
+        weekLessons = LessonSplitting.split(week.lessons, selection: state.selection)
+        state.isStale = week.isStale
+        state.fetchedAt = week.fetchedAt
+        state.error = nil
+        state.isLoading = false
+        applyWeek()
     }
 
     private func applyWeek() {

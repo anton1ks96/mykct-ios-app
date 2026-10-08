@@ -114,7 +114,7 @@ struct ScheduleScreen: View {
         VStack(alignment: .leading, spacing: 20) {
             HeroSummary(caption: caption, value: value, subtitle: subtitle)
 
-            if state.isStale {
+            if state.isStale || state.isOffline {
                 staleNote
             }
 
@@ -132,14 +132,20 @@ struct ScheduleScreen: View {
             Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90.icloud")
                 .font(.system(size: 12, weight: .semibold))
 
-            Text(
-                state.fetchedAt.map { "Портал недоступен, расписание от \(ScheduleFormat.dayMonth($0))" }
-                    ?? "Портал недоступен, показано сохранённое расписание"
-            )
-            .textStyle(AppType.labelMedium)
+            Text(staleText)
+                .textStyle(AppType.labelMedium)
         }
         .foregroundStyle(colors.onSurfaceVariant)
         .accessibilityElement(children: .combine)
+    }
+
+    private var staleText: String {
+        let reason = state.isOffline ? "Нет связи" : "Портал недоступен"
+        guard let fetchedAt = state.fetchedAt else {
+            return "\(reason), показано сохранённое расписание"
+        }
+        return "\(reason), расписание от \(ScheduleFormat.dayMonth(fetchedAt))"
+            + " \(ScheduleFormat.time(ScheduleCalendar.minutes(of: fetchedAt)))"
     }
 
     private var phase: Phase {

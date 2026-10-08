@@ -5,7 +5,7 @@
 
 import Foundation
 
-nonisolated struct LessonSubgroup: Identifiable, Equatable, Sendable {
+nonisolated struct LessonSubgroup: Identifiable, Equatable, Codable, Sendable {
     let id: String
     let title: String
     let topic: String
@@ -26,7 +26,7 @@ nonisolated struct LessonSlot: Hashable, Sendable {
     let end: Int
 }
 
-nonisolated struct Lesson: Identifiable, Equatable, Sendable {
+nonisolated struct Lesson: Identifiable, Equatable, Codable, Sendable {
     let id: String
     let day: Date
     let start: Int

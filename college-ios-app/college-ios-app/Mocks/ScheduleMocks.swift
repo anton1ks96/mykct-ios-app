@@ -22,6 +22,10 @@ nonisolated final class MockScheduleRepository: ScheduleRepositoryProtocol {
         return WeekSchedule(lessons: lessons)
     }
 
+    func cachedWeek(monday: Date, selection: Selection) async -> WeekSchedule? {
+        nil
+    }
+
     func classDetails(id: String) async throws -> [DetailRow] {
         try? await Task.sleep(for: delay)
         let subgroup = id.hasPrefix("mock-") ? String(id.dropFirst("mock-".count)) : nil

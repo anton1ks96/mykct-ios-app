@@ -38,7 +38,7 @@ struct ScheduleScreen: View {
     private var state: ScheduleState { viewModel.state }
 
     var body: some View {
-        ScrollView {
+        FillScroll(fills: phase != .content) {
             VStack(alignment: .leading, spacing: 20) {
                 header
 
@@ -241,6 +241,7 @@ struct ScheduleScreen: View {
         .frame(maxWidth: .infinity)
         .padding(.horizontal, Metrics.screenPadding)
         .padding(.vertical, 48)
+        .scrollCentered()
     }
 
     // MARK: - Copy

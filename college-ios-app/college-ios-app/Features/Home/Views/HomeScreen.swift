@@ -17,7 +17,7 @@ struct HomeScreen: View {
     private var state: HomeState { viewModel.state }
 
     var body: some View {
-        ScrollView {
+        FillScroll(fills: isPlaceholder) {
             Fade(value: state.gate) { gate in
                 body(for: gate)
             }
@@ -184,6 +184,14 @@ struct HomeScreen: View {
         if state.error != nil { return "Нет данных" }
         if state.stats.total == 0 { return "Отметок за месяц нет" }
         return HomeFormat.attended(present: state.stats.present, total: state.stats.total)
+    }
+
+    private var isPlaceholder: Bool {
+        switch state.gate {
+        case .loading, .offline: true
+        case .invite: false
+        case .content: tab == .performance && performancePhase != .content
+        }
     }
 
     private var attendancePhase: Phase {

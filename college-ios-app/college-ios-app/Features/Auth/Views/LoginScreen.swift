@@ -11,7 +11,7 @@ private nonisolated enum LoginField: Hashable {
 }
 
 struct LoginScreen: View {
-    @Environment(\.colors) private var colors
+    private let colors = AppColors.dark
 
     let onClose: () -> Void
     var onSkip: (() -> Void)?
@@ -37,7 +37,7 @@ struct LoginScreen: View {
                         .padding(.horizontal, Metrics.screenPadding)
                         .padding(.top, 72)
                         .padding(.bottom, 24)
-                        .frame(minHeight: proxy.size.height, alignment: .center)
+                        .frame(minHeight: proxy.size.height, alignment: .bottom)
                 }
                 .scrollBounceBehavior(.basedOnSize)
             }
@@ -45,7 +45,7 @@ struct LoginScreen: View {
 
             backButton
         }
-        .appBackground()
+        .loginBackdrop()
         .onChange(of: viewModel.didSignIn) { _, signedIn in
             if signedIn { onClose() }
         }
@@ -157,7 +157,6 @@ struct LoginScreen: View {
 
 #Preview("Из настроек") {
     LoginScreen(viewModel: PreviewMocks.loginViewModel(), onClose: {})
-        .environment(\.colors, .dark)
 }
 
 #Preview("С приветствия") {
@@ -168,5 +167,4 @@ struct LoginScreen: View {
         onClose: {},
         onSkip: {}
     )
-    .environment(\.colors, .light)
 }

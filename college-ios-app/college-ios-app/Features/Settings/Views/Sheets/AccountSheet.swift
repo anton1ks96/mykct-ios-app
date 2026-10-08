@@ -15,8 +15,8 @@ struct AccountSheet: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                if let user = sessionViewModel.user {
-                    VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: 0) {
+                    if let user = sessionViewModel.user {
                         SettingsSectionTitle("Информация об аккаунте")
                         SettingsCard {
                             ForEach(Array(rows(for: user).enumerated()), id: \.element.title) { index, row in
@@ -32,14 +32,14 @@ struct AccountSheet: View {
                                 }
                             }
                         }
-
-                        SettingsSectionTitle("Действия")
-                        SettingsCard {
-                            signOutRow
-                        }
                     }
-                    .padding(.bottom, 24)
+
+                    SettingsSectionTitle("Действия")
+                    SettingsCard {
+                        signOutRow
+                    }
                 }
+                .padding(.bottom, 24)
             }
             .scrollBounceBehavior(.basedOnSize)
             .appBackground()

@@ -39,6 +39,21 @@ private actor StubScheduleRepository: ScheduleRepositoryProtocol {
     }
 }
 
+private struct OneLessonScheduleAPI: ScheduleAPIProtocol {
+    func schedule(selection: Selection, start: Date, end: Date) async throws -> ScheduleResponse {
+        let day = ScheduleParsing.requestString(from: start)
+        let json = """
+        {"events":[{"ClID":"8658","Day":"\(day)","start":"09:00","end":"10:30",
+        "title":"Математика","topic":"","room":"404"}],"stale":false}
+        """
+        return try JSONDecoder().decode(ScheduleResponse.self, from: Data(json.utf8))
+    }
+
+    func classDetails(id: String) async throws -> JSONValue {
+        throw APIError.notFound
+    }
+}
+
 private func makeFileURL() -> URL {
     FileManager.default.temporaryDirectory
         .appending(path: "schedule-cache-tests-\(UUID().uuidString)")
@@ -123,6 +138,21 @@ struct ScheduleCacheTests {
 
         let shiftedTuesday = ScheduleCalendar.adding(days: 1, to: shiftedMonday)
         #expect(restored?.lessons.map(\.day) == [shiftedTuesday])
+    }
+
+    @Test("Успешный ответ сервера сохраняется в кэш")
+    func repositorySavesFetchedWeek() async throws {
+        let repository = ScheduleRepository(
+            api: OneLessonScheduleAPI(),
+            cache: ScheduleCache(fileURL: makeFileURL())
+        )
+        let selection = ScheduleMocks.selection
+
+        let fetched = try await repository.weekSchedule(monday: currentMonday, selection: selection)
+        let cached = await repository.cachedWeek(monday: currentMonday, selection: selection)
+
+        #expect(fetched.lessons.count == 1)
+        #expect(cached?.lessons == fetched.lessons)
     }
 
     @Test("Битый файл читается как пустой кэш")

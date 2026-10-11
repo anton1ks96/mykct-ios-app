@@ -80,6 +80,7 @@ struct PersonCard: View {
                     .resizable()
                     .scaledToFill()
                     .blur(radius: backdropBlur)
+                    .allowsHitTesting(false)
                     .accessibilityHidden(true)
             }
             .clipShape(shape)

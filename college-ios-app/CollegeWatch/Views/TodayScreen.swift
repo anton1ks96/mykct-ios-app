@@ -8,6 +8,8 @@ import SwiftUI
 struct TodayScreen: View {
     let snapshot: WidgetSnapshot?
     let now: Date
+    var onWeek: () -> Void = {}
+    var onDay: (Date) -> Void = { _ in }
 
     private var today: Date { ScheduleCalendar.day(of: now) }
 
@@ -19,6 +21,13 @@ struct TodayScreen: View {
             .scenePadding(.horizontal)
         }
         .navigationTitle("Сегодня")
+        .toolbar {
+            if snapshot != nil {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Неделя", systemImage: "calendar", action: onWeek)
+                }
+            }
+        }
     }
 
     @ViewBuilder
@@ -64,7 +73,12 @@ struct TodayScreen: View {
     @ViewBuilder
     private func nextDay(_ day: WidgetDay) -> some View {
         if let slot = day.slots.first {
-            NextDayCard(label: dayCaption(day.date), slot: slot)
+            Button {
+                onDay(day.date)
+            } label: {
+                NextDayCard(label: dayCaption(day.date), slot: slot)
+            }
+            .buttonStyle(.plain)
         }
     }
 

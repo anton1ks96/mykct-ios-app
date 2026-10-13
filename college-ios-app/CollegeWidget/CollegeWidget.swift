@@ -15,7 +15,7 @@ struct CollegeWidget: Widget {
         }
         .configurationDisplayName("Расписание")
         .description("Текущая пара, аудитория и сколько осталось")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }
 
@@ -60,5 +60,16 @@ private enum PreviewTimeline {
     PreviewTimeline.entry(0, 16)
     PreviewTimeline.entry(2, 12)
     PreviewTimeline.setup
+}
+
+#Preview(as: .systemLarge) {
+    CollegeWidget()
+} timeline: {
+    PreviewTimeline.entry(0, 10, 5)
+    PreviewTimeline.entry(0, 12, 50)
+    PreviewTimeline.entry(0, 16)
+    PreviewTimeline.entry(2, 12)
+    PreviewTimeline.entry(4, 9)
+    PreviewTimeline.entry(4, 16, 5)
 }
 #endif

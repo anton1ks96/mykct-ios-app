@@ -27,6 +27,8 @@ struct ScheduleWidgetLayout: View {
         switch family {
         case .systemMedium:
             MediumLayout(entry: entry)
+        case .systemLarge:
+            LargeLayout(entry: entry)
         default:
             SmallLayout(entry: entry)
         }

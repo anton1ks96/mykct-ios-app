@@ -23,6 +23,15 @@ nonisolated struct WidgetSnapshotStore: Sendable {
     }
 
     @discardableResult
+    func adopt(_ selection: Selection) throws -> Bool {
+        guard let defaults, load()?.selection != selection else { return false }
+
+        let snapshot = WidgetSnapshot(selection: selection, weeks: [:])
+        defaults.set(try JSONEncoder().encode(snapshot), forKey: ScheduleWidgetKey.snapshot)
+        return true
+    }
+
+    @discardableResult
     func save(
         _ lessons: [Lesson],
         monday: Date,

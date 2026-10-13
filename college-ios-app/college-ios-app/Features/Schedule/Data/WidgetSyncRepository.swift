@@ -29,18 +29,9 @@ nonisolated final class WidgetSyncRepository: ScheduleRepositoryProtocol {
     }
 
     func weekSchedule(monday: Date, selection: Selection) async throws -> WeekSchedule {
+        write { try store.adopt(selection) }
         let week = try await base.weekSchedule(monday: monday, selection: selection)
-        do {
-            if try store.save(week.lessons, monday: monday, selection: selection) {
-                onChange()
-            }
-        } catch {
-            CrashlyticsLogger.logDataError(
-                error,
-                operation: "save_widget_snapshot",
-                dataType: "WidgetSnapshot"
-            )
-        }
+        write { try store.save(week.lessons, monday: monday, selection: selection) }
         return week
     }
 
@@ -50,5 +41,19 @@ nonisolated final class WidgetSyncRepository: ScheduleRepositoryProtocol {
 
     func classDetails(id: String) async throws -> [DetailRow] {
         try await base.classDetails(id: id)
+    }
+
+    private func write(_ change: () throws -> Bool) {
+        do {
+            if try change() {
+                onChange()
+            }
+        } catch {
+            CrashlyticsLogger.logDataError(
+                error,
+                operation: "save_widget_snapshot",
+                dataType: "WidgetSnapshot"
+            )
+        }
     }
 }

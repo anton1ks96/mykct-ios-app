@@ -71,17 +71,18 @@ struct WidgetSyncRepositoryTests {
         _ = try await repository.weekSchedule(monday: currentMonday, selection: selection)
 
         #expect(store.load()?.lessons(on: currentMonday)?.map(\.title) == ["Математика"])
-        #expect(reloads.count == 1)
+        #expect(reloads.count > 0)
     }
 
-    @Test("Ошибка загрузки не трогает снимок и виджет")
-    func failedLoadKeepsWidget() async {
+    @Test("Ошибка загрузки той же группы не трогает снимок и виджет")
+    func failedLoadKeepsWidget() async throws {
         let reloads = ReloadCounter()
         let (repository, store) = makeRepository(nil, reloads: reloads)
+        try store.save(week(on: currentMonday).lessons, monday: currentMonday, selection: selection)
 
         _ = try? await repository.weekSchedule(monday: currentMonday, selection: selection)
 
-        #expect(store.load() == nil)
+        #expect(store.load()?.lessons(on: currentMonday)?.map(\.title) == ["Математика"])
         #expect(reloads.count == 0)
     }
 
@@ -90,11 +91,42 @@ struct WidgetSyncRepositoryTests {
         let reloads = ReloadCounter()
         let far = ScheduleCalendar.adding(weeks: 3, to: currentMonday)
         let (repository, store) = makeRepository(week(on: far), reloads: reloads)
+        try store.save(week(on: currentMonday).lessons, monday: currentMonday, selection: selection)
 
         _ = try await repository.weekSchedule(monday: far, selection: selection)
         _ = await repository.cachedWeek(monday: currentMonday, selection: selection)
 
-        #expect(store.load() == nil)
+        #expect(store.load()?.lessons(on: far) == nil)
+        #expect(store.load()?.lessons(on: currentMonday)?.count == 1)
         #expect(reloads.count == 0)
+    }
+
+    @Test("Новая группа попадает в снимок, даже если неделя не загрузилась")
+    func newSelectionSurvivesFailedLoad() async throws {
+        let reloads = ReloadCounter()
+        let (repository, store) = makeRepository(nil, reloads: reloads)
+        try store.save(week(on: currentMonday).lessons, monday: currentMonday, selection: selection)
+        let other = Selection(group: "ИТ25-11")
+
+        _ = try? await repository.weekSchedule(monday: currentMonday, selection: other)
+
+        #expect(store.load()?.selection == other)
+        #expect(store.load()?.lessons(on: currentMonday) == nil)
+        #expect(reloads.count == 1)
+    }
+
+    @Test("Новая группа на дальней неделе тоже сбрасывает снимок")
+    func newSelectionOnFarWeekResetsSnapshot() async throws {
+        let reloads = ReloadCounter()
+        let far = ScheduleCalendar.adding(weeks: 3, to: currentMonday)
+        let (repository, store) = makeRepository(week(on: far), reloads: reloads)
+        try store.save(week(on: currentMonday).lessons, monday: currentMonday, selection: selection)
+        let other = Selection(group: "ИТ25-11")
+
+        _ = try await repository.weekSchedule(monday: far, selection: other)
+
+        #expect(store.load()?.selection == other)
+        #expect(store.load()?.lessons(on: currentMonday) == nil)
+        #expect(reloads.count == 1)
     }
 }

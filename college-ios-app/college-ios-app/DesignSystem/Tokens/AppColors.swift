@@ -8,6 +8,7 @@ import SwiftUI
 struct AppColors: Equatable, Sendable {
     let primary: Color
     let onPrimary: Color
+    let accentText: Color
     let primaryContainer: Color
     let onPrimaryContainer: Color
     let secondary: Color
@@ -34,6 +35,7 @@ struct AppColors: Equatable, Sendable {
     static let light = AppColors(
         primary: .violet,
         onPrimary: .white,
+        accentText: .violet,
         primaryContainer: .violetSoft,
         onPrimaryContainer: .ink,
         secondary: .statusGreen,
@@ -61,6 +63,7 @@ struct AppColors: Equatable, Sendable {
     static let dark = AppColors(
         primary: .violet,
         onPrimary: .white,
+        accentText: .violetLight,
         primaryContainer: .violetDeep,
         onPrimaryContainer: .white,
         secondary: .statusGreen,
@@ -88,6 +91,7 @@ struct AppColors: Equatable, Sendable {
     static let oled = AppColors(
         primary: .violet,
         onPrimary: .white,
+        accentText: .violetLight,
         primaryContainer: .violetDeep,
         onPrimaryContainer: .white,
         secondary: .statusGreen,

@@ -6,40 +6,28 @@
 #if DEBUG
 import Foundation
 
-nonisolated final class MockScheduleRepository: ScheduleRepositoryProtocol {
-
-    private let delay: Duration
-
-    init(delay: Duration = .milliseconds(350)) {
-        self.delay = delay
-    }
-
-    func weekSchedule(monday: Date, selection: Selection) async throws -> WeekSchedule {
-        try? await Task.sleep(for: delay)
-        let lessons = (0..<7).flatMap { offset in
-            ScheduleMocks.lessons(day: ScheduleCalendar.adding(days: offset, to: monday), weekday: offset)
-        }
-        return WeekSchedule(lessons: lessons)
-    }
-
-    func cachedWeek(monday: Date, selection: Selection) async -> WeekSchedule? {
-        nil
-    }
-
-    func classDetails(id: String) async throws -> [DetailRow] {
-        try? await Task.sleep(for: delay)
-        let subgroup = id.hasPrefix("mock-") ? String(id.dropFirst("mock-".count)) : nil
-        return [
-            DetailRow(key: "teacher", value: subgroup == nil ? "Иванов И. И." : "Петрова А. С."),
-            DetailRow(key: "building", value: "Главный корпус"),
-            DetailRow(key: "comment", value: subgroup.map { "Подгруппа \($0)" } ?? "Взять ноутбук"),
-        ]
-    }
-}
-
 nonisolated enum ScheduleMocks {
 
     static let selection = Selection(group: "ИТ26-11", subgroup: "Подгр1", englishGroup: "A0.11")
+
+    static func week(monday: Date) -> [Lesson] {
+        (0..<7).flatMap { offset in
+            lessons(day: ScheduleCalendar.adding(days: offset, to: monday), weekday: offset)
+        }
+    }
+
+    static func widgetSnapshot(monday: Date) -> WidgetSnapshot? {
+        [monday, ScheduleCalendar.adding(weeks: 1, to: monday)].reduce(nil) { snapshot, week in
+            WidgetSnapshot.merging(
+                snapshot,
+                lessons: self.week(monday: week),
+                monday: week,
+                selection: selection,
+                resetsSelection: true,
+                at: monday
+            )
+        }
+    }
 
     static func lessons(day: Date, weekday: Int) -> [Lesson] {
         plan(for: weekday).enumerated().map { index, item in

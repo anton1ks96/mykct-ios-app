@@ -77,7 +77,7 @@ struct WidgetScheduleTests {
         let pause = try #require(focus(WidgetSchedule.content(at: at(0, 10, 32), in: bothWeeks)))
         #expect(pause.stage == .upcoming)
         #expect(pause.slot.title == "Основы алгоритмизации")
-        #expect(pause.next?.title == "Английский язык")
+        #expect(pause.next?.title == "Английский A0.11 · Английский A0.12")
     }
 
     @Test("На последней паре дальше показывается следующий учебный день")
@@ -106,7 +106,7 @@ struct WidgetScheduleTests {
 
         let evening = try #require(focus(WidgetSchedule.content(at: at(2, 18), in: bothWeeks)))
         #expect(evening.stage == .tomorrow)
-        #expect(evening.slot.title == "Английский язык")
+        #expect(evening.slot.title == "Английский A0.11 · Английский A0.12")
     }
 
     @Test("Пары кончились, а завтра свободно - отдых до ближайшего учебного дня")
@@ -147,11 +147,12 @@ struct WidgetScheduleTests {
         #expect(slots[1].timeRange == "9:00 - 10:30")
     }
 
-    @Test("Английский без своей подгруппы остаётся одной парой с подгруппами")
-    func unsplitEnglishKeepsTitle() throws {
+    @Test("Неразделённая пара называется подгруппами, как карточка в приложении")
+    func unsplitLessonUsesDisplayTitle() throws {
         let focus = try #require(focus(WidgetSchedule.content(at: at(0, 12, 50), in: bothWeeks)))
 
-        #expect(focus.slot.title == "Английский язык")
+        #expect(focus.slot.title == "Английский A0.11 · Английский A0.12")
+        #expect(focus.slot.symbol == SubjectIcon.symbol(for: "Английский язык"))
         #expect(focus.slot.subgroupCount == 2)
         #expect(focus.slot.room.isEmpty)
     }

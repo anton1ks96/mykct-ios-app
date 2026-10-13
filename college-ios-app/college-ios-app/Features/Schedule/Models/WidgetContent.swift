@@ -14,7 +14,7 @@ nonisolated struct WidgetSlot: Equatable, Sendable {
     var startDate: Date { ScheduleCalendar.date(day, atMinutes: start) }
     var endDate: Date { ScheduleCalendar.date(day, atMinutes: end) }
 
-    var title: String { Self.joined(lessons.map(\.title)) }
+    var title: String { Self.joined(lessons.map(\.displayTitle)) }
     var room: String { Self.joined(lessons.map(\.room)) }
     var topic: String { lessons.count == 1 ? lessons[0].topic : "" }
     var subgroupCount: Int { lessons.count == 1 ? lessons[0].subgroups.count : 0 }

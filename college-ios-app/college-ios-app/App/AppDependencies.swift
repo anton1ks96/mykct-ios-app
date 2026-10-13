@@ -33,16 +33,21 @@ enum AppDependencies {
 
     static let scheduleCache = ScheduleCache()
 
+    static let widgetStore = WidgetSnapshotStore()
+
     static let scheduleRepository: ScheduleRepositoryProtocol = {
         let live = ScheduleRepository(
             api: ScheduleAPI(client: scheduleClient),
             cache: scheduleCache
         )
 #if DEBUG
-        return AppEnvironment.usesMockData ? MockScheduleRepository() : live
+        let base: ScheduleRepositoryProtocol = AppEnvironment.usesMockData
+            ? MockScheduleRepository()
+            : live
 #else
-        return live
+        let base: ScheduleRepositoryProtocol = live
 #endif
+        return WidgetSyncRepository(base: base, store: widgetStore)
     }()
 
     static let pushAPI: PushAPIProtocol = {

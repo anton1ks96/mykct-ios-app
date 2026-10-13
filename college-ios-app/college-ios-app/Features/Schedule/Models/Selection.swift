@@ -5,7 +5,7 @@
 
 import Foundation
 
-nonisolated struct Selection: Equatable, Sendable {
+nonisolated struct Selection: Equatable, Codable, Sendable {
     var group: String
     var subgroup: String?
     var englishGroup: String?

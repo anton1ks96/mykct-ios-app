@@ -36,11 +36,14 @@ struct RectangularLayout: View {
     }
 
     private func focusContent(_ focus: WidgetFocus) -> some View {
-        VStack(alignment: .leading, spacing: 1) {
+        let next = isOnGradient ? focus.next : nil
+
+        return VStack(alignment: .leading, spacing: next == nil ? 1 : 0) {
             accentLine(symbol: focus.slot.symbol, text: header(focus))
 
             Text(focus.slot.title)
-                .textStyle(AppType.titleMedium)
+                .textStyle(next == nil ? AppType.titleMedium : AppType.labelLarge)
+                .fontWeight(.bold)
                 .foregroundStyle(colors.onSurface)
 
             HStack(spacing: 6) {
@@ -54,8 +57,30 @@ struct RectangularLayout: View {
             }
             .textStyle(AppType.labelMedium)
             .foregroundStyle(secondary)
+
+            if let next {
+                nextLine(next, after: focus)
+            }
         }
         .accessibilityElement(children: .combine)
+    }
+
+    private func nextLine(_ slot: WidgetSlot, after focus: WidgetFocus) -> some View {
+        let label = WidgetSchedule.dayLabel(of: slot.day, focusDay: focus.day.date, at: entry.date)
+        let detail = [slot.room, slot.title].filter { !$0.isEmpty }.joined(separator: " · ")
+
+        return HStack(spacing: 4) {
+            Text(label.uppercased())
+                .textStyle(AppType.caps)
+
+            Text(ScheduleFormat.time(slot.start))
+                .fontWeight(.bold)
+                .monospacedDigit()
+
+            Text(detail)
+        }
+        .textStyle(AppType.labelMedium)
+        .foregroundStyle(secondary)
     }
 
     private func restContent(_ rest: WidgetRest) -> some View {

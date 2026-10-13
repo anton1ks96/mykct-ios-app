@@ -12,6 +12,7 @@ enum WatchDependencies {
     static let reloadComplications: @Sendable () -> Void = {
         Task { @MainActor in
             WidgetCenter.shared.reloadTimelines(ofKind: ScheduleWidgetKey.kind)
+            WidgetCenter.shared.invalidateRelevance(ofKind: ScheduleWidgetKey.kind)
         }
     }
 

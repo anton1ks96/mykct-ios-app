@@ -36,6 +36,7 @@ struct WatchRoot: View {
         .onChange(of: scenePhase, initial: true) { _, phase in
             if phase == .active {
                 schedule.reload()
+                schedule.refresh()
             }
         }
     }

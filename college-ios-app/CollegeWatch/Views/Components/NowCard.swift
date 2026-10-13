@@ -25,7 +25,7 @@ struct NowCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            WidgetPill(text: slot.timeRange)
+            timeLabel
 
             Text(slot.title)
                 .textStyle(AppType.titleMedium)
@@ -55,6 +55,19 @@ struct NowCard: View {
         .clipShape(shape)
         .overlay { border }
         .accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder
+    private var timeLabel: some View {
+        if isLuminanceReduced {
+            Text(slot.timeRange)
+                .textStyle(AppType.labelLarge)
+                .fontWeight(.bold)
+                .monospacedDigit()
+                .foregroundStyle(colors.accentText)
+        } else {
+            WidgetPill(text: slot.timeRange)
+        }
     }
 
     @ViewBuilder

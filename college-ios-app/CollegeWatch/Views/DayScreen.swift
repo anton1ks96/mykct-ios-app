@@ -32,8 +32,8 @@ struct DayScreen: View {
                     .lineLimit(1)
                     .padding(.leading, 4)
 
-                ForEach(day.slots, id: \.start) { slot in
-                    LessonTile(slot: slot, isPast: slot.endDate <= now)
+                ForEach(day.slots.indices, id: \.self) { index in
+                    LessonTile(slot: day.slots[index], isPast: day.slots[index].endDate <= now)
                 }
             } else {
                 RestHeader(caption: ScheduleFormat.dayTitle(date), lessonCount: 0)

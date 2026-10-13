@@ -9,6 +9,7 @@ private let badgeSide: CGFloat = 52
 
 struct WatchMessage: View {
     @Environment(\.colors) private var colors
+    @Environment(\.isLuminanceReduced) private var isLuminanceReduced
 
     static let setup = WatchMessage(
         symbol: "iphone",
@@ -33,7 +34,7 @@ struct WatchMessage: View {
                 .fontWeight(.semibold)
                 .foregroundStyle(.white)
                 .frame(width: badgeSide, height: badgeSide)
-                .background(accentGradient, in: Circle())
+                .background { badge }
 
             Text(title)
                 .textStyle(AppType.titleMedium)
@@ -47,5 +48,14 @@ struct WatchMessage: View {
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder
+    private var badge: some View {
+        if isLuminanceReduced {
+            Circle().strokeBorder(colors.accentText, lineWidth: 1.5)
+        } else {
+            Circle().fill(accentGradient)
+        }
     }
 }

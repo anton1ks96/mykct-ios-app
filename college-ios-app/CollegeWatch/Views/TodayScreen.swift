@@ -61,8 +61,8 @@ struct TodayScreen: View {
 
         if !later.isEmpty {
             SectionCaps(text: "Далее")
-            ForEach(later, id: \.start) { slot in
-                LessonTile(slot: slot)
+            ForEach(later.indices, id: \.self) { index in
+                LessonTile(slot: later[index])
             }
         } else if let next = focus.next {
             SectionCaps(text: WidgetSchedule.dayLabel(of: next.day, focusDay: focus.day.date, at: now))

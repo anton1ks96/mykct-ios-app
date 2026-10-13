@@ -25,6 +25,8 @@ struct ScheduleWidgetLayout: View {
     @ViewBuilder
     private var layout: some View {
         switch family {
+        case .systemMedium:
+            MediumLayout(entry: entry)
         default:
             SmallLayout(entry: entry)
         }

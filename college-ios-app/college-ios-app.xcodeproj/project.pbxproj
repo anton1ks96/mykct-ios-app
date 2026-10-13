@@ -68,6 +68,13 @@
 			);
 			target = 4F3866422E7F004E00C9993A /* college-ios-app */;
 		};
+		4FA7FEC7307CDA9D00E8E270 /* Exceptions for "CollegeWidget" folder in "CollegeWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4FA7FEB2307CDA9D00E8E270 /* CollegeWidgetExtension */;
+		};
 		4FA7FECA307CDA9D00E8E270 /* Exceptions for "college-ios-app" folder in "CollegeWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -91,13 +98,6 @@
 				Features/Schedule/Utils/LessonSplitting.swift,
 				Features/Schedule/Utils/WidgetSchedule.swift,
 				Mocks/ScheduleMocks.swift,
-			);
-			target = 4FA7FEB2307CDA9D00E8E270 /* CollegeWidgetExtension */;
-		};
-		4FA7FEC7307CDA9D00E8E270 /* Exceptions for "CollegeWidget" folder in "CollegeWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
 			);
 			target = 4FA7FEB2307CDA9D00E8E270 /* CollegeWidgetExtension */;
 		};

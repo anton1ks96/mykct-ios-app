@@ -10,6 +10,25 @@ nonisolated enum ScheduleMocks {
 
     static let selection = Selection(group: "ИТ26-11", subgroup: "Подгр1", englishGroup: "A0.11")
 
+    static func week(monday: Date) -> [Lesson] {
+        (0..<7).flatMap { offset in
+            lessons(day: ScheduleCalendar.adding(days: offset, to: monday), weekday: offset)
+        }
+    }
+
+    static func widgetSnapshot(monday: Date) -> WidgetSnapshot? {
+        [monday, ScheduleCalendar.adding(weeks: 1, to: monday)].reduce(nil) { snapshot, week in
+            WidgetSnapshot.merging(
+                snapshot,
+                lessons: self.week(monday: week),
+                monday: week,
+                selection: selection,
+                resetsSelection: true,
+                at: monday
+            )
+        }
+    }
+
     static func lessons(day: Date, weekday: Int) -> [Lesson] {
         plan(for: weekday).enumerated().map { index, item in
             Lesson(

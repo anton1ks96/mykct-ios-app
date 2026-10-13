@@ -16,10 +16,7 @@ nonisolated final class MockScheduleRepository: ScheduleRepositoryProtocol {
 
     func weekSchedule(monday: Date, selection: Selection) async throws -> WeekSchedule {
         try? await Task.sleep(for: delay)
-        let lessons = (0..<7).flatMap { offset in
-            ScheduleMocks.lessons(day: ScheduleCalendar.adding(days: offset, to: monday), weekday: offset)
-        }
-        return WeekSchedule(lessons: lessons)
+        return WeekSchedule(lessons: ScheduleMocks.week(monday: monday))
     }
 
     func cachedWeek(monday: Date, selection: Selection) async -> WeekSchedule? {

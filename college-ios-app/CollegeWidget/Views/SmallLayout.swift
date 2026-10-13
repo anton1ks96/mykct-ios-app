@@ -29,13 +29,21 @@ struct SmallLayout: View {
     }
 
     private func focusContent(_ focus: WidgetFocus) -> some View {
+        ViewThatFits(in: .vertical) {
+            lessonStack(focus, titleLines: 2)
+            lessonStack(focus, titleLines: 1)
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    private func lessonStack(_ focus: WidgetFocus, titleLines: Int) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             WidgetPill(text: focus.slot.timeRange)
 
             Text(focus.slot.title)
                 .textStyle(AppType.titleLarge)
                 .foregroundStyle(.white)
-                .lineLimit(2)
+                .lineLimit(titleLines)
                 .minimumScaleFactor(0.75)
                 .padding(.top, 6)
 
@@ -46,7 +54,6 @@ struct SmallLayout: View {
             StatusLine(focus: focus, now: entry.date, isCompact: true)
                 .padding(.top, 8)
         }
-        .accessibilityElement(children: .combine)
     }
 
     @ViewBuilder

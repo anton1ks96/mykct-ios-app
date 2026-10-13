@@ -25,6 +25,14 @@ struct MediumLayout: View {
     }
 
     private func focusContent(_ focus: WidgetFocus) -> some View {
+        ViewThatFits(in: .vertical) {
+            lessonStack(focus, showsTopic: true)
+            lessonStack(focus, showsTopic: false)
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    private func lessonStack(_ focus: WidgetFocus, showsTopic: Bool) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             SlotHeader(slot: focus.slot)
 
@@ -35,7 +43,7 @@ struct MediumLayout: View {
                 .minimumScaleFactor(0.8)
                 .padding(.top, 8)
 
-            if !focus.slot.topic.isEmpty {
+            if showsTopic && !focus.slot.topic.isEmpty {
                 Text(focus.slot.topic)
                     .textStyle(AppType.bodyMedium)
                     .foregroundStyle(.white.opacity(0.75))
@@ -56,7 +64,6 @@ struct MediumLayout: View {
                 )
             }
         }
-        .accessibilityElement(children: .combine)
     }
 
     private func restContent(_ rest: WidgetRest) -> some View {

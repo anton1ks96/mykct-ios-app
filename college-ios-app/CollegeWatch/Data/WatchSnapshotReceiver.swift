@@ -36,10 +36,13 @@ nonisolated final class WatchSnapshotReceiver: NSObject, WCSessionDelegate, Send
     }
 
     private func receive(_ context: [String: Any]) {
-        guard let data = context[ScheduleWidgetKey.snapshot] as? Data,
-              (try? store.replace(with: data)) == true
-        else { return }
-        onChange()
+        guard let data = context[ScheduleWidgetKey.snapshot] as? Data else { return }
+
+        Task { @MainActor in
+            if (try? store.receive(data)) == true {
+                onChange()
+            }
+        }
     }
 
     // MARK: - WCSessionDelegate

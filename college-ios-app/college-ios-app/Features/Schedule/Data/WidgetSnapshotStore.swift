@@ -27,11 +27,13 @@ nonisolated struct WidgetSnapshotStore: Sendable {
     }
 
     @discardableResult
-    func replace(with data: Data) throws -> Bool {
-        let snapshot = try JSONDecoder().decode(WidgetSnapshot.self, from: data)
-        guard let defaults, load() != snapshot else { return false }
+    func receive(_ data: Data, at now: Date = .now) throws -> Bool {
+        let incoming = try JSONDecoder().decode(WidgetSnapshot.self, from: data)
+        let local = load()
+        let snapshot = WidgetSnapshot.combining(incoming, with: local, at: now)
+        guard let defaults, snapshot != local else { return false }
 
-        defaults.set(data, forKey: ScheduleWidgetKey.snapshot)
+        defaults.set(try JSONEncoder().encode(snapshot), forKey: ScheduleWidgetKey.snapshot)
         return true
     }
 

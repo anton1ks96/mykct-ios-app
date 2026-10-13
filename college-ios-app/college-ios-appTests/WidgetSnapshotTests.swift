@@ -185,8 +185,8 @@ struct WidgetSnapshotTests {
         #expect(store.load() == before)
     }
 
-    @Test("Снимок с iPhone целиком заменяет снимок на часах")
-    func replaceTakesWholeSnapshot() throws {
+    @Test("Снимок с iPhone другой группы целиком заменяет снимок на часах")
+    func receiveTakesOtherSelection() throws {
         let phone = WidgetSnapshotStore(suiteName: "widget.snapshot.tests.\(UUID().uuidString)")
         let watch = WidgetSnapshotStore(suiteName: "widget.snapshot.tests.\(UUID().uuidString)")
         try phone.save(
@@ -198,21 +198,57 @@ struct WidgetSnapshotTests {
         try watch.save([], monday: nextMonday, selection: Selection(group: "ИТ25-11"), at: now)
         let data = try #require(phone.data())
 
-        #expect(try watch.replace(with: data))
+        #expect(try watch.receive(data, at: now))
         #expect(watch.load() == phone.load())
-        #expect(try !watch.replace(with: data))
+        #expect(try !watch.receive(data, at: now))
+    }
+
+    @Test("Неделя, скачанная часами позже, переживает приём старого снимка с iPhone")
+    func receiveKeepsNewerWatchWeeks() throws {
+        let phone = WidgetSnapshotStore(suiteName: "widget.snapshot.tests.\(UUID().uuidString)")
+        let watch = WidgetSnapshotStore(suiteName: "widget.snapshot.tests.\(UUID().uuidString)")
+        let later = now.addingTimeInterval(60 * 60)
+        try phone.save(
+            [lesson("Старая", on: monday, start: 9 * 60)],
+            monday: monday,
+            selection: selection,
+            at: now
+        )
+        let stale = try #require(phone.data())
+
+        #expect(try watch.receive(stale, at: now))
+        try watch.save(
+            [lesson("Свежая", on: monday, start: 9 * 60)],
+            monday: monday,
+            selection: selection,
+            resetsSelection: false,
+            at: later
+        )
+
+        #expect(try !watch.receive(stale, at: later))
+        #expect(watch.load()?.lessons(on: monday)?.map(\.title) == ["Свежая"])
+
+        try phone.save(
+            [lesson("Новейшая", on: monday, start: 9 * 60)],
+            monday: monday,
+            selection: selection,
+            at: later.addingTimeInterval(60)
+        )
+        let fresh = try #require(phone.data())
+        #expect(try watch.receive(fresh, at: later))
+        #expect(watch.load()?.lessons(on: monday)?.map(\.title) == ["Новейшая"])
     }
 
     @Test("Повреждённые данные с iPhone не трогают снимок")
-    func brokenDataIsNotReplaced() throws {
+    func brokenDataIsNotReceived() throws {
         let store = WidgetSnapshotStore(suiteName: "widget.snapshot.tests.\(UUID().uuidString)")
         try store.save([], monday: monday, selection: selection, at: now)
         let before = store.load()
 
-        #expect(throws: DecodingError.self) { try store.replace(with: Data("{".utf8)) }
+        #expect(throws: DecodingError.self) { try store.receive(Data("{".utf8), at: now) }
         #expect(store.load() == before)
 
         let data = try #require(store.data())
-        #expect(try !WidgetSnapshotStore(suiteName: nil).replace(with: data))
+        #expect(try !WidgetSnapshotStore(suiteName: nil).receive(data, at: now))
     }
 }

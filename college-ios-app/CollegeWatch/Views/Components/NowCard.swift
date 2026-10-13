@@ -30,8 +30,8 @@ struct NowCard: View {
             Text(slot.title)
                 .textStyle(AppType.titleMedium)
                 .fontWeight(.bold)
-                .lineLimit(2)
-                .minimumScaleFactor(0.75)
+                .lineLimit(3)
+                .minimumScaleFactor(0.85)
                 .padding(.top, 6)
 
             if !isOngoing && !slot.topic.isEmpty {

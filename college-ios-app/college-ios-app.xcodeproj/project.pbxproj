@@ -236,6 +236,9 @@
 				Provider/ScheduleEntry.swift,
 				Provider/ScheduleProvider.swift,
 				Provider/WidgetSample.swift,
+				Views/Components/LessonBackground.swift,
+				Views/Components/LessonProgressBar.swift,
+				Views/Components/MinutesText.swift,
 			);
 			target = 4FC0A7000000000000000011 /* CollegeWatchWidgetExtension */;
 		};

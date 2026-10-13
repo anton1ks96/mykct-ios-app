@@ -37,6 +37,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, MXMetricManagerSubscriber {
         }
 
         MXMetricManager.shared.add(self)
+        AppDependencies.watchSender.activate()
         return true
     }
 

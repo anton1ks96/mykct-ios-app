@@ -34,6 +34,7 @@ enum AppDependencies {
     static let scheduleCache = ScheduleCache()
 
     static let widgetStore = WidgetSnapshotStore()
+    static let watchSender = WatchSnapshotSender(store: widgetStore)
 
     static let scheduleRepository: ScheduleRepositoryProtocol = {
         let live = ScheduleRepository(
@@ -47,7 +48,11 @@ enum AppDependencies {
 #else
         let base: ScheduleRepositoryProtocol = live
 #endif
-        return WidgetSyncRepository(base: base, store: widgetStore)
+        let sender = watchSender
+        return WidgetSyncRepository(base: base, store: widgetStore) {
+            WidgetSyncRepository.reloadWidget()
+            sender.send()
+        }
     }()
 
     static let pushAPI: PushAPIProtocol = {

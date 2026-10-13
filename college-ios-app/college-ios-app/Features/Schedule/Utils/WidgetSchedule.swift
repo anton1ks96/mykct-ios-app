@@ -14,6 +14,7 @@ nonisolated enum WidgetSchedule {
     static let retryInterval: TimeInterval = 30 * 60
     static let timelineSpan: TimeInterval = 48 * 60 * 60
     static let lookaheadDays = 3
+    static let relevanceLead: TimeInterval = 15 * 60
 
     static func content(at now: Date, in snapshot: WidgetSnapshot?) -> WidgetContent {
         guard let snapshot else { return .setup }
@@ -55,6 +56,19 @@ nonisolated enum WidgetSchedule {
         Dictionary(grouping: lessons, by: \.slot)
             .map { WidgetSlot(day: day, start: $0.key.start, end: $0.key.end, lessons: $0.value) }
             .sorted { ($0.start, $0.end) < ($1.start, $1.end) }
+    }
+
+    static func day(_ date: Date, in snapshot: WidgetSnapshot?) -> WidgetDay? {
+        let day = ScheduleCalendar.day(of: date)
+        guard let lessons = snapshot?.lessons(on: day) else { return nil }
+        return WidgetDay(date: day, slots: slots(of: lessons, on: day))
+    }
+
+    static func week(of date: Date, in snapshot: WidgetSnapshot?) -> [WidgetDay] {
+        let monday = ScheduleCalendar.monday(of: date)
+        return (0..<7).compactMap { offset in
+            day(ScheduleCalendar.adding(days: offset, to: monday), in: snapshot)
+        }
     }
 
     static func isSoon(_ slot: WidgetSlot, at now: Date) -> Bool {
@@ -104,6 +118,23 @@ nonisolated enum WidgetSchedule {
         }
 
         return [now] + dates.filter { $0 > now && $0 <= limit }.sorted()
+    }
+
+    static func relevantIntervals(from now: Date, in snapshot: WidgetSnapshot?) -> [DateInterval] {
+        let today = ScheduleCalendar.day(of: now)
+        let limit = now.addingTimeInterval(timelineSpan)
+
+        return (0...2)
+            .flatMap { offset in
+                day(ScheduleCalendar.adding(days: offset, to: today), in: snapshot)?.slots ?? []
+            }
+            .filter { $0.endDate > now && $0.startDate < limit }
+            .map { slot in
+                DateInterval(
+                    start: slot.startDate.addingTimeInterval(-relevanceLead),
+                    end: slot.endDate
+                )
+            }
     }
 
     static func weeksToRefresh(at now: Date, in snapshot: WidgetSnapshot) -> [Date] {

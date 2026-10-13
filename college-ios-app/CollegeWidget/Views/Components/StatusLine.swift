@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 private let barWidth: CGFloat = 96
 
@@ -28,6 +29,7 @@ struct StatusLine: View {
         .font(AppType.bodyLarge.font)
         .fontWeight(.semibold)
         .foregroundStyle(.white)
+        .widgetAccentable()
     }
 
     @ViewBuilder

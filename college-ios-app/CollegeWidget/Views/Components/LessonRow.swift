@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 private let timeColumnWidth: CGFloat = 44
 private let rowHeight: CGFloat = 40
@@ -22,6 +23,7 @@ struct LessonRow: View {
                     .textStyle(AppType.labelLarge)
                     .fontWeight(.bold)
                     .foregroundStyle(colors.accentText)
+                    .widgetAccentable()
                 Text(ScheduleFormat.time(slot.end))
                     .textStyle(AppType.labelSmall)
                     .foregroundStyle(colors.onSurfaceVariant)

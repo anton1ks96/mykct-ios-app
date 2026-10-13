@@ -4,8 +4,11 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 struct NextCapsule: View {
+    @Environment(\.widgetRenderingMode) private var renderingMode
+
     let label: String
     let slot: WidgetSlot
     let isOnGradient: Bool
@@ -20,6 +23,7 @@ struct NextCapsule: View {
                 .textStyle(AppType.labelLarge)
                 .fontWeight(.bold)
                 .monospacedDigit()
+                .widgetAccentable()
 
             Text(detail)
                 .textStyle(AppType.bodyMedium)
@@ -39,8 +43,10 @@ struct NextCapsule: View {
             Capsule()
                 .fill(.black.opacity(0.18))
                 .overlay(Capsule().stroke(.white.opacity(0.3), lineWidth: 1))
-        } else {
+        } else if renderingMode == .fullColor {
             Capsule().fill(accentGradient)
+        } else {
+            Capsule().fill(.white.opacity(0.2))
         }
     }
 

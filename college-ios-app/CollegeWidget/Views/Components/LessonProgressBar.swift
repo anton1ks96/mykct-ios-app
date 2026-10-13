@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 struct LessonProgressBar: View {
     let slot: WidgetSlot
@@ -17,5 +18,6 @@ struct LessonProgressBar: View {
         .progressViewStyle(.linear)
         .tint(.white)
         .background(.white.opacity(0.3), in: Capsule())
+        .widgetAccentable()
     }
 }

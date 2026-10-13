@@ -4,8 +4,11 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 struct FocusCard: View {
+    @Environment(\.widgetRenderingMode) private var renderingMode
+
     let focus: WidgetFocus
     let now: Date
 
@@ -20,6 +23,15 @@ struct FocusCard: View {
         case .ongoing: true
         case .upcoming: WidgetSchedule.isSoon(slot, at: now)
         case .tomorrow: false
+        }
+    }
+
+    @ViewBuilder
+    private var background: some View {
+        if renderingMode == .fullColor {
+            LessonBackground(symbol: slot.symbol)
+        } else {
+            Color.white.opacity(0.1)
         }
     }
 
@@ -49,11 +61,14 @@ struct FocusCard: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background { LessonBackground(symbol: slot.symbol) }
+        .background { background }
         .clipShape(shape)
         .overlay {
             if focus.stage == .ongoing {
                 shape.strokeBorder(.white.opacity(0.85), lineWidth: 2)
+                    .widgetAccentable()
+            } else if renderingMode != .fullColor {
+                shape.strokeBorder(.white.opacity(0.25), lineWidth: 1)
             }
         }
         .accessibilityElement(children: .combine)

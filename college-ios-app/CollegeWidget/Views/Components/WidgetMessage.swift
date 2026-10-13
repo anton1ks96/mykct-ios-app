@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 struct WidgetMessage: View {
     @Environment(\.colors) private var colors
@@ -29,6 +30,7 @@ struct WidgetMessage: View {
             Image(systemName: symbol)
                 .font(.system(size: 22, weight: .semibold))
                 .foregroundStyle(colors.accentText)
+                .widgetAccentable()
 
             Spacer(minLength: 8)
 

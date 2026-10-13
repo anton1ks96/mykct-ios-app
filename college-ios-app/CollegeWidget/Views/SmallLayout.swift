@@ -74,12 +74,10 @@ struct SmallLayout: View {
             Spacer(minLength: 8)
 
             if let day = rest.upcoming, let slot = day.slots.first {
-                Text("\(dayLabel(of: day)) · \(ScheduleFormat.time(slot.start))")
-                    .textStyle(AppType.labelLarge)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(accentGradient, in: Capsule())
+                WidgetPill(
+                    text: "\(dayLabel(of: day)) · \(ScheduleFormat.time(slot.start))",
+                    style: .accent
+                )
 
                 Text(slot.title)
                     .textStyle(AppType.bodySmall)

@@ -9,7 +9,7 @@ import SwiftUI
 struct CollegeWatchApp: App {
     var body: some Scene {
         WindowGroup {
-            Text("МойКЦТ")
+            WatchRoot(schedule: WatchDependencies.schedule)
         }
     }
 }

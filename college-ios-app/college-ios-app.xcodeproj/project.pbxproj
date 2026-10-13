@@ -184,6 +184,12 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Data/WidgetScheduleFetcher.swift,
+				Views/Components/LessonBackground.swift,
+				Views/Components/LessonProgressBar.swift,
+				Views/Components/MinutesText.swift,
+				Views/Components/RestHeader.swift,
+				Views/Components/WidgetChip.swift,
+				Views/Components/WidgetPill.swift,
 			);
 			target = 4FC0A7000000000000000001 /* CollegeWatch */;
 		};

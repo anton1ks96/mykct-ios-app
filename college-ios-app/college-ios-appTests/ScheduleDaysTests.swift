@@ -20,6 +20,15 @@ private func offsets(_ dates: [Date]) -> [Int] {
 @Suite("Дни недели расписания")
 struct ScheduleDaysTests {
 
+    @Test("Время пары считается по настенным часам дня, а не прибавкой минут")
+    func lessonTimeIsWallClock() {
+        let start = ScheduleCalendar.date(day(1), atMinutes: 14 * 60 + 45)
+
+        #expect(ScheduleCalendar.day(of: start) == day(1))
+        #expect(ScheduleCalendar.minutes(of: start) == 14 * 60 + 45)
+        #expect(ScheduleCalendar.date(day(1), atMinutes: 24 * 60) == day(2))
+    }
+
     @Test("Понедельник считается началом недели")
     func mondayIsWeekStart() {
         #expect(ScheduleCalendar.monday(of: day(6)) == monday)

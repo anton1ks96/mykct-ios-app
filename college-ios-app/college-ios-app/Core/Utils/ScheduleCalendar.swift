@@ -58,7 +58,10 @@ nonisolated enum ScheduleCalendar {
     }
 
     static func date(_ day: Date, atMinutes minutes: Int) -> Date {
-        calendar.date(byAdding: .minute, value: minutes, to: day) ?? day
+        let minutesPerDay = 24 * 60
+        let base = adding(days: minutes / minutesPerDay, to: day)
+        let rest = minutes % minutesPerDay
+        return calendar.date(bySettingHour: rest / 60, minute: rest % 60, second: 0, of: base) ?? base
     }
 
     static func minutes(of date: Date) -> Int {

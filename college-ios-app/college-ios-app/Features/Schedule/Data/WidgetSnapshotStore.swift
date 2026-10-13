@@ -53,4 +53,26 @@ nonisolated struct WidgetSnapshotStore: Sendable {
         defaults.set(try JSONEncoder().encode(snapshot), forKey: ScheduleWidgetKey.snapshot)
         return true
     }
+
+    @discardableResult
+    func refresh(
+        at now: Date = .now,
+        fetch: (Date, Selection) async throws -> [Lesson]
+    ) async -> Bool {
+        guard let snapshot = load() else { return false }
+
+        var saved = false
+        for monday in WidgetSchedule.weeksToRefresh(at: now, in: snapshot) {
+            guard let lessons = try? await fetch(monday, snapshot.selection) else { continue }
+            let didSave = try? save(
+                lessons,
+                monday: monday,
+                selection: snapshot.selection,
+                resetsSelection: false,
+                at: now
+            )
+            saved = didSave == true || saved
+        }
+        return saved
+    }
 }

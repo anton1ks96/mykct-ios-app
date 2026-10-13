@@ -125,4 +125,63 @@ struct WidgetSnapshotTests {
         #expect(WidgetSnapshotStore(suiteName: suiteName).load() == nil)
         #expect(WidgetSnapshotStore(suiteName: nil).load() == nil)
     }
+
+    @Test("Догружаются только недостающие и устаревшие недели")
+    func refreshFetchesMissingAndStaleWeeks() async throws {
+        let store = WidgetSnapshotStore(suiteName: "widget.snapshot.tests.\(UUID().uuidString)")
+        try store.save([], monday: monday, selection: selection, at: now)
+        let friday = ScheduleCalendar.date(
+            ScheduleCalendar.adding(days: 4, to: monday),
+            atMinutes: 10 * 60
+        )
+        var requested: [Date] = []
+
+        let saved = await store.refresh(at: friday) { week, chosen in
+            requested.append(week)
+            #expect(chosen == selection)
+            return [lesson("Математика", on: week, start: 9 * 60)]
+        }
+
+        #expect(saved)
+        #expect(requested == [monday, nextMonday])
+        #expect(store.load()?.lessons(on: nextMonday)?.map(\.title) == ["Математика"])
+
+        requested = []
+        let again = await store.refresh(at: friday) { week, _ in
+            requested.append(week)
+            return []
+        }
+
+        #expect(!again)
+        #expect(requested.isEmpty)
+    }
+
+    @Test("Ошибка загрузки не трогает снимок, а без снимка сеть не нужна")
+    func refreshKeepsSnapshotOnError() async throws {
+        let store = WidgetSnapshotStore(suiteName: "widget.snapshot.tests.\(UUID().uuidString)")
+        var calls = 0
+
+        let empty = await store.refresh(at: now) { _, _ in
+            calls += 1
+            return []
+        }
+
+        #expect(!empty)
+        #expect(calls == 0)
+
+        try store.save(
+            [lesson("Математика", on: monday, start: 9 * 60)],
+            monday: monday,
+            selection: selection,
+            at: now
+        )
+        let before = store.load()
+
+        let failed = await store.refresh(at: now.addingTimeInterval(13 * 60 * 60)) { _, _ in
+            throw URLError(.notConnectedToInternet)
+        }
+
+        #expect(!failed)
+        #expect(store.load() == before)
+    }
 }

@@ -15,7 +15,10 @@ struct RectangularLayout: View {
 
     let entry: ScheduleEntry
 
-    private var isOnGradient: Bool { showsBackground && renderingMode == .fullColor }
+    private var isOnGradient: Bool {
+        guard case .focus = entry.content else { return false }
+        return showsBackground && renderingMode == .fullColor
+    }
     private var today: Date { ScheduleCalendar.day(of: entry.date) }
 
     var body: some View {

@@ -16,7 +16,7 @@ struct InlineLayout: View {
             if let day = rest.upcoming, let slot = day.slots.first {
                 line(slot.symbol, Text(startText(of: slot, on: day.date)))
             } else {
-                Text("Пар нет")
+                Text(rest.lessonCount == 0 ? "Пар нет" : "Пары закончились")
             }
         case .setup:
             Text("Выбери группу")
@@ -31,9 +31,9 @@ struct InlineLayout: View {
 
         switch focus.stage {
         case .ongoing:
-            line("mappin.and.ellipse", countdown("ещё", to: slot.endDate, at: slot))
+            line(placeSymbol(of: slot), countdown("ещё", to: slot.endDate, at: slot))
         case .upcoming where WidgetSchedule.isSoon(slot, at: entry.date):
-            line("mappin.and.ellipse", countdown("через", to: slot.startDate, at: slot))
+            line(placeSymbol(of: slot), countdown("через", to: slot.startDate, at: slot))
         case .upcoming:
             line(slot.symbol, Text(joined(ScheduleFormat.time(slot.start), place(of: slot))))
         case .tomorrow:
@@ -58,6 +58,10 @@ struct InlineLayout: View {
         let today = ScheduleCalendar.day(of: entry.date)
         let label = WidgetSchedule.dayLabel(of: day, focusDay: today, at: entry.date)
         return joined("\(label) \(ScheduleFormat.time(slot.start))", place(of: slot))
+    }
+
+    private func placeSymbol(of slot: WidgetSlot) -> String {
+        slot.room.isEmpty ? slot.symbol : "mappin.and.ellipse"
     }
 
     private func place(of slot: WidgetSlot) -> String {

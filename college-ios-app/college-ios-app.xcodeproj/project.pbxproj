@@ -15,6 +15,8 @@
 		4FA7FEB6307CDA9D00E8E270 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FA7FEB5307CDA9D00E8E270 /* WidgetKit.framework */; };
 		4FA7FEB8307CDA9D00E8E270 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FA7FEB7307CDA9D00E8E270 /* SwiftUI.framework */; };
 		4FA7FEC3307CDA9D00E8E270 /* CollegeWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4FA7FEB3307CDA9D00E8E270 /* CollegeWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4FC0A700000000000000000E /* CollegeWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 4FC0A7000000000000000005 /* CollegeWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4FC0A700000000000000001E /* CollegeWatchWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4FC0A7000000000000000015 /* CollegeWatchWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,6 +26,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4FA7FEB2307CDA9D00E8E270;
 			remoteInfo = CollegeWidgetExtension;
+		};
+		4FC0A700000000000000000F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4F38663B2E7F004E00C9993A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4FC0A7000000000000000001;
+			remoteInfo = CollegeWatch;
+		};
+		4FC0A700000000000000001F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4F38663B2E7F004E00C9993A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4FC0A7000000000000000011;
+			remoteInfo = CollegeWatchWidgetExtension;
 		};
 		4FE571000000000000000009 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -46,6 +62,28 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4FC0A700000000000000000D /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				4FC0A700000000000000000E /* CollegeWatch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FC0A700000000000000001D /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4FC0A700000000000000001E /* CollegeWatchWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +93,8 @@
 		4FA7FEB3307CDA9D00E8E270 /* CollegeWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CollegeWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FA7FEB5307CDA9D00E8E270 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = /System/Library/Frameworks/WidgetKit.framework; sourceTree = "<absolute>"; };
 		4FA7FEB7307CDA9D00E8E270 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = /System/Library/Frameworks/SwiftUI.framework; sourceTree = "<absolute>"; };
+		4FC0A7000000000000000005 /* CollegeWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CollegeWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4FC0A7000000000000000015 /* CollegeWatchWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CollegeWatchWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FE571000000000000000004 /* college-ios-appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "college-ios-appTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -104,6 +144,95 @@
 			);
 			target = 4FA7FEB2307CDA9D00E8E270 /* CollegeWidgetExtension */;
 		};
+		4FC0A700000000000000000A /* Exceptions for "CollegeWatch" folder in "CollegeWatch" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4FC0A7000000000000000001 /* CollegeWatch */;
+		};
+		4FC0A700000000000000000B /* Exceptions for "college-ios-app" folder in "CollegeWatch" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Core/Utils/ScheduleCalendar.swift,
+				Core/Utils/ScheduleFormat.swift,
+				Core/Utils/ScheduleParsing.swift,
+				Core/Utils/StudyProfile.swift,
+				Core/Utils/SubjectIcon.swift,
+				DesignSystem/Theme/AppTheme.swift,
+				DesignSystem/Theme/ThemeEnvironment.swift,
+				DesignSystem/Tokens/AppColors.swift,
+				DesignSystem/Tokens/AppTypography.swift,
+				DesignSystem/Tokens/Metrics.swift,
+				DesignSystem/Tokens/Palette.swift,
+				Features/Schedule/Data/ScheduleEventParsing.swift,
+				Features/Schedule/Data/ScheduleQuery.swift,
+				Features/Schedule/Data/WidgetSnapshotStore.swift,
+				Features/Schedule/Models/Lesson.swift,
+				Features/Schedule/Models/ScheduleDTO.swift,
+				Features/Schedule/Models/Selection.swift,
+				Features/Schedule/Models/WidgetContent.swift,
+				Features/Schedule/Models/WidgetSnapshot.swift,
+				Features/Schedule/Utils/Groups.swift,
+				Features/Schedule/Utils/LessonSplitting.swift,
+				Features/Schedule/Utils/WidgetSchedule.swift,
+				Mocks/ScheduleMocks.swift,
+			);
+			target = 4FC0A7000000000000000001 /* CollegeWatch */;
+		};
+		4FC0A700000000000000000C /* Exceptions for "CollegeWidget" folder in "CollegeWatch" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Data/WidgetScheduleFetcher.swift,
+			);
+			target = 4FC0A7000000000000000001 /* CollegeWatch */;
+		};
+		4FC0A700000000000000001A /* Exceptions for "CollegeWatchWidget" folder in "CollegeWatchWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4FC0A7000000000000000011 /* CollegeWatchWidgetExtension */;
+		};
+		4FC0A700000000000000001B /* Exceptions for "college-ios-app" folder in "CollegeWatchWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Core/Utils/ScheduleCalendar.swift,
+				Core/Utils/ScheduleFormat.swift,
+				Core/Utils/ScheduleParsing.swift,
+				Core/Utils/StudyProfile.swift,
+				Core/Utils/SubjectIcon.swift,
+				DesignSystem/Theme/AppTheme.swift,
+				DesignSystem/Theme/ThemeEnvironment.swift,
+				DesignSystem/Tokens/AppColors.swift,
+				DesignSystem/Tokens/AppTypography.swift,
+				DesignSystem/Tokens/Metrics.swift,
+				DesignSystem/Tokens/Palette.swift,
+				Features/Schedule/Data/ScheduleEventParsing.swift,
+				Features/Schedule/Data/ScheduleQuery.swift,
+				Features/Schedule/Data/WidgetSnapshotStore.swift,
+				Features/Schedule/Models/Lesson.swift,
+				Features/Schedule/Models/ScheduleDTO.swift,
+				Features/Schedule/Models/Selection.swift,
+				Features/Schedule/Models/WidgetContent.swift,
+				Features/Schedule/Models/WidgetSnapshot.swift,
+				Features/Schedule/Utils/Groups.swift,
+				Features/Schedule/Utils/LessonSplitting.swift,
+				Features/Schedule/Utils/WidgetSchedule.swift,
+				Mocks/ScheduleMocks.swift,
+			);
+			target = 4FC0A7000000000000000011 /* CollegeWatchWidgetExtension */;
+		};
+		4FC0A700000000000000001C /* Exceptions for "CollegeWidget" folder in "CollegeWatchWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Data/WidgetScheduleFetcher.swift,
+				Provider/ScheduleEntry.swift,
+				Provider/ScheduleProvider.swift,
+				Provider/WidgetSample.swift,
+			);
+			target = 4FC0A7000000000000000011 /* CollegeWatchWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -112,6 +241,8 @@
 			exceptions = (
 				4F79A2E72E805E4200660834 /* Exceptions for "college-ios-app" folder in "college-ios-app" target */,
 				4FA7FECA307CDA9D00E8E270 /* Exceptions for "college-ios-app" folder in "CollegeWidgetExtension" target */,
+				4FC0A700000000000000000B /* Exceptions for "college-ios-app" folder in "CollegeWatch" target */,
+				4FC0A700000000000000001B /* Exceptions for "college-ios-app" folder in "CollegeWatchWidgetExtension" target */,
 			);
 			path = "college-ios-app";
 			sourceTree = "<group>";
@@ -120,8 +251,26 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				4FA7FEC7307CDA9D00E8E270 /* Exceptions for "CollegeWidget" folder in "CollegeWidgetExtension" target */,
+				4FC0A700000000000000000C /* Exceptions for "CollegeWidget" folder in "CollegeWatch" target */,
+				4FC0A700000000000000001C /* Exceptions for "CollegeWidget" folder in "CollegeWatchWidgetExtension" target */,
 			);
 			path = CollegeWidget;
+			sourceTree = "<group>";
+		};
+		4FC0A7000000000000000009 /* CollegeWatch */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4FC0A700000000000000000A /* Exceptions for "CollegeWatch" folder in "CollegeWatch" target */,
+			);
+			path = CollegeWatch;
+			sourceTree = "<group>";
+		};
+		4FC0A7000000000000000019 /* CollegeWatchWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4FC0A700000000000000001A /* Exceptions for "CollegeWatchWidget" folder in "CollegeWatchWidgetExtension" target */,
+			);
+			path = CollegeWatchWidget;
 			sourceTree = "<group>";
 		};
 		4FE57100000000000000000A /* college-ios-appTests */ = {
@@ -151,6 +300,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4FC0A7000000000000000003 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FC0A7000000000000000013 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4FE571000000000000000003 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -168,6 +331,8 @@
 				4F3866452E7F004E00C9993A /* college-ios-app */,
 				4FE57100000000000000000A /* college-ios-appTests */,
 				4FA7FEB9307CDA9D00E8E270 /* CollegeWidget */,
+				4FC0A7000000000000000009 /* CollegeWatch */,
+				4FC0A7000000000000000019 /* CollegeWatchWidget */,
 				4FA7FEB4307CDA9D00E8E270 /* Frameworks */,
 				4F3866442E7F004E00C9993A /* Products */,
 				4F49B9302ECB5F2C00943378 /* GoogleService-Info.plist */,
@@ -180,6 +345,8 @@
 				4F3866432E7F004E00C9993A /* college-ios-app.app */,
 				4FE571000000000000000004 /* college-ios-appTests.xctest */,
 				4FA7FEB3307CDA9D00E8E270 /* CollegeWidgetExtension.appex */,
+				4FC0A7000000000000000005 /* CollegeWatch.app */,
+				4FC0A7000000000000000015 /* CollegeWatchWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -204,12 +371,14 @@
 				4F3866402E7F004E00C9993A /* Frameworks */,
 				4F3866412E7F004E00C9993A /* Resources */,
 				4FA7FEC8307CDA9D00E8E270 /* Embed Foundation Extensions */,
+				4FC0A700000000000000000D /* Embed Watch Content */,
 				4F49B9382ECB618D00943378 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				4FA7FEC2307CDA9D00E8E270 /* PBXTargetDependency */,
+				4FC0A7000000000000000010 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				4F3866452E7F004E00C9993A /* college-ios-app */,
@@ -244,6 +413,52 @@
 			);
 			productName = CollegeWidgetExtension;
 			productReference = 4FA7FEB3307CDA9D00E8E270 /* CollegeWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		4FC0A7000000000000000001 /* CollegeWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4FC0A7000000000000000006 /* Build configuration list for PBXNativeTarget "CollegeWatch" */;
+			buildPhases = (
+				4FC0A7000000000000000002 /* Sources */,
+				4FC0A7000000000000000003 /* Frameworks */,
+				4FC0A7000000000000000004 /* Resources */,
+				4FC0A700000000000000001D /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4FC0A7000000000000000020 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4FC0A7000000000000000009 /* CollegeWatch */,
+			);
+			name = CollegeWatch;
+			packageProductDependencies = (
+			);
+			productName = CollegeWatch;
+			productReference = 4FC0A7000000000000000005 /* CollegeWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4FC0A7000000000000000011 /* CollegeWatchWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4FC0A7000000000000000016 /* Build configuration list for PBXNativeTarget "CollegeWatchWidgetExtension" */;
+			buildPhases = (
+				4FC0A7000000000000000012 /* Sources */,
+				4FC0A7000000000000000013 /* Frameworks */,
+				4FC0A7000000000000000014 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4FC0A7000000000000000019 /* CollegeWatchWidget */,
+			);
+			name = CollegeWatchWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = CollegeWatchWidgetExtension;
+			productReference = 4FC0A7000000000000000015 /* CollegeWatchWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		4FE571000000000000000001 /* college-ios-appTests */ = {
@@ -285,6 +500,12 @@
 					4FA7FEB2307CDA9D00E8E270 = {
 						CreatedOnToolsVersion = 27.0;
 					};
+					4FC0A7000000000000000001 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					4FC0A7000000000000000011 = {
+						CreatedOnToolsVersion = 27.0;
+					};
 					4FE571000000000000000001 = {
 						CreatedOnToolsVersion = 26.0;
 						TestTargetID = 4F3866422E7F004E00C9993A;
@@ -312,6 +533,8 @@
 				4F3866422E7F004E00C9993A /* college-ios-app */,
 				4FE571000000000000000001 /* college-ios-appTests */,
 				4FA7FEB2307CDA9D00E8E270 /* CollegeWidgetExtension */,
+				4FC0A7000000000000000001 /* CollegeWatch */,
+				4FC0A7000000000000000011 /* CollegeWatchWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -327,6 +550,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4FA7FEB1307CDA9D00E8E270 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FC0A7000000000000000004 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FC0A7000000000000000014 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -377,6 +614,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4FC0A7000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FC0A7000000000000000012 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4FE571000000000000000002 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -391,6 +642,16 @@
 			isa = PBXTargetDependency;
 			target = 4FA7FEB2307CDA9D00E8E270 /* CollegeWidgetExtension */;
 			targetProxy = 4FA7FEC1307CDA9D00E8E270 /* PBXContainerItemProxy */;
+		};
+		4FC0A7000000000000000010 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4FC0A7000000000000000001 /* CollegeWatch */;
+			targetProxy = 4FC0A700000000000000000F /* PBXContainerItemProxy */;
+		};
+		4FC0A7000000000000000020 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4FC0A7000000000000000011 /* CollegeWatchWidgetExtension */;
+			targetProxy = 4FC0A700000000000000001F /* PBXContainerItemProxy */;
 		};
 		4FE571000000000000000008 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -697,6 +958,150 @@
 			};
 			name = Release;
 		};
+		4FC0A7000000000000000007 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CollegeWatch/CollegeWatch.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 33;
+				DEVELOPMENT_TEAM = KYMQ44FU4S;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CollegeWatch/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "МойКЦТ";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "anton1ks.college-ios-app";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "anton1ks.college-ios-app.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		4FC0A7000000000000000008 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CollegeWatch/CollegeWatch.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 33;
+				DEVELOPMENT_TEAM = KYMQ44FU4S;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CollegeWatch/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "МойКЦТ";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "anton1ks.college-ios-app";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "anton1ks.college-ios-app.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
+		4FC0A7000000000000000017 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = CollegeWatchWidget/CollegeWatchWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 33;
+				DEVELOPMENT_TEAM = KYMQ44FU4S;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CollegeWatchWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "МойКЦТ";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 2.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "anton1ks.college-ios-app.watchkitapp.CollegeWatchWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		4FC0A7000000000000000018 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = CollegeWatchWidget/CollegeWatchWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 33;
+				DEVELOPMENT_TEAM = KYMQ44FU4S;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CollegeWatchWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "МойКЦТ";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 2.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "anton1ks.college-ios-app.watchkitapp.CollegeWatchWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
 		4FE571000000000000000006 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -763,6 +1168,24 @@
 			buildConfigurations = (
 				4FA7FEC5307CDA9D00E8E270 /* Debug */,
 				4FA7FEC6307CDA9D00E8E270 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4FC0A7000000000000000006 /* Build configuration list for PBXNativeTarget "CollegeWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4FC0A7000000000000000007 /* Debug */,
+				4FC0A7000000000000000008 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4FC0A7000000000000000016 /* Build configuration list for PBXNativeTarget "CollegeWatchWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4FC0A7000000000000000017 /* Debug */,
+				4FC0A7000000000000000018 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

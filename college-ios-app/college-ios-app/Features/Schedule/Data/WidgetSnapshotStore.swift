@@ -17,9 +17,22 @@ nonisolated struct WidgetSnapshotStore: Sendable {
         suiteName.flatMap(UserDefaults.init(suiteName:))
     }
 
+    func data() -> Data? {
+        defaults?.data(forKey: ScheduleWidgetKey.snapshot)
+    }
+
     func load() -> WidgetSnapshot? {
-        guard let data = defaults?.data(forKey: ScheduleWidgetKey.snapshot) else { return nil }
+        guard let data = data() else { return nil }
         return try? JSONDecoder().decode(WidgetSnapshot.self, from: data)
+    }
+
+    @discardableResult
+    func replace(with data: Data) throws -> Bool {
+        let snapshot = try JSONDecoder().decode(WidgetSnapshot.self, from: data)
+        guard let defaults, load() != snapshot else { return false }
+
+        defaults.set(data, forKey: ScheduleWidgetKey.snapshot)
+        return true
     }
 
     @discardableResult

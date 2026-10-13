@@ -184,4 +184,35 @@ struct WidgetSnapshotTests {
         #expect(!failed)
         #expect(store.load() == before)
     }
+
+    @Test("Снимок с iPhone целиком заменяет снимок на часах")
+    func replaceTakesWholeSnapshot() throws {
+        let phone = WidgetSnapshotStore(suiteName: "widget.snapshot.tests.\(UUID().uuidString)")
+        let watch = WidgetSnapshotStore(suiteName: "widget.snapshot.tests.\(UUID().uuidString)")
+        try phone.save(
+            [lesson("Математика", on: monday, start: 9 * 60)],
+            monday: monday,
+            selection: selection,
+            at: now
+        )
+        try watch.save([], monday: nextMonday, selection: Selection(group: "ИТ25-11"), at: now)
+        let data = try #require(phone.data())
+
+        #expect(try watch.replace(with: data))
+        #expect(watch.load() == phone.load())
+        #expect(try !watch.replace(with: data))
+    }
+
+    @Test("Повреждённые данные с iPhone не трогают снимок")
+    func brokenDataIsNotReplaced() throws {
+        let store = WidgetSnapshotStore(suiteName: "widget.snapshot.tests.\(UUID().uuidString)")
+        try store.save([], monday: monday, selection: selection, at: now)
+        let before = store.load()
+
+        #expect(throws: DecodingError.self) { try store.replace(with: Data("{".utf8)) }
+        #expect(store.load() == before)
+
+        let data = try #require(store.data())
+        #expect(try !WidgetSnapshotStore(suiteName: nil).replace(with: data))
+    }
 }

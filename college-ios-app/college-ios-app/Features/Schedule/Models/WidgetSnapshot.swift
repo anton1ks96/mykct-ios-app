@@ -48,8 +48,7 @@ nonisolated struct WidgetSnapshot: Codable, Equatable, Sendable {
         resetsSelection: Bool,
         at now: Date
     ) -> WidgetSnapshot? {
-        let current = ScheduleCalendar.monday(of: now)
-        let window = [current, ScheduleCalendar.adding(weeks: 1, to: current)].map(key(of:))
+        let window = windowKeys(at: now)
         let week = key(of: monday)
         guard window.contains(week) else { return nil }
 
@@ -64,6 +63,34 @@ nonisolated struct WidgetSnapshot: Codable, Equatable, Sendable {
             savedAt: now
         )
         return WidgetSnapshot(selection: selection, weeks: weeks)
+    }
+
+    static func combining(
+        _ incoming: WidgetSnapshot,
+        with local: WidgetSnapshot?,
+        at now: Date
+    ) -> WidgetSnapshot {
+        let window = windowKeys(at: now)
+        guard let local, local.selection == incoming.selection else {
+            return WidgetSnapshot(
+                selection: incoming.selection,
+                weeks: incoming.weeks.filter { window.contains($0.key) }
+            )
+        }
+
+        var weeks = local.weeks
+        for (key, week) in incoming.weeks where week.savedAt > weeks[key]?.savedAt ?? .distantPast {
+            weeks[key] = week
+        }
+        return WidgetSnapshot(
+            selection: local.selection,
+            weeks: weeks.filter { window.contains($0.key) }
+        )
+    }
+
+    private static func windowKeys(at now: Date) -> [String] {
+        let current = ScheduleCalendar.monday(of: now)
+        return [current, ScheduleCalendar.adding(weeks: 1, to: current)].map(key(of:))
     }
 
     private static func key(of day: Date) -> String {

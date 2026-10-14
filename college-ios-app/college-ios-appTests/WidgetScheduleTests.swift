@@ -210,4 +210,33 @@ struct WidgetScheduleTests {
         #expect(WidgetSchedule.reloadDate(after: at(0, 4), hasToday: true) == at(0, 5))
         #expect(WidgetSchedule.reloadDate(after: at(0, 10), hasToday: false) == at(0, 10, 30))
     }
+
+    @Test("День и неделя для часов: без недели пусто, свободный день без пар")
+    func dayAndWeek() {
+        let days = (0..<7).map { ScheduleCalendar.adding(days: $0, to: monday) }
+
+        #expect(WidgetSchedule.day(at(1, 15), in: currentWeek)?.slots.count == 3)
+        #expect(WidgetSchedule.day(at(2, 12), in: currentWeek)?.slots == [])
+        #expect(WidgetSchedule.day(at(7, 10), in: currentWeek) == nil)
+        #expect(WidgetSchedule.week(of: at(3, 10), in: currentWeek).map(\.date) == days)
+        #expect(WidgetSchedule.week(of: nextMonday, in: currentWeek).isEmpty)
+        #expect(WidgetSchedule.week(of: nextMonday, in: bothWeeks).count == 7)
+    }
+
+    @Test("Smart Stack поднимает расписание за 15 минут до пары на двое суток вперёд")
+    func relevantIntervals() {
+        let intervals = WidgetSchedule.relevantIntervals(from: at(0, 10, 5), in: bothWeeks)
+
+        #expect(intervals.count == 7)
+        #expect(intervals.first == DateInterval(start: at(0, 8, 45), end: at(0, 10, 30)))
+        #expect(WidgetSchedule.relevantIntervals(from: at(0, 10, 5), in: nil).isEmpty)
+    }
+
+    @Test("Короткая дата дня для часов")
+    func dayShort() throws {
+        let mayDay = try #require(ScheduleParsing.date(from: "2026-05-01"))
+
+        #expect(ScheduleFormat.dayShort(at(3, 10)) == "Чт, 15 окт")
+        #expect(ScheduleFormat.dayShort(mayDay) == "Пт, 1 мая")
+    }
 }

@@ -30,24 +30,10 @@ nonisolated struct ScheduleProvider: TimelineProvider {
     ) {
         Task {
             let now = Date.now
-            await refreshWeeks(at: now)
+            if let fetcher = WidgetScheduleFetcher.live {
+                await store.refresh(at: now, fetch: fetcher.week)
+            }
             completion(timeline(at: now, snapshot: store.load()))
-        }
-    }
-
-    private func refreshWeeks(at now: Date) async {
-        guard let fetcher = WidgetScheduleFetcher.live, let snapshot = store.load() else { return }
-
-        for monday in WidgetSchedule.weeksToRefresh(at: now, in: snapshot) {
-            guard let lessons = try? await fetcher.week(monday: monday, selection: snapshot.selection)
-            else { continue }
-            try? store.save(
-                lessons,
-                monday: monday,
-                selection: snapshot.selection,
-                resetsSelection: false,
-                at: now
-            )
         }
     }
 

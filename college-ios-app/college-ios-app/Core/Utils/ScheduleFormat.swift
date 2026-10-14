@@ -20,6 +20,11 @@ nonisolated enum ScheduleFormat {
         return "\(parts.day ?? 0) \(genitiveMonths[(parts.month ?? 1) - 1])"
     }
 
+    static func dayShort(_ date: Date) -> String {
+        let parts = ScheduleCalendar.calendar.dateComponents([.day, .month], from: date)
+        return "\(weekdayShort(date)), \(parts.day ?? 0) \(shortMonths[(parts.month ?? 1) - 1])"
+    }
+
     static func dayTitle(_ date: Date) -> String {
         "\(fullWeekdays[ScheduleCalendar.weekdayIndex(of: date) - 1]), \(dayMonth(date))"
     }
@@ -84,6 +89,10 @@ nonisolated enum ScheduleFormat {
     private static let genitiveMonths = [
         "января", "февраля", "марта", "апреля", "мая", "июня",
         "июля", "августа", "сентября", "октября", "ноября", "декабря",
+    ]
+
+    private static let shortMonths = [
+        "янв", "фев", "мар", "апр", "мая", "июн", "июл", "авг", "сен", "окт", "ноя", "дек",
     ]
 
     private static let fullWeekdays = [

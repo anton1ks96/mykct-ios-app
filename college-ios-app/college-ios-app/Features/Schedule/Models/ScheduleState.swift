@@ -39,6 +39,7 @@ nonisolated struct ScheduleState: Equatable, Sendable {
     var visible: [DaySchedule] = []
     var isLoading: Bool = true
     var error: String?
+    var isDisabled: Bool = false
     var details: LessonDetails?
     var isStale: Bool = false
     var isOffline: Bool = false

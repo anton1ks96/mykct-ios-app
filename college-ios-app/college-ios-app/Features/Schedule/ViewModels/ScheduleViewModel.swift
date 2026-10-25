@@ -185,6 +185,7 @@ final class ScheduleViewModel {
             state.fetchedAt = nil
             state.isLoading = false
             state.error = ErrorText.message(for: error) ?? "Не удалось загрузить расписание"
+            state.isDisabled = ErrorText.isFeatureDisabled(error)
         }
     }
 
@@ -193,6 +194,7 @@ final class ScheduleViewModel {
         state.isStale = week.isStale
         state.fetchedAt = week.fetchedAt
         state.error = nil
+        state.isDisabled = false
         state.isLoading = false
         applyWeek()
     }

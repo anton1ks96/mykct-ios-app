@@ -169,19 +169,28 @@ struct ScheduleScreen: View {
 
         case .error:
             placeholder {
+                if state.isDisabled {
+                    Image(systemName: "pause.circle")
+                        .font(.system(size: 40))
+                        .foregroundStyle(colors.onSurfaceVariant)
+                        .padding(.bottom, 12)
+                }
+
                 Text(state.error ?? "Не удалось загрузить расписание")
                     .textStyle(AppType.bodyLarge)
                     .foregroundStyle(colors.onSurfaceVariant)
                     .multilineTextAlignment(.center)
 
-                Button {
-                    Task { await viewModel.retry() }
-                } label: {
-                    Label("Повторить", systemImage: "arrow.clockwise")
+                if !state.isDisabled {
+                    Button {
+                        Task { await viewModel.retry() }
+                    } label: {
+                        Label("Повторить", systemImage: "arrow.clockwise")
+                    }
+                    .glassAction()
+                    .frame(maxWidth: 240)
+                    .padding(.top, 12)
                 }
-                .glassAction()
-                .frame(maxWidth: 240)
-                .padding(.top, 12)
             }
 
         case .empty:

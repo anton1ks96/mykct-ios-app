@@ -154,8 +154,10 @@ final class HomeViewModel {
             state.stats = stats
             state.motivation = stats.total > 0 ? HomeFormat.motivation(percent: stats.percent) : nil
             state.error = nil
+            state.attendanceDisabled = false
         } catch {
             guard !ErrorText.isCancellation(error) else { return }
+            state.attendanceDisabled = ErrorText.isFeatureDisabled(error)
             state.records = []
             state.marks = [:]
             state.stats = .empty
@@ -169,8 +171,11 @@ final class HomeViewModel {
             let streak = try await repository.streak()
             try Task.checkCancellation()
             state.streak = streak
+            state.streakDisabled = nil
         } catch {
-            return
+            guard ErrorText.isFeatureDisabled(error) else { return }
+            state.streak = nil
+            state.streakDisabled = ErrorText.message(for: error)
         }
     }
 
@@ -214,10 +219,12 @@ final class HomeViewModel {
         state.stats = .empty
         state.motivation = nil
         state.streak = nil
+        state.streakDisabled = nil
         state.leaderboard = .idle
         state.subjects = []
         state.scores = nil
         state.error = nil
+        state.attendanceDisabled = false
         state.isLoading = false
     }
 }

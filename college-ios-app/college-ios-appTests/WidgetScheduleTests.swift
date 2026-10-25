@@ -56,6 +56,12 @@ struct WidgetScheduleTests {
         #expect(WidgetSchedule.content(at: at(8, 10), in: currentWeek) == .unavailable)
     }
 
+    @Test("Отключённое расписание показывается вместо пар")
+    func disabled() {
+        let snapshot = WidgetSnapshot(selection: currentWeek.selection, weeks: currentWeek.weeks, disabledAt: .now)
+        #expect(WidgetSchedule.content(at: at(0, 10), in: snapshot) == .disabled)
+    }
+
     @Test("До первой пары фокус на ней, статус по сегодняшнему дню")
     func morningFocusesFirstLesson() throws {
         let focus = try #require(focus(WidgetSchedule.content(at: at(0, 7, 30), in: bothWeeks)))

@@ -24,6 +24,8 @@ struct LargeLayout: View {
                 WidgetMessage.setup.frame(maxHeight: 138)
             case .unavailable:
                 WidgetMessage.unavailable.frame(maxHeight: 138)
+            case .disabled:
+                WidgetMessage.disabled.frame(maxHeight: 138)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

@@ -110,9 +110,10 @@ struct HomeScreen: View {
             HomePlaceholder { Swirl().frame(width: 44, height: 44) }
 
         case .error:
-            HomeFailure(message: state.error ?? "Не удалось загрузить посещаемость") {
-                Task { await viewModel.refresh() }
-            }
+            HomeFailure(
+                message: state.error ?? "Не удалось загрузить посещаемость",
+                onRetry: state.attendanceDisabled ? nil : { Task { await viewModel.refresh() } }
+            )
 
         case .empty, .content:
             days

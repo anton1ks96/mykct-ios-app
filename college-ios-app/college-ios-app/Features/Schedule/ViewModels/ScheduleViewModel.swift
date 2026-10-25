@@ -172,7 +172,7 @@ final class ScheduleViewModel {
             show(week)
         } catch {
             guard !ErrorText.isCancellation(error), isCurrent() else { return }
-            guard cached == nil else {
+            guard cached == nil || ErrorText.isFeatureDisabled(error) else {
                 state.isOffline = ErrorText.isConnectivity(error)
                 state.isStale = !state.isOffline
                 return
@@ -185,6 +185,7 @@ final class ScheduleViewModel {
             state.fetchedAt = nil
             state.isLoading = false
             state.error = ErrorText.message(for: error) ?? "Не удалось загрузить расписание"
+            state.isDisabled = ErrorText.isFeatureDisabled(error)
         }
     }
 
@@ -193,6 +194,7 @@ final class ScheduleViewModel {
         state.isStale = week.isStale
         state.fetchedAt = week.fetchedAt
         state.error = nil
+        state.isDisabled = false
         state.isLoading = false
         applyWeek()
     }

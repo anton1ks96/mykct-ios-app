@@ -39,7 +39,7 @@ struct DayScreen: View {
                 RestHeader(caption: ScheduleFormat.dayTitle(date), lessonCount: 0)
             }
         } else {
-            WatchMessage.unavailable
+            snapshot?.isDisabled == true ? WatchMessage.disabled : WatchMessage.unavailable
         }
     }
 

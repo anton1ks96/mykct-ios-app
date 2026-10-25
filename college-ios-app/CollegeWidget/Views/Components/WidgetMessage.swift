@@ -21,6 +21,12 @@ struct WidgetMessage: View {
         subtitle: "Открой МойКЦТ, чтобы обновить"
     )
 
+    static let disabled = WidgetMessage(
+        symbol: "pause.circle",
+        title: "Расписание отключено",
+        subtitle: "Временно, загляни позже"
+    )
+
     let symbol: String
     let title: String
     let subtitle: String

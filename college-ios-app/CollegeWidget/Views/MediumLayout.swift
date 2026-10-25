@@ -19,6 +19,8 @@ struct MediumLayout: View {
                 WidgetMessage.setup
             case .unavailable:
                 WidgetMessage.unavailable
+            case .disabled:
+                WidgetMessage.disabled
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

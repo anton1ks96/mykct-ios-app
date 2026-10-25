@@ -61,6 +61,7 @@ nonisolated struct WidgetRest: Equatable, Sendable {
 nonisolated enum WidgetContent: Equatable, Sendable {
     case setup
     case unavailable
+    case disabled
     case focus(WidgetFocus)
     case rest(WidgetRest)
 }

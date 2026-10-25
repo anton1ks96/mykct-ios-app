@@ -23,6 +23,12 @@ struct WatchMessage: View {
         subtitle: "Открой МойКЦТ, чтобы обновить"
     )
 
+    static let disabled = WatchMessage(
+        symbol: "pause",
+        title: "Расписание отключено",
+        subtitle: "Временно, загляни позже"
+    )
+
     let symbol: String
     let title: String
     let subtitle: String

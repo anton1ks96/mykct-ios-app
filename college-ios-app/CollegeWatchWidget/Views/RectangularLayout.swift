@@ -32,6 +32,8 @@ struct RectangularLayout: View {
                 message("Выбери группу", "Открой МойКЦТ на iPhone")
             case .unavailable:
                 message("Нет данных", "Открой МойКЦТ, чтобы обновить")
+            case .disabled:
+                message("Отключено", "Расписание вернётся позже")
             }
         }
         .lineLimit(1)

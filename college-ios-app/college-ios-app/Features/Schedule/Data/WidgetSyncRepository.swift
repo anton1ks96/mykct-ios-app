@@ -30,7 +30,15 @@ nonisolated final class WidgetSyncRepository: ScheduleRepositoryProtocol {
 
     func weekSchedule(monday: Date, selection: Selection) async throws -> WeekSchedule {
         write { try store.adopt(selection) }
-        let week = try await base.weekSchedule(monday: monday, selection: selection)
+        let week: WeekSchedule
+        do {
+            week = try await base.weekSchedule(monday: monday, selection: selection)
+        } catch {
+            if ErrorText.isFeatureDisabled(error) {
+                write { try store.disable() }
+            }
+            throw error
+        }
         write { try store.save(week.lessons, monday: monday, selection: selection) }
         return week
     }

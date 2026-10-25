@@ -251,4 +251,49 @@ struct WidgetSnapshotTests {
         let data = try #require(store.data())
         #expect(try !WidgetSnapshotStore(suiteName: nil).receive(data, at: now))
     }
+
+    @Test("Отключённое расписание сбрасывает недели, а первая скачанная неделя снимает отметку")
+    func disabledUntilWeekLoads() async throws {
+        let store = WidgetSnapshotStore(suiteName: "widget.snapshot.tests.\(UUID().uuidString)")
+        try store.save([lesson("Математика", on: monday, start: 9 * 60)], monday: monday, selection: selection, at: now)
+
+        let disabled = await store.refresh(at: now.addingTimeInterval(13 * 60 * 60)) { _, _ in
+            throw ScheduleDisabledError()
+        }
+
+        #expect(disabled)
+        #expect(store.load()?.isDisabled == true)
+        #expect(store.load()?.lessons(on: monday) == nil)
+        #expect(try !store.disable(at: now))
+
+        let enabled = await store.refresh(at: now.addingTimeInterval(14 * 60 * 60)) { _, _ in [] }
+
+        #expect(enabled)
+        #expect(store.load()?.isDisabled == false)
+        #expect(store.load()?.selection == selection)
+    }
+
+    @Test("Отметка отключения доходит до часов и снимается неделей, скачанной позже")
+    func receiveCarriesDisabled() throws {
+        let phone = WidgetSnapshotStore(suiteName: "widget.snapshot.tests.\(UUID().uuidString)")
+        let watch = WidgetSnapshotStore(suiteName: "widget.snapshot.tests.\(UUID().uuidString)")
+        try phone.save([lesson("Математика", on: monday, start: 9 * 60)], monday: monday, selection: selection, at: now)
+        #expect(try watch.receive(try #require(phone.data()), at: now))
+
+        try phone.disable(at: now.addingTimeInterval(60))
+        let disabled = try #require(phone.data())
+        #expect(try watch.receive(disabled, at: now))
+        #expect(watch.load()?.isDisabled == true)
+        #expect(watch.load()?.lessons(on: monday) == nil)
+
+        try watch.save(
+            [lesson("Свежая", on: monday, start: 9 * 60)],
+            monday: monday,
+            selection: selection,
+            resetsSelection: false,
+            at: now.addingTimeInterval(120)
+        )
+        #expect(try !watch.receive(disabled, at: now))
+        #expect(watch.load()?.isDisabled == false)
+    }
 }

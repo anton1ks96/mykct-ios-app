@@ -55,6 +55,8 @@ struct StreakSheet: View {
     private var streak: some View {
         if let streak = state.streak {
             content(for: streak)
+        } else if let disabled = state.streakDisabled {
+            HomeFailure(message: disabled, onRetry: nil)
         } else if state.isLoading {
             HomePlaceholder { Swirl().frame(width: 44, height: 44) }
         } else {

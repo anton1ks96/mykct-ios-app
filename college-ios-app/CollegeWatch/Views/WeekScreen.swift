@@ -23,7 +23,7 @@ struct WeekScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 6) {
                 if weeks.isEmpty {
-                    WatchMessage.unavailable
+                    snapshot?.isDisabled == true ? WatchMessage.disabled : WatchMessage.unavailable
                 }
 
                 ForEach(weeks, id: \.monday) { week in

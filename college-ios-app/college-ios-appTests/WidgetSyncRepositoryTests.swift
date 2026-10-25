@@ -10,9 +10,10 @@ import Testing
 
 private struct FixedScheduleRepository: ScheduleRepositoryProtocol {
     let week: WeekSchedule?
+    var failure: APIError = .url(URLError(.notConnectedToInternet))
 
     func weekSchedule(monday: Date, selection: Selection) async throws -> WeekSchedule {
-        guard let week else { throw APIError.url(URLError(.notConnectedToInternet)) }
+        guard let week else { throw failure }
         return week
     }
 
@@ -49,11 +50,12 @@ private func week(on day: Date) -> WeekSchedule {
 
 private func makeRepository(
     _ week: WeekSchedule?,
+    failure: APIError = .url(URLError(.notConnectedToInternet)),
     reloads: ReloadCounter
 ) -> (WidgetSyncRepository, WidgetSnapshotStore) {
     let store = WidgetSnapshotStore(suiteName: "widget.sync.tests.\(UUID().uuidString)")
     let repository = WidgetSyncRepository(
-        base: FixedScheduleRepository(week: week),
+        base: FixedScheduleRepository(week: week, failure: failure),
         store: store,
         onChange: { reloads.increment() }
     )
@@ -127,6 +129,19 @@ struct WidgetSyncRepositoryTests {
 
         #expect(store.load()?.selection == other)
         #expect(store.load()?.lessons(on: currentMonday) == nil)
+        #expect(reloads.count == 1)
+    }
+
+    @Test("Отключённое на бэкенде расписание отмечается в снимке")
+    func disabledScheduleMarksSnapshot() async throws {
+        let reloads = ReloadCounter()
+        let failure = APIError.api(code: "FEATURE_DISABLED", message: "Расписание временно отключено", status: 503)
+        let (repository, store) = makeRepository(nil, failure: failure, reloads: reloads)
+        try store.save(week(on: currentMonday).lessons, monday: currentMonday, selection: selection)
+
+        _ = try? await repository.weekSchedule(monday: currentMonday, selection: selection)
+
+        #expect(store.load()?.isDisabled == true)
         #expect(reloads.count == 1)
     }
 }

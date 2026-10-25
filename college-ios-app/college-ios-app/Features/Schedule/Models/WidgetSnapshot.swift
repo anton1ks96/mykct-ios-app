@@ -11,6 +11,8 @@ nonisolated enum ScheduleWidgetKey {
     static let snapshot = "widget.snapshot"
 }
 
+nonisolated struct ScheduleDisabledError: Error {}
+
 nonisolated struct WidgetWeek: Codable, Equatable, Sendable {
     let savedAt: Date
     let days: [[Lesson]]
@@ -29,6 +31,9 @@ nonisolated struct WidgetWeek: Codable, Equatable, Sendable {
 nonisolated struct WidgetSnapshot: Codable, Equatable, Sendable {
     let selection: Selection
     let weeks: [String: WidgetWeek]
+    var disabledAt: Date?
+
+    var isDisabled: Bool { disabledAt != nil }
 
     func lessons(on day: Date) -> [Lesson]? {
         guard let week = weeks[Self.key(of: day)] else { return nil }
@@ -74,13 +79,20 @@ nonisolated struct WidgetSnapshot: Codable, Equatable, Sendable {
         guard let local, local.selection == incoming.selection else {
             return WidgetSnapshot(
                 selection: incoming.selection,
-                weeks: incoming.weeks.filter { window.contains($0.key) }
+                weeks: incoming.weeks.filter { window.contains($0.key) },
+                disabledAt: incoming.disabledAt
             )
         }
 
         var weeks = local.weeks
         for (key, week) in incoming.weeks where week.savedAt > weeks[key]?.savedAt ?? .distantPast {
             weeks[key] = week
+        }
+
+        let savedAt = weeks.values.map(\.savedAt).max() ?? .distantPast
+        if let disabledAt = [local.disabledAt, incoming.disabledAt].compactMap({ $0 }).max(),
+           disabledAt > savedAt {
+            return WidgetSnapshot(selection: local.selection, weeks: [:], disabledAt: disabledAt)
         }
         return WidgetSnapshot(
             selection: local.selection,

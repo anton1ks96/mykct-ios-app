@@ -18,6 +18,7 @@ nonisolated enum WidgetSchedule {
 
     static func content(at now: Date, in snapshot: WidgetSnapshot?) -> WidgetContent {
         guard let snapshot else { return .setup }
+        guard !snapshot.isDisabled else { return .disabled }
 
         let today = ScheduleCalendar.day(of: now)
         guard let lessons = snapshot.lessons(on: today) else { return .unavailable }

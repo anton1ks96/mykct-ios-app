@@ -30,6 +30,8 @@ struct CircularLayout: View {
             badge("iphone")
         case .unavailable:
             badge("arrow.clockwise")
+        case .disabled:
+            badge("pause")
         }
     }
 

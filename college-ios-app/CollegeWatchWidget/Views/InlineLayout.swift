@@ -22,6 +22,8 @@ struct InlineLayout: View {
             Text("Выбери группу")
         case .unavailable:
             Text("Нет данных")
+        case .disabled:
+            Text("Отключено")
         }
     }
 

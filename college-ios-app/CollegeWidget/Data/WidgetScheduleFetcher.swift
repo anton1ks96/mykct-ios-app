@@ -19,6 +19,10 @@ nonisolated struct WidgetScheduleFetcher: Sendable {
         return WidgetScheduleFetcher(baseURL: url)
     }
 
+    private struct ErrorBody: Decodable {
+        let code: String
+    }
+
     func week(monday: Date, selection: Selection) async throws -> [Lesson] {
         var components = URLComponents(
             url: baseURL.appending(path: ScheduleQuery.path),
@@ -34,6 +38,9 @@ nonisolated struct WidgetScheduleFetcher: Sendable {
         let request = URLRequest(url: url, timeoutInterval: Self.requestTimeout)
         let (data, response) = try await session.data(for: request)
         guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            if (try? JSONDecoder().decode(ErrorBody.self, from: data))?.code == "FEATURE_DISABLED" {
+                throw ScheduleDisabledError()
+            }
             throw URLError(.badServerResponse)
         }
         return try JSONDecoder().decode(ScheduleResponse.self, from: data)

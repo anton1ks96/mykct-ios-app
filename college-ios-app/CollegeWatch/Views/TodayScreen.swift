@@ -48,6 +48,8 @@ struct TodayScreen: View {
             WatchMessage.setup
         case .unavailable:
             WatchMessage.unavailable
+        case .disabled:
+            WatchMessage.disabled
         }
     }
 

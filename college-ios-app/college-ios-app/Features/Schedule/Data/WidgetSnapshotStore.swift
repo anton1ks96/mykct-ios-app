@@ -47,6 +47,15 @@ nonisolated struct WidgetSnapshotStore: Sendable {
     }
 
     @discardableResult
+    func disable(at now: Date = .now) throws -> Bool {
+        guard let defaults, let current = load(), !current.isDisabled else { return false }
+
+        let snapshot = WidgetSnapshot(selection: current.selection, weeks: [:], disabledAt: now)
+        defaults.set(try JSONEncoder().encode(snapshot), forKey: ScheduleWidgetKey.snapshot)
+        return true
+    }
+
+    @discardableResult
     func save(
         _ lessons: [Lesson],
         monday: Date,
@@ -78,7 +87,14 @@ nonisolated struct WidgetSnapshotStore: Sendable {
 
         var saved = false
         for monday in WidgetSchedule.weeksToRefresh(at: now, in: snapshot) {
-            guard let lessons = try? await fetch(monday, snapshot.selection) else { continue }
+            let lessons: [Lesson]
+            do {
+                lessons = try await fetch(monday, snapshot.selection)
+            } catch is ScheduleDisabledError {
+                return (try? disable(at: now)) == true || saved
+            } catch {
+                continue
+            }
             let didSave = try? save(
                 lessons,
                 monday: monday,

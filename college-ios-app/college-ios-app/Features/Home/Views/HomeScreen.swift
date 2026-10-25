@@ -160,11 +160,15 @@ struct HomeScreen: View {
             HomePlaceholder { Swirl().frame(width: 44, height: 44) }
 
         case .empty, .error:
-            HomePlaceholder {
-                Text("Колледж не отдал ни одного предмета")
-                    .textStyle(AppType.bodyLarge)
-                    .foregroundStyle(colors.onSurfaceVariant)
-                    .multilineTextAlignment(.center)
+            if let disabled = state.performanceDisabled {
+                HomeFailure(message: disabled, onRetry: nil)
+            } else {
+                HomePlaceholder {
+                    Text("Колледж не отдал ни одного предмета")
+                        .textStyle(AppType.bodyLarge)
+                        .foregroundStyle(colors.onSurfaceVariant)
+                        .multilineTextAlignment(.center)
+                }
             }
 
         case .content:

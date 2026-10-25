@@ -9,6 +9,11 @@ import Testing
 
 private actor CountingHomeRepository: HomeRepositoryProtocol {
     private(set) var months: [Date] = []
+    private let subjectsFailure: APIError
+
+    init(subjectsFailure: APIError = .cancelled) {
+        self.subjectsFailure = subjectsFailure
+    }
 
     func attendance(month: Date) async throws -> [AttendanceRecord] {
         months.append(month)
@@ -24,7 +29,7 @@ private actor CountingHomeRepository: HomeRepositoryProtocol {
     }
 
     func subjects() async throws -> [Subject] {
-        throw APIError.cancelled
+        throw subjectsFailure
     }
 
     func scores(subjectID: String, start: Date, end: Date) async throws -> [SubjectLesson] {
@@ -49,6 +54,23 @@ private func loaded() async -> (HomeViewModel, CountingHomeRepository) {
     viewModel.sync(user: user, isBootstrapping: false)
     await viewModel.refresh()
     return (viewModel, repository)
+}
+
+@Suite("Отключённая успеваемость")
+@MainActor
+struct HomePerformanceTests {
+
+    @Test("Выключенная на бэкенде успеваемость показывается текстом бэкенда")
+    func disabled() async {
+        let failure = APIError.api(code: "FEATURE_DISABLED", message: "Успеваемость временно отключена", status: 503)
+        let viewModel = HomeViewModel(repository: CountingHomeRepository(subjectsFailure: failure))
+        viewModel.sync(user: user, isBootstrapping: false)
+
+        await viewModel.refresh()
+
+        #expect(viewModel.state.performanceDisabled == "Успеваемость временно отключена")
+        #expect(viewModel.state.subjects.isEmpty)
+    }
 }
 
 @Suite("Выбор дня и месяца")

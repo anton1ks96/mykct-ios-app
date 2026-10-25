@@ -89,6 +89,7 @@ nonisolated struct HomeState: Equatable, Sendable {
     var streakDisabled: String?
     var leaderboard: LeaderboardFeed = .idle
     var subjects: [Subject] = []
+    var performanceDisabled: String?
     var isLoading: Bool = false
     var error: String?
     var attendanceDisabled: Bool = false

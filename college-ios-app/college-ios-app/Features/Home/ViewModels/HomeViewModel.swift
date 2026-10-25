@@ -184,8 +184,11 @@ final class HomeViewModel {
             let subjects = try await repository.subjects()
             try Task.checkCancellation()
             state.subjects = subjects
+            state.performanceDisabled = nil
         } catch {
-            return
+            guard ErrorText.isFeatureDisabled(error) else { return }
+            state.subjects = []
+            state.performanceDisabled = ErrorText.message(for: error)
         }
     }
 
@@ -222,6 +225,7 @@ final class HomeViewModel {
         state.streakDisabled = nil
         state.leaderboard = .idle
         state.subjects = []
+        state.performanceDisabled = nil
         state.scores = nil
         state.error = nil
         state.attendanceDisabled = false

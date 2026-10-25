@@ -86,16 +86,18 @@ nonisolated struct HomeState: Equatable, Sendable {
     var stats: AttendanceStats = .empty
     var motivation: String?
     var streak: Streak?
+    var streakDisabled: String?
     var leaderboard: LeaderboardFeed = .idle
     var subjects: [Subject] = []
     var isLoading: Bool = false
     var error: String?
+    var attendanceDisabled: Bool = false
     var scores: SubjectScores?
 
     var isAuthenticated: Bool { user != nil }
 
     var canSeeLeaderboard: Bool {
-        user?.isStudent == true && user?.academicGroup?.isEmpty == false
+        user?.isStudent == true && user?.academicGroup?.isEmpty == false && streakDisabled == nil
     }
 
     var weekStart: Date { ScheduleCalendar.monday(of: .now) }

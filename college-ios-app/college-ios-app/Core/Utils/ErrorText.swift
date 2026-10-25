@@ -22,6 +22,11 @@ nonisolated enum ErrorText {
         }
     }
 
+    static func isFeatureDisabled(_ error: Error) -> Bool {
+        if case let APIError.api(code, _, _) = error { return code == "FEATURE_DISABLED" }
+        return false
+    }
+
     static func message(for error: Error) -> String? {
         (error as? LocalizedError)?.errorDescription
     }

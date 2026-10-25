@@ -172,7 +172,7 @@ final class ScheduleViewModel {
             show(week)
         } catch {
             guard !ErrorText.isCancellation(error), isCurrent() else { return }
-            guard cached == nil else {
+            guard cached == nil || ErrorText.isFeatureDisabled(error) else {
                 state.isOffline = ErrorText.isConnectivity(error)
                 state.isStale = !state.isOffline
                 return

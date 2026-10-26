@@ -30,13 +30,13 @@ struct LessonCard: View {
                 .padding(cardPadding)
                 .frame(maxWidth: .infinity, minHeight: minHeight, alignment: .topLeading)
                 .background(alignment: .bottomTrailing) { watermark }
-                .clipShape(shape)
-                .accentGlass(shape, interactive: true)
                 .overlay {
                     if isNow {
                         shape.strokeBorder(.white.opacity(0.85), lineWidth: 2)
                     }
                 }
+                .clipShape(shape)
+                .accentGlass(shape, interactive: true)
                 .background(alignment: .bottom) {
                     if isNow { glow }
                 }

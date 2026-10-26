@@ -76,17 +76,23 @@ struct DayTimeline: View {
                 .contentTransition(.numericText())
                 .frame(width: gutter, alignment: .leading)
 
-            Circle()
-                .fill(colors.onBackground)
-                .frame(width: 7, height: 7)
+            if !isDuringLesson(time) {
+                Circle()
+                    .fill(colors.onBackground)
+                    .frame(width: 7, height: 7)
 
-            Rectangle()
-                .fill(colors.onBackground)
-                .frame(height: 2)
+                Rectangle()
+                    .fill(colors.onBackground)
+                    .frame(height: 2)
+            }
         }
         .frame(height: markerHeight)
         .offset(y: offset(for: time) - markerHeight / 2)
         .accessibilityHidden(true)
+    }
+
+    private func isDuringLesson(_ time: Int) -> Bool {
+        lessons.contains { $0.start <= time && time < $0.end }
     }
 
     private var rows: [SlotRow] {
